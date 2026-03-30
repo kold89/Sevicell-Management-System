@@ -1,0 +1,51 @@
+﻿<Window x:Class="WpfApp1.main"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        mc:Ignorable="d"
+        Title="main" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <!-- Menú -->
+            <ColumnDefinition Width="*"/>
+            <!-- Contenido -->
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <!-- Barra superior -->
+            <RowDefinition Height="*"/>
+            <!-- Contenido -->
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Column="0" Grid.Row="0" Background="#2D2D30">
+            <TextBlock Text="LOGO" Foreground="White"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"></TextBlock>
+            
+        </Grid>
+
+        <!-- 🔹 Menú lateral -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Background="#2D2D30">
+            <Button Margin="3 2 2 0" Content="Inicio"/>
+            <Button Margin="3 2 2 0" Content="Ventas"/>
+            <Button Margin="3 2 2 0" Content="Reparaciones"/>
+            <Button Margin="3 2 2 0" Content="Inventario"/>
+            <Button Margin="3 2 2 0" Content="Reportes"/>
+            <Button Margin="3 2 2 0" Content="Configuraciones"/>
+        </StackPanel>
+
+        <!-- 🔹 Barra superior -->
+        <Grid Grid.Column="1" Grid.Row="0" Background="#1E1E1E">
+            <TextBlock Text="SEVICELL" Foreground="White" VerticalAlignment="Center" Margin="10"/>
+        </Grid>
+
+        <!-- 🔹 Contenido dinámico -->
+        <Grid Grid.Column="1" Grid.Row="1" Background="#F5F5F5">
+            <!-- Aquí cargas las vistas -->
+        </Grid>
+    </Grid>
+</Window>
