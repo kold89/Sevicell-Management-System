@@ -48,8 +48,8 @@ namespace WpfApp1
                     var loggedUser = service.ValidateUser(txtUsuario.Text, txtPassword.Password);
                     if (loggedUser != null)
                     {
-                        main main = new main();
                         SessionManager.loggedInUser = loggedUser;
+                        main main = new main();
 
                         main.Show();
                         this.Close();

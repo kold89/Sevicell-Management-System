@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfApp1.Data;
+using WpfApp1.Security;
 
 namespace WpfApp1
 {
@@ -24,8 +25,19 @@ namespace WpfApp1
         {
             InitializeComponent();
             this.WindowState = WindowState.Maximized;
+
+            // 1. Mostrar el nombre del usuario logueado
+            if (SessionManager.loggedInUser != null)
+            {
+                LblUserName.Text = SessionManager.loggedInUser.Name;
+            }
         }
 
+        private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
+        {
+            var confiCards = new WpfApp1.Views.ConfigDashboardPage();
 
+            MainFrame.Navigate(confiCards);
+        }
     }
 }

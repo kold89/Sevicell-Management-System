@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
-        Title="main" Height="450" Width="800">
+        Title="Panel Administrativo-SEVICELL" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="250"/>
             <!-- Menú -->
             <ColumnDefinition Width="*"/>
             <!-- Contenido -->
@@ -30,22 +30,31 @@
 
         <!-- 🔹 Menú lateral -->
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#2D2D30">
-            <Button Margin="3 2 2 0" Content="Inicio"/>
-            <Button Margin="3 2 2 0" Content="Ventas"/>
-            <Button Margin="3 2 2 0" Content="Reparaciones"/>
-            <Button Margin="3 2 2 0" Content="Inventario"/>
-            <Button Margin="3 2 2 0" Content="Reportes"/>
-            <Button Margin="3 2 2 0" Content="Configuraciones"/>
+            <Button Margin="3 2 2 0" Content="Inicio" Padding="2" FontSize="15" FontFamily="Bookman Old Style"/>
+            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Ventas"/>
+            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Reparaciones"/>
+            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Inventario"/>
+            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Reportes"/>
+            <Button x:Name="btnConfiguraciones" Click="btnConfiguraciones_Click" Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Configuraciones"/>
         </StackPanel>
 
         <!-- 🔹 Barra superior -->
         <Grid Grid.Column="1" Grid.Row="0" Background="#1E1E1E">
-            <TextBlock Text="SEVICELL" Foreground="White" VerticalAlignment="Center" Margin="10"/>
+            <DockPanel Margin="10">
+                <TextBlock Text="SEVICELL PRO" FontSize="16" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock Text="Bienvenido," FontSize="15" Foreground="Gray" Margin="0,0,7,0"/>
+                    <TextBlock Name="LblUserName" FontSize="15"  Text="Usuario" Foreground="SkyBlue" FontWeight="SemiBold"/>
+                </StackPanel>
+            </DockPanel>
         </Grid>
 
         <!-- 🔹 Contenido dinámico -->
         <Grid Grid.Column="1" Grid.Row="1" Background="#F5F5F5">
-            <!-- Aquí cargas las vistas -->
+            <Frame Name="MainFrame" 
+           NavigationUIVisibility="Hidden" 
+           BorderThickness="0"/>
         </Grid>
     </Grid>
 </Window>
