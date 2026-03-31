@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using WpfApp1.Models;
 using WpfApp1.Data;
 using Microsoft.EntityFrameworkCore;
+using WpfApp1.ViewModels;
 
 
 namespace WpfApp1.Services
@@ -106,6 +107,27 @@ namespace WpfApp1.Services
             {
                 return false;
             }
+        }
+
+        public List<ViewUserDto> GetUserForDGrid()
+        {
+            try
+            {
+                using (var db = new DBSevicellContext())
+                {
+                    return db.Users.Select(x => new ViewUserDto
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        lastName = x.LastName,
+                        status = (bool)x.Status ? "Activo" : "Deshabilitado",
+                    }).ToList();
+                }
+            }
+            catch (Exception ex) 
+            {
+                return new List<ViewUserDto>();
+            }     
         }
     }
 }

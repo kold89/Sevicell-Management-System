@@ -10,29 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace WpfApp1.Views
 {
     /// <summary>
-    /// Lógica de interacción para ConfigDashboardPage.xaml
+    /// Lógica de interacción para DialogAddUser.xaml
     /// </summary>
-    public partial class ConfigDashboardPage : Page
+    public partial class DialogAddUser : Window
     {
-        public ConfigDashboardPage()
+        public DialogAddUser()
         {
             InitializeComponent();
-        }
-
-        private void BtnRol_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void BtnUsers_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(new WpfApp1.Views.UserListPage());
         }
     }
 }

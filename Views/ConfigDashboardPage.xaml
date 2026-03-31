@@ -18,7 +18,7 @@
 
         <UniformGrid Grid.Row="1" Columns="3" VerticalAlignment="Top">
             
-            <Button x:Name="btnUsers" Click="btnUsers_Click" Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnUsers" Click="BtnUsers_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_UserShield" Height="50" Foreground="#2196F3" Margin="0,0,0,15"/>
                     <TextBlock Text="Usuarios" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
@@ -26,7 +26,7 @@
                 </StackPanel>
             </Button>
 
-            <Button x:Name="rol" Click="rol_Click" Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="rol" Click="BtnRol_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_UserTag" Height="50" Foreground="#4CAF50" Margin="0,0,0,15"/>
                     <TextBlock Text="Roles de Sistema" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
