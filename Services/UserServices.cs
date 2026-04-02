@@ -96,11 +96,37 @@ namespace WpfApp1.Services
                     if (user != null)
                     {
                         user.Status = false;
+                        user.UpdatedAt = DateTime.Now;
                         db.SaveChanges();
                         isDisable = true;
                     }
 
                     return isDisable;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool EnableUser(int id)
+        {
+            try
+            {
+                bool isEnable = false;
+                using (var db = new DBSevicellContext())
+                {
+                    var user = db.Users.FirstOrDefault(x => x.Id == id);
+                    if (user != null)
+                    {
+                        user.Status = true;
+                        user.UpdatedAt = DateTime.Now;
+                        db.SaveChanges();
+                        isEnable = true;
+                    }
+
+                    return isEnable;
                 }
             }
             catch (Exception ex)
@@ -120,6 +146,7 @@ namespace WpfApp1.Services
                         Id = x.Id,
                         Name = x.Name,
                         lastName = x.LastName,
+                        profile = x.Username,
                         status = (bool)x.Status ? "Activo" : "Deshabilitado",
                     }).ToList();
                 }

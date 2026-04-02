@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp1.Data;
+using WpfApp1.Models;
 using WpfApp1.Services;
 using WpfApp1.ViewModels;
 
@@ -48,7 +49,69 @@ namespace WpfApp1.Views
         private void BtnAddUser_Click(object sender, RoutedEventArgs e)
         {
             DialogAddUser modalUser = new  DialogAddUser();
-            modalUser.ShowDialog();
+            modalUser.Owner = Window.GetWindow(this);
+            bool? result = modalUser.ShowDialog();
+
+            if (result == true) 
+            { 
+                LoadData();
+            }
+        }
+
+        private void BtnEdit_Click(object sender, RoutedEventArgs e)
+        {
+           var userSelect = (ViewUserDto)dgUsers.SelectedItem;
+
+            if (userSelect != null)
+            { 
+                var userForEdit = serviceUse.SearchUser(userSelect.Id);
+                var win = new DialogAddUser(userForEdit);
+                win.Owner = Window.GetWindow(this);
+
+                if (win.ShowDialog() == true)
+                {
+                    LoadData();
+                }
+            }
+        }
+
+        private void BtnDisable_Click(object sender, RoutedEventArgs e)
+        {
+            var seleccionado = (ViewUserDto)dgUsers.SelectedItem;
+
+            if (seleccionado != null)
+            {
+                switch(seleccionado.status)
+                {
+                    case "Activo":
+                        var msjDisable = MessageBox.Show($"¿Está seguro que desea dar de baja a {seleccionado.Name}?",
+                            "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                        if (msjDisable == MessageBoxResult.Yes)
+                        {
+                            serviceUse.DisableUser(seleccionado.Id);
+                            LoadData();
+                        }
+                        break;
+
+                    case "Deshabilitado":
+                        var resultado = MessageBox.Show($"¿Está seguro que desea habilitar a {seleccionado.Name}?",
+                            "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                        if (resultado == MessageBoxResult.Yes)
+                        {
+                            serviceUse.EnableUser(seleccionado.Id);
+                            LoadData();
+                        }
+                        break;
+
+                    default:
+                        break;
+
+                }
+            
+            }
+
         }
     }
 }

@@ -11,26 +11,26 @@
         <StackPanel Margin="20">
             <TextBlock Text="Registrar Nuevo Usuario" FontSize="18" FontWeight="Bold" Margin="0,0,0,20"/>
 
-            <TextBlock Text="Nombres:"/>
+            <TextBlock Text="Nombres:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
             <TextBox x:Name="txtNombre" Margin="0,5,0,15" Padding="5"/>
 
-            <TextBlock Text="Apellidos:"/>
+            <TextBlock Text="Apellidos:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
             <TextBox x:Name="txtLasName" Margin="0,5,0,15" Padding="5"/>
 
-            <TextBlock Text="Nombre de Usuario (Login):"/>
+            <TextBlock Text="Nombre de Usuario (Login):" FontWeight="Bold" FontFamily="Bookman Old Style"/>
             <TextBox x:Name="txtLogin" Margin="0,5,0,15" Padding="5"/>
 
-            <TextBlock Text="Contraseña:"/>
+            <TextBlock Text="Contraseña:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
             <PasswordBox x:Name="txtPass" Margin="0,5,0,15" Padding="5"/>
 
-            <TextBlock Text="Rol de Usuario:"/>
+            <TextBlock Text="Rol de Usuario:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
             <ComboBox x:Name="cbRoles" 
                   Margin="0,5,0,15" 
                   Padding="5"
-                  DisplayMemberPath="NombreRol" 
-                  SelectedValuePath="IdRol" />  
+                  DisplayMemberPath="Name" 
+                  SelectedValuePath="Id" />  
 
-            <Button x:Name="btnGuardar" Content="Guardar Usuario"  
+            <Button x:Name="btnGuardar" Click="btnGuardar_Click" Content="Guardar Usuario"  
             Background="#2196F3" Foreground="White" Padding="10" Cursor="Hand"/>
         </StackPanel>
     </Grid>

@@ -27,7 +27,7 @@ namespace WpfApp1.Views
 
         private void BtnRol_Click(object sender, RoutedEventArgs e)
         {
-
+            this.NavigationService.Navigate(new WpfApp1.Views.RoleListPage());
         }
 
         private void BtnUsers_Click(object sender, RoutedEventArgs e)
