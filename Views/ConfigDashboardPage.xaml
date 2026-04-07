@@ -34,7 +34,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="Audit" Click="Audit_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_History" Height="50" Foreground="#FF9800" Margin="0,0,0,15"/>
                     <TextBlock Text="Auditoría" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>

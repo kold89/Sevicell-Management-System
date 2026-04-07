@@ -34,5 +34,10 @@ namespace WpfApp1.Views
         {
             this.NavigationService.Navigate(new WpfApp1.Views.UserListPage());
         }
+
+        private void Audit_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new WpfApp1.Views.AuditList());
+        }
     }
 }

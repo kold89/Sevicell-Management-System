@@ -13,5 +13,7 @@ public partial class Permission
 
     public string Code { get; set; } = null!;
 
-    public virtual ICollection<Role> Roles { get; set; } = new List<Role>();
+    public string Modulo { get; set; } = null!;
+
+    public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();
 }

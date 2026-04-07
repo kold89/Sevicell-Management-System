@@ -50,7 +50,7 @@
             </Button>
         </Grid>
 
-        <DataGrid x:Name="dgUsers" Grid.Row="2" AutoGenerateColumns="False" 
+        <DataGrid x:Name="dgUsers" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
                   CanUserAddRows="False" HeadersVisibility="Column"
                   GridLinesVisibility="All"
                   VerticalGridLinesBrush="#aaaaaa"

@@ -55,14 +55,14 @@ namespace WpfApp1.Views
 
         private void BtnAddRole_Click(object sender, RoutedEventArgs e)
         {
-            //DialogAddUser modalUser = new DialogAddUser();
-            //modalUser.Owner = Window.GetWindow(this);
-            //bool? result = modalUser.ShowDialog();
+            RoleEditWindow modalRol = new RoleEditWindow();
+            modalRol.Owner = Window.GetWindow(this);
+            bool? result = modalRol.ShowDialog();
 
-            //if (result == true)
-            //{
-            //    LoadData();
-            //}
+            if (result == true)
+            {
+                LoadData();
+            }
         }
     }
 }

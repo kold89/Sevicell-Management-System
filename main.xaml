@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
+        xmlns:fa5="http://schemas.fontawesome.com/icons/"
         mc:Ignorable="d"
         Title="Panel Administrativo-SEVICELL" Height="450" Width="800">
     <Grid>
@@ -30,12 +31,47 @@
 
         <!-- 🔹 Menú lateral -->
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#2D2D30">
-            <Button Margin="3 2 2 0" Content="Inicio" Padding="2" FontSize="15" FontFamily="Bookman Old Style"/>
-            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Ventas"/>
-            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Reparaciones"/>
-            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Inventario"/>
-            <Button Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Reportes"/>
-            <Button x:Name="btnConfiguraciones" Click="btnConfiguraciones_Click" Margin="3 2 2 0" Padding="2" FontSize="15" FontFamily="Bookman Old Style" Content="Configuraciones"/>
+            <Button Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Icon="Solid_Home" Height="16" Foreground="White" Margin="0,0,15,0"/>
+                    <TextBlock Text="Inicio" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </Button>
+
+            <Button Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Icon="Solid_ShoppingCart" Height="16" Foreground="White" Margin="0,0,15,0"/>
+                    <TextBlock Text="Ventas" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </Button>
+
+            <Button Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Icon="Solid_Tools" Height="16" Foreground="White" Margin="0,0,15,0"/>
+                    <TextBlock Text="Reparaciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </Button>
+
+            <Button Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Icon="Solid_Box" Height="16" Foreground="White" Margin="0,0,15,0"/>
+                    <TextBlock Text="Inventario" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </Button>
+
+            <Button Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Icon="Solid_ChartBar" Height="16" Foreground="White" Margin="0,0,15,0"/>
+                    <TextBlock Text="Reportes" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="btnConfiguraciones" Click="btnConfiguraciones_Click" Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Icon="Solid_Cog" Height="16" Foreground="White" Margin="0,0,15,0"/>
+                    <TextBlock Text="Configuraciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </Button>
         </StackPanel>
 
         <!-- 🔹 Barra superior -->
