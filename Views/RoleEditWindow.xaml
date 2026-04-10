@@ -111,8 +111,8 @@
         </Border>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-            <Button x:Name="btnGuardar" Content="GUARDAR (F10)" Background="#0097A7" Foreground="White" Width="130" Height="35" FontWeight="Bold" Margin="0,0,10,0" Click="btnGuardar_Click" />
-            <Button x:Name="btnCancelar" Content="CANCELAR (Esc)" Background="#DDDDDD" Width="130" Height="35" Click="btnCancelar_Click"/>
+            <Button x:Name="btnGuardar" Content="GUARDAR" Background="#0097A7" Foreground="White" Width="130" Height="35" FontWeight="Bold" Margin="0,0,10,0" Click="btnGuardar_Click" />
+            <Button x:Name="btnCancelar" Content="CANCELAR" Background="#DDDDDD" Width="130" Height="35" Click="btnCancelar_Click"/>
         </StackPanel>
     </Grid>
 </Window>

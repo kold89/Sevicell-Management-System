@@ -70,11 +70,8 @@ namespace WpfApp1.Services
             {
                 using (var db = new DBSevicellContext())
                 {
-                    if (IsPasswordUpdated)
-                    {
-                        user.Password = Security.Security.HashPassword(user.Password);
-                    }
-
+                    if (IsPasswordUpdated) user.Password = Security.Security.HashPassword(user.Password);
+                    
                     db.Users.Update(user);
                     db.SaveChanges();
                 }

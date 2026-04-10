@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using WpfApp1.Data;
 using WpfApp1.Models;
 using WpfApp1.Security;
@@ -11,7 +13,7 @@ using WpfApp1.ViewModels;
 
 namespace WpfApp1.Services
 {
-    class roleServices
+    class roleServices : BaseService
     {
 
         public List<Role> GetRoles()
@@ -26,6 +28,41 @@ namespace WpfApp1.Services
             catch (Exception ex)
             {
                 return new List<Role>();
+            }
+        }
+
+        public async Task<ServicesResult<bool>> ChangeRoleStatusAsync(int id, bool newStatus)
+        {
+            string actionStatus = "";
+            try
+            {
+                using (var db = new DBSevicellContext())
+                {
+                    var rol = await db.Roles.FirstOrDefaultAsync(x => x.Id == id);
+                    if (rol == null) 
+                        return ServicesResult<bool>.Fail($"No se encontro el rol.");
+                    
+                    rol.Status = newStatus;
+                    actionStatus = newStatus ? "habilitado" : "deshabilitado";
+                    await db.SaveChangesAsync();
+
+                    await db.AuditTables.AddAsync(new AuditTable
+                    {
+                        DateCreate = DateTime.Now,
+                        UserId = SessionManager.loggedInUser.Id,
+                        Accion = "UPDATE",
+                        AffectedTable = "Roles",
+                        ObjectId = id.ToString(),
+                        Details = $"Rol {rol.Name} ha cambiado su estado a {rol.Status}."
+                    });
+
+
+                    return ServicesResult<bool>.Ok(true, $"El rol ha sido {actionStatus} correctamente.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<bool>.Fail($"Error al cambiar estado" + ex.Message);
             }
         }
 
@@ -90,7 +127,7 @@ namespace WpfApp1.Services
                             });
                         }
 
-                        // 3. Registramos Auditoría (Incluso podrías llamar a un AuditService aquí)
+                        // 3. Registramos Auditoría 
                         db.AuditTables.Add(new AuditTable
                         {
                             DateCreate = DateTime.Now,
@@ -109,6 +146,60 @@ namespace WpfApp1.Services
                     {
                         await transaction.RollbackAsync();
                         // Aquí podrías usar un Logger para guardar el error en un archivo
+                        return false;
+                    }
+                }
+            }
+        }
+
+        public async Task<bool> ActualizarRolCompletoAsync(int rolId, string name, string description, List<int> nuevosPermisosIds)
+        {
+            using (var db = new DBSevicellContext())
+            {
+                using (var transaction = await db.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        // 1. Buscar el rol existente
+                        var rolDb = await db.Roles.FindAsync(rolId);
+                        if (rolDb == null) return false;
+
+                        // 2. Actualizar datos básicos
+                        rolDb.Name = name;
+                        rolDb.Description = description;
+
+                        // 3. Sincronizar Permisos (Borrar los actuales e insertar los nuevos)
+                        var permisosViejos = db.RolePermissions.Where(rp => rp.RoleId == rolId);
+                        db.RolePermissions.RemoveRange(permisosViejos);
+
+                        foreach (var pId in nuevosPermisosIds)
+                        {
+                            db.RolePermissions.Add(new RolePermission
+                            {
+                                RoleId = rolId,
+                                PermissionId = pId,
+                                DateCreation = DateTime.Now
+                            });
+                        }
+
+                        // 4. Registrar Auditoría de la Edición
+                        db.AuditTables.Add(new AuditTable
+                        {
+                            DateCreate = DateTime.Now,
+                            UserId = SessionManager.loggedInUser.Id,
+                            Accion = "UPDATE",
+                            AffectedTable = "Roles",
+                            ObjectId = rolId.ToString(),
+                            Details = $"Rol modificado: {name}. Ahora tiene {nuevosPermisosIds.Count} permisos."
+                        });
+
+                        await db.SaveChangesAsync();
+                        await transaction.CommitAsync();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
                         return false;
                     }
                 }

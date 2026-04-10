@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp1.Models;
 using WpfApp1.Services;
@@ -30,7 +31,7 @@ namespace WpfApp1.Views
         {
             InitializeComponent();
             userExist = userForEdit;
-            loadRoles();
+            LoadRoles();
 
             if (userExist != null) 
             {
@@ -47,7 +48,7 @@ namespace WpfApp1.Views
             }
         }
 
-        private void loadRoles()
+        private void LoadRoles()
         {
             
             var rolesDb = serviceRole.GetRoles();
@@ -59,14 +60,51 @@ namespace WpfApp1.Views
             cbRoles.SelectedIndex = 0;
         }
 
-        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        public bool ValidateFields()
         {
+            // Validar Nombre
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            {
+                MessageBox.Show("El nombre es obligatorio.", "Validación",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtNombre.Focus(); 
+                return false;
+            }
+            //Valida apellidos
+            if (string.IsNullOrWhiteSpace(txtLasName.Text))
+            {
+                MessageBox.Show("Por favor, ingrese Apellidos.",
+                        "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtLasName.Focus(); 
+                return  false;
+            }
+            //valida Usuario
+            if (string.IsNullOrWhiteSpace(txtLogin.Text))
+            {
+                MessageBox.Show("Por favor, ingrese un usuario.",
+                        "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
+            //valida contraseña
+            if (string.IsNullOrWhiteSpace(txtPass.Password))
+            {
+                MessageBox.Show("Por favor, ingrese una contraseña.",
+                        "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
             if (cbRoles.SelectedValue == null || (int)cbRoles.SelectedValue == 0)
             {
                 MessageBox.Show("Por favor, seleccione un rol válido para el usuario.",
                         "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                return  false;
             }
+
+            return true;
+        }
+        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ValidateFields()) return;
+
             bool isPassDiferent = false;
 
             if (userExist == null)

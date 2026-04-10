@@ -133,7 +133,8 @@ namespace WpfApp1.Views
         }
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
-
+            this.DialogResult = false;
+            this.Close();
         }
     }
 }
