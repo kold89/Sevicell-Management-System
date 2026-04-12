@@ -39,5 +39,12 @@ namespace WpfApp1
 
             MainFrame.Navigate(confiCards);
         }
+
+        private void btnRepairs_Click(object sender, RoutedEventArgs e)
+        {
+            var confiCards = new WpfApp1.Views.RepairManagementPage();
+
+            MainFrame.Navigate(confiCards);
+        }
     }
 }

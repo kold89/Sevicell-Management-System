@@ -45,7 +45,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Style="{StaticResource MenuButtonStyle}">
+            <Button x:Name="btnRepairs" Click="btnRepairs_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Icon="Solid_Tools" Height="16" Foreground="White" Margin="0,0,15,0"/>
                     <TextBlock Text="Reparaciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>

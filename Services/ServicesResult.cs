@@ -10,11 +10,11 @@ namespace WpfApp1.Services
     {
         // 'ServiceResult' es el nombre. '<T>' es el molde genérico.
 
-        public bool Success { get; set; }
-        public string Message { get; set; }
-        public T Data { get; set; } // 'Data' será del tipo que tú decidas al instanciarla
+        public bool Success { get; private set; }
+        public string Message { get; private set; }
+        public T Data { get; private set; } // 'Data' será del tipo que decida al instanciar
 
-        // Método tradicional para éxito
+        // Método para éxito
         public static ServicesResult<T> Ok(T data, string message)
         {
             ServicesResult<T> result = new ServicesResult<T>();
@@ -24,7 +24,7 @@ namespace WpfApp1.Services
             return result;
         }
 
-        // Método tradicional para fallo
+        // Método para fallo
         public static ServicesResult<T> Fail(string message)
         {
             ServicesResult<T> result = new ServicesResult<T>();

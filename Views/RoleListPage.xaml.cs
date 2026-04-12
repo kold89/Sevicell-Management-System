@@ -71,11 +71,11 @@ namespace WpfApp1.Views
                 if (msjDisable == MessageBoxResult.Yes)
                 {
                     var result = await servicesRole.ChangeRoleStatusAsync(seleccionado.id, newStatus);
-                    MessageBox.Show(result.Message);
 
                     if (result.Success)
                     {
                         LoadData();
+                        MessageBox.Show(result.Message);
                     }
                 }
             }

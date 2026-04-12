@@ -48,16 +48,27 @@ namespace WpfApp1.Views
             }
         }
 
-        private void LoadRoles()
+        private async void LoadRoles()
         {
-            
-            var rolesDb = serviceRole.GetRoles();
-            var listadPlaceHolder = new List<Role>();
-            listadPlaceHolder.Add(new Role { Id = 0, Name = "--Selecciones un Rol--" });
+            try {
+                var rolesDb = await serviceRole.GetRoleAsync();
+                if (!rolesDb.Success)
+                {
+                    MessageBox.Show(rolesDb.Message);
+                    return;
+                }
 
-            listadPlaceHolder.AddRange(rolesDb);
-            cbRoles.ItemsSource = listadPlaceHolder;
-            cbRoles.SelectedIndex = 0;
+                var listadPlaceHolder = new List<Role>();
+                listadPlaceHolder.Add(new Role { Id = 0, Name = "--Selecciones un Rol--" });
+
+                listadPlaceHolder.AddRange(rolesDb.Data);
+                cbRoles.ItemsSource = listadPlaceHolder;
+                cbRoles.SelectedIndex = 0;
+            } catch (Exception ex)
+            {
+                MessageBox.Show("Error inesperado " + ex.Message);
+            }
+            
         }
 
         public bool ValidateFields()

@@ -32,9 +32,18 @@ namespace WpfApp1.Views
             LoadData();
         }
 
-        public void LoadData()
+        public async void LoadData()
         {
-            dgUsers.ItemsSource = serviceUse.GetUserForDGrid();
+            ServicesResult<List<ViewUserDto>> users = await serviceUse.GetUserForDGridAsync();
+            if (users.Success)
+            {
+                dgUsers.ItemsSource = users.Data;
+            }
+            else
+            {
+                dgUsers.ItemsSource = null;
+                MessageBox.Show(users.Message);
+            }
         }
 
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
@@ -75,43 +84,29 @@ namespace WpfApp1.Views
             }
         }
 
-        private void BtnDisable_Click(object sender, RoutedEventArgs e)
+        private async void BtnDisable_Click(object sender, RoutedEventArgs e)
         {
             var seleccionado = (ViewUserDto)dgUsers.SelectedItem;
 
             if (seleccionado != null)
             {
-                switch(seleccionado.status)
+                bool newStatus = seleccionado.status == "Activo" ? false : true;
+                string actionStatus = seleccionado.status == "Activo" ? "dar de baja" : "habilitar";
+
+                var msjDisable = MessageBox.Show($"¿Está seguro que desea {actionStatus} al usuario {seleccionado.Name}?",
+                            "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (msjDisable == MessageBoxResult.Yes)
                 {
-                    case "Activo":
-                        var msjDisable = MessageBox.Show($"¿Está seguro que desea dar de baja a {seleccionado.Name}?",
-                            "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                    var result = await serviceUse.ChangeStatusUserAsync(seleccionado.Id, newStatus);
 
-                        if (msjDisable == MessageBoxResult.Yes)
-                        {
-                            serviceUse.DisableUser(seleccionado.Id);
-                            LoadData();
-                        }
-                        break;
-
-                    case "Deshabilitado":
-                        var resultado = MessageBox.Show($"¿Está seguro que desea habilitar a {seleccionado.Name}?",
-                            "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-                        if (resultado == MessageBoxResult.Yes)
-                        {
-                            serviceUse.EnableUser(seleccionado.Id);
-                            LoadData();
-                        }
-                        break;
-
-                    default:
-                        break;
-
+                    if (result.Success)
+                    {
+                        LoadData();
+                        MessageBox.Show(result.Message);
+                    }
                 }
-            
             }
-
         }
     }
 }

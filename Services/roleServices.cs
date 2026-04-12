@@ -16,18 +16,24 @@ namespace WpfApp1.Services
     class roleServices : BaseService
     {
 
-        public List<Role> GetRoles()
+        public async Task<ServicesResult<List<Role>>>  GetRoleAsync()
         {
             try
             {
                 using (var db = new DBSevicellContext())
                 {
-                    return db.Roles.Where(x => x.Status == true).ToList();
+                    var roles = await db.Roles.Where(x => x.Status == true).ToListAsync();
+                    if(roles.Count == 0)
+                    {
+                        return ServicesResult<List<Role>>.Fail("No se encontro ningun rol.");
+                    }
+
+                    return ServicesResult<List<Role>>.Ok(roles, "Roles obtenidos con exito");
                 }
             }
             catch (Exception ex)
             {
-                return new List<Role>();
+                return ServicesResult<List<Role>>.Fail("Erro al buscar roles." + ex.Message);
             }
         }
 
@@ -53,9 +59,9 @@ namespace WpfApp1.Services
                         Accion = "UPDATE",
                         AffectedTable = "Roles",
                         ObjectId = id.ToString(),
-                        Details = $"Rol {rol.Name} ha cambiado su estado a {rol.Status}."
+                        Details = $"Rol {rol.Name} se ha cambiado su estado a {rol.Status}."
                     });
-
+                    await db.SaveChangesAsync();
 
                     return ServicesResult<bool>.Ok(true, $"El rol ha sido {actionStatus} correctamente.");
                 }
@@ -102,7 +108,7 @@ namespace WpfApp1.Services
             }
         }
 
-        public async Task<bool> RegistrarNuevoRolCompletoAsync(string name, string description, List<int> permisosIds)
+        public async Task<ServicesResult<bool>> RegistrarNuevoRolCompletoAsync(string name, string description, List<int> permisosIds)
         {
             // El Service es el DUEÑO del contexto y de la transacción
             using (var db = new DBSevicellContext())
@@ -140,13 +146,12 @@ namespace WpfApp1.Services
 
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
-                        return true;
+                        return ServicesResult<bool>.Ok(true, "Rol y permisos creados con exito");
                     }
                     catch (Exception ex)
                     {
                         await transaction.RollbackAsync();
-                        // Aquí podrías usar un Logger para guardar el error en un archivo
-                        return false;
+                        return ServicesResult<bool>.Fail("Error al crear el rol y permisos. " + ex.Message);
                     }
                 }
             }

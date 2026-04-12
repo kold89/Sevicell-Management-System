@@ -82,75 +82,61 @@ namespace WpfApp1.Services
             } 
         }
      
-        public bool DisableUser(int id)
+
+        public async Task<ServicesResult<bool>>  ChangeStatusUserAsync(int id, bool newStatus)
         {
             try
             {
-                bool isDisable = false;
                 using (var db = new DBSevicellContext())
                 {
-                    var user = db.Users.FirstOrDefault(x => x.Id == id);
-                    if (user != null)
+                    string statusUser = newStatus ? "habilitado" : "deshabilitado";
+                    
+                    var user = await db.Users.FirstOrDefaultAsync(x => x.Id == id);
+                    if (user == null)
                     {
-                        user.Status = false;
-                        user.UpdatedAt = DateTime.Now;
-                        db.SaveChanges();
-                        isDisable = true;
+                        return ServicesResult<bool>.Fail($"Error el usuario no pudo ser {statusUser}");
                     }
 
-                    return isDisable;
+                    user.Status = newStatus;
+                    user.UpdatedAt = DateTime.Now;
+                    await db.SaveChangesAsync();
+
+                    return ServicesResult<bool>.Ok(true, $"Usuario {user.Name} {statusUser} con exito."); ;
                 }
             }
             catch (Exception ex)
             {
-                return false;
+                return ServicesResult<bool>.Fail("Sucedio un error inesperado.");
             }
         }
 
-        public bool EnableUser(int id)
-        {
-            try
-            {
-                bool isEnable = false;
-                using (var db = new DBSevicellContext())
-                {
-                    var user = db.Users.FirstOrDefault(x => x.Id == id);
-                    if (user != null)
-                    {
-                        user.Status = true;
-                        user.UpdatedAt = DateTime.Now;
-                        db.SaveChanges();
-                        isEnable = true;
-                    }
 
-                    return isEnable;
-                }
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public List<ViewUserDto> GetUserForDGrid()
+        public async Task<ServicesResult<List<ViewUserDto>>> GetUserForDGridAsync()
         {
             try
             {
                 using (var db = new DBSevicellContext())
                 {
-                    return db.Users.Select(x => new ViewUserDto
+                    var data = await db.Users.Select(x => new ViewUserDto
                     {
                         Id = x.Id,
                         Name = x.Name,
                         lastName = x.LastName,
                         profile = x.Username,
                         status = (bool)x.Status ? "Activo" : "Deshabilitado",
-                    }).ToList();
+                    }).ToListAsync();
+
+                    if(data.Count == 0)
+                    {
+                        return ServicesResult<List<ViewUserDto>>.Ok(data, "No se encontraron datos.");
+                    }
+
+                    return ServicesResult<List<ViewUserDto>>.Ok(data, "Usuarios obtenidos exitosamente.");
                 }
             }
             catch (Exception ex) 
             {
-                return new List<ViewUserDto>();
+                return ServicesResult<List<ViewUserDto>>.Fail("Error inesperado " + ex.Message);
             }     
         }
     }

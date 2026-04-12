@@ -114,13 +114,13 @@ namespace WpfApp1.Views
                 .Select(p => p.PermisoId)
                 .ToList();
 
-            bool exito = await servicesRole.RegistrarNuevoRolCompletoAsync(
+            var result = await servicesRole.RegistrarNuevoRolCompletoAsync(
                 txtNameRol.Text,
                 txtDescriptionRol.Text,
                 idsSeleccionados
             );
 
-            if (exito)
+            if (result.Success)
             {
                 MessageBox.Show("Rol guardado correctamente.", "SEVICELL");
                 this.DialogResult = true;
