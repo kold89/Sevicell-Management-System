@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp1.Data;
+using WpfApp1.Models;
 using WpfApp1.Services;
 using WpfApp1.ViewModels;
 
@@ -23,7 +24,6 @@ namespace WpfApp1.Views
     /// </summary>
     public partial class RoleListPage : Page
     {
-        private DBSevicellContext db = new DBSevicellContext();
         private readonly roleServices servicesRole = new roleServices();
 
         public RoleListPage()
@@ -36,6 +36,7 @@ namespace WpfApp1.Views
         {
             dgRoles.ItemsSource = servicesRole.GetRoleForDGrid();
         }
+
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
             if (this.NavigationService.CanGoBack)
@@ -44,7 +45,7 @@ namespace WpfApp1.Views
             }
         }
 
-        private void BtnEdit_Click(object sender, RoutedEventArgs e)
+        private void BtnAddRole_Click(object sender, RoutedEventArgs e)
         {
             RoleEditWindow modalRol = new RoleEditWindow();
             modalRol.Owner = Window.GetWindow(this);
@@ -53,6 +54,26 @@ namespace WpfApp1.Views
             if (result == true)
             {
                 LoadData();
+            }
+        }
+
+        private void BtnEdit_Click(object sender, RoutedEventArgs e)
+        {
+            var roleSelect = (ViewRoleDto)dgRoles.SelectedItem;
+
+            if (roleSelect != null)
+            {
+                ServicesResult<Role?> rolForEdit = servicesRole.GetRolForId(roleSelect.id);
+                if (rolForEdit.Success)
+                {
+                    var win = new RoleEditWindow(rolForEdit.Data);
+                    win.Owner = Window.GetWindow(this);
+
+                    if (win.ShowDialog() == true)
+                    {
+                        LoadData();
+                    }
+                }  
             }
         }
 
@@ -78,18 +99,6 @@ namespace WpfApp1.Views
                         MessageBox.Show(result.Message);
                     }
                 }
-            }
-        }
-
-        private void BtnAddRole_Click(object sender, RoutedEventArgs e)
-        {
-            RoleEditWindow modalRol = new RoleEditWindow();
-            modalRol.Owner = Window.GetWindow(this);
-            bool? result = modalRol.ShowDialog();
-
-            if (result == true)
-            {
-                LoadData();
             }
         }
     }

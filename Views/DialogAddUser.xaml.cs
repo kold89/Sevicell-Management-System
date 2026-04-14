@@ -48,10 +48,10 @@ namespace WpfApp1.Views
             }
         }
 
-        private async void LoadRoles()
+        private void LoadRoles()
         {
             try {
-                var rolesDb = await serviceRole.GetRoleAsync();
+                var rolesDb =  serviceRole.GetListRoles();
                 if (!rolesDb.Success)
                 {
                     MessageBox.Show(rolesDb.Message);

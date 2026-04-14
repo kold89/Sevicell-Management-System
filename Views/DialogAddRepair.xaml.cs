@@ -10,24 +10,18 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace WpfApp1.Views
 {
     /// <summary>
-    /// Lógica de interacción para RepairManagementPage.xaml
+    /// Lógica de interacción para DialogAddRepair.xaml
     /// </summary>
-    public partial class RepairManagementPage : Page
+    public partial class DialogAddRepair : Window
     {
-        public RepairManagementPage()
+        public DialogAddRepair()
         {
             InitializeComponent();
-        }
-
-        private void BtnRepair_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(new WpfApp1.Views.RepairListPage());
         }
     }
 }

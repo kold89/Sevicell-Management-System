@@ -16,17 +16,14 @@ namespace WpfApp1.Services
     class roleServices : BaseService
     {
 
-        public async Task<ServicesResult<List<Role>>>  GetRoleAsync()
+        public ServicesResult<List<Role>>  GetListRoles()
         {
             try
             {
                 using (var db = new DBSevicellContext())
                 {
-                    var roles = await db.Roles.Where(x => x.Status == true).ToListAsync();
-                    if(roles.Count == 0)
-                    {
-                        return ServicesResult<List<Role>>.Fail("No se encontro ningun rol.");
-                    }
+                    var roles =  db.Roles.Where(x => x.Status == true).ToList();
+                    if(roles.Count == 0)  return ServicesResult<List<Role>>.Fail("No se encontro ningun rol.");
 
                     return ServicesResult<List<Role>>.Ok(roles, "Roles obtenidos con exito");
                 }
@@ -34,6 +31,28 @@ namespace WpfApp1.Services
             catch (Exception ex)
             {
                 return ServicesResult<List<Role>>.Fail("Erro al buscar roles." + ex.Message);
+            }
+        }
+
+        public ServicesResult<Role?> GetRolForId(int id)
+        {
+            try
+            {
+                using (var db = new DBSevicellContext())
+                {
+                    var item = db.Roles.FirstOrDefault(x => x.Id == id);
+                    if (item == null)
+                    {
+                        return ServicesResult<Role?>.Fail("No se encontro rol.");
+                    }
+
+                    return ServicesResult<Role?>.Ok(item, "Rol encontrado con exito.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<Role?>.Fail("Error inesperado. " + ex.Message);
+
             }
         }
 
@@ -157,7 +176,18 @@ namespace WpfApp1.Services
             }
         }
 
-        public async Task<bool> ActualizarRolCompletoAsync(int rolId, string name, string description, List<int> nuevosPermisosIds)
+        public List<int> GetIdsPermisosPorRol(int rolId)
+        {
+            using (var db = new DBSevicellContext())
+            {
+                return db.RolePermissions
+                         .Where(rp => rp.RoleId == rolId)
+                         .Select(rp => rp.PermissionId)
+                         .ToList();
+            }
+        }
+
+        public async Task<ServicesResult<bool>> ActualizarRolCompletoAsync(int rolId, string name, string description, List<int> nuevosPermisosIds)
         {
             using (var db = new DBSevicellContext())
             {
@@ -167,7 +197,8 @@ namespace WpfApp1.Services
                     {
                         // 1. Buscar el rol existente
                         var rolDb = await db.Roles.FindAsync(rolId);
-                        if (rolDb == null) return false;
+                        if (rolDb == null)
+                            return ServicesResult<bool>.Fail("Error, rol no encontrado");
 
                         // 2. Actualizar datos básicos
                         rolDb.Name = name;
@@ -200,12 +231,12 @@ namespace WpfApp1.Services
 
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
-                        return true;
+                        return ServicesResult<bool>.Ok(true, "Datos actualizados con exito.");
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         await transaction.RollbackAsync();
-                        return false;
+                        return ServicesResult<bool>.Fail("Error inesperado. " + ex.Message);
                     }
                 }
             }
