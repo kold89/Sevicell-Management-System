@@ -1,0 +1,145 @@
+﻿<Window x:Class="WpfApp1.Views.DialogAddRepair"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa5="http://schemas.fontawesome.com/icons/"
+        xmlns:local="clr-namespace:WpfApp1.Views"
+        mc:Ignorable="d"
+ 
+        Title="DialogAddRepair" Height="850" Width="550">
+
+    <Window.Resources>
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Setter Property="Margin" Value="0,0,0,2"/>
+        </Style>
+
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5,0"/>
+            <Setter Property="BorderBrush" Value="#DDD"/>
+        </Style>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Border Margin="20" Background="White" CornerRadius="10" Padding="20">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Direction="270" ShadowDepth="2" Opacity="0.1"/>
+            </Border.Effect>
+
+            <StackPanel>
+                <Grid Margin="0,0,0,15">
+                    <TextBlock Text="Editar Datos:" FontSize="22" FontWeight="Bold"/>
+                    <Button Content="Cambiar Cliente" HorizontalAlignment="Right" 
+                            Background="#27AE60" Foreground="White" Padding="10,5" BorderThickness="0">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Grid>
+
+                <TextBlock Text="No. Teléfono" Style="{StaticResource LabelStyle}"/>
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="txtPhone" IsEnabled="False" Background="#EEE"/>
+                    <fa5:FontAwesome Icon="Solid_Lock" Grid.Column="1" Height="15" Margin="5,0" Foreground="#AAA" VerticalAlignment="Center"/>
+                </Grid>
+
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Nombres" Style="{StaticResource LabelStyle}"/>
+                        <Grid>
+                            <TextBox IsEnabled="False" Background="#EEE"/>
+                            <fa5:FontAwesome Icon="Solid_Lock" Height="12" HorizontalAlignment="Right" Margin="0,0,5,0" Foreground="#AAA" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Apellidos" Style="{StaticResource LabelStyle}"/>
+                        <Grid>
+                            <TextBox IsEnabled="False" Background="#EEE"/>
+                            <fa5:FontAwesome Icon="Solid_Lock" Height="12" HorizontalAlignment="Right" Margin="0,0,5,0" Foreground="#AAA" VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <Border BorderBrush="#8E44AD" BorderThickness="1.5" CornerRadius="5" Margin="0,15,0,10" Padding="10">
+                    <StackPanel>
+                        <TextBlock Text="Trabajos y Repuestos (Dinámico)" FontWeight="Bold" Foreground="#8E44AD" Margin="0,0,0,10"/>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="40"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" Height="32" Margin="0,0,5,0" IsEditable="True" Text="Pantalla iPhone 11"/>
+                            <TextBox Grid.Column="1" Text="1" Margin="0,0,5,0" HorizontalContentAlignment="Center"/>
+                            <TextBox Grid.Column="2" Text="1500.00" Margin="0,0,5,0"/>
+                            <Button Grid.Column="3" Background="#27AE60" Foreground="White" BorderThickness="0">
+                                <fa5:FontAwesome Icon="Solid_Plus" Height="12" Foreground="White"/>
+                            </Button>
+                        </Grid>
+
+                        <DataGrid Height="120" AutoGenerateColumns="False" CanUserAddRows="False" Background="White" BorderBrush="#DDD">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Descripción" Binding="{Binding Description}" Width="2*"/>
+                                <DataGridTextColumn Header="Precio" Binding="{Binding Price}" Width="*"/>
+                                <DataGridTemplateColumn Width="40">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Background="Transparent" BorderThickness="0">
+                                                <fa5:FontAwesome Icon="Solid_TrashAlt" Height="12" Foreground="#C0392B"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                        <TextBlock Text="Total a Pagar: L. 1500.00" HorizontalAlignment="Right" 
+                                   FontSize="16" FontWeight="Bold" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Fotografía de Evidencia" FontWeight="Bold" Margin="0,5"/>
+                <ItemsControl Margin="0,0,0,15">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="60" Height="60" Background="#DDD" Margin="0,0,5,0" CornerRadius="5"/>
+                        <Border Width="60" Height="60" Background="#DDD" Margin="0,0,5,0" CornerRadius="5"/>
+                        <Button Width="80" Height="60" Background="Transparent" BorderBrush="#AAA" BorderThickness="1">
+                            <StackPanel>
+                                <fa5:FontAwesome Icon="Solid_Camera" Height="15" Margin="0,0,0,5"/>
+                                <TextBlock Text="Añadir Foto" FontSize="10"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </ItemsControl>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <Button Content="Guardar" Background="#27AE60" Foreground="White" Width="100" Height="35" Margin="0,0,10,0" BorderThickness="0"/>
+                    <Button Content="Cancelar" Background="#E74C3C" Foreground="White" Width="100" Height="35" BorderThickness="0"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</Window>
+

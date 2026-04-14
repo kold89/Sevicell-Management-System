@@ -1,0 +1,44 @@
+﻿<Page x:Class="WpfApp1.Views.RepairManagementPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp1.Views"
+      mc:Ignorable="d" 
+      xmlns:fa5="http://schemas.fontawesome.com/icons/"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="RepairManagementPage">
+
+    <Grid Margin="40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,30">
+            <TextBlock Text="Reparaciones" FontSize="28" FontWeight="Bold" Foreground="#2D2D30"/>
+            <TextBlock Text="Administre las reparaciones" Foreground="Gray" FontSize="14"/>
+        </StackPanel>
+
+        <UniformGrid Grid.Row="1" Columns="3" VerticalAlignment="Top">
+
+            <Button x:Name="BtnRepair" Click="BtnRepair_Click"  Style="{StaticResource CardButtonStyle}">
+                <StackPanel>
+                    <fa5:SvgAwesome Icon="Solid_MobileAlt" Height="50" Foreground="#4CAF50" Margin="0,0,0,15"/>
+                    <TextBlock Text="Gestión de Reparaciones" FontSize="17" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Agregue, edite y asigne reparaciones" Foreground="Gray" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+            <Button x:Name="AssingRepair" Style="{StaticResource CardButtonStyle}">
+                <StackPanel>
+                    <fa5:SvgAwesome Icon="Solid_UserCog" Height="50" Foreground="#FF9800" Margin="0,0,0,15"/>
+                    <TextBlock Text="Gestionar Ténicos" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Administre y visualice la carga de trabajo." Foreground="Gray" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
+        </UniformGrid>
+
+    </Grid>
+</Page>

@@ -16,6 +16,8 @@ public partial class DBSevicellContext : DbContext
     {
     }
 
+    public virtual DbSet<AuditTable> AuditTables { get; set; }
+
     public virtual DbSet<Brand> Brands { get; set; }
 
     public virtual DbSet<Category> Categories { get; set; }
@@ -48,6 +50,8 @@ public partial class DBSevicellContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<RolePermission> RolePermissions { get; set; }
+
     public virtual DbSet<SalesDetail> SalesDetails { get; set; }
 
     public virtual DbSet<SalesInvoice> SalesInvoices { get; set; }
@@ -62,10 +66,36 @@ public partial class DBSevicellContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-U8CCBCT;Database=SevicellDB;Trusted_Connection=True;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-U8CCBCT;Database=SevicellDB;User Id=sa;Password=sa;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<AuditTable>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__AuditTab__3214EC07BD572F0A");
+
+            entity.ToTable("AuditTable");
+
+            entity.Property(e => e.Accion)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.AffectedTable)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DateCreate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("dateCreate");
+            entity.Property(e => e.ObjectId)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.User).WithMany(p => p.AuditTables)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Auditoria_Usuarios");
+        });
+
         modelBuilder.Entity<Brand>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Brand__3214EC070548E4F0");
@@ -184,7 +214,16 @@ public partial class DBSevicellContext : DbContext
 
             entity.ToTable("Permission");
 
+            entity.HasIndex(e => e.Code, "UQ__Permissi__A25C5AA7579E95E3").IsUnique();
+
+            entity.Property(e => e.Code)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Description).HasMaxLength(200);
+            entity.Property(e => e.Modulo)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue("General");
             entity.Property(e => e.Name).HasMaxLength(100);
         });
 
@@ -311,23 +350,27 @@ public partial class DBSevicellContext : DbContext
 
             entity.Property(e => e.Description).HasMaxLength(200);
             entity.Property(e => e.Name).HasMaxLength(100);
+        });
 
-            entity.HasMany(d => d.Permissions).WithMany(p => p.Roles)
-                .UsingEntity<Dictionary<string, object>>(
-                    "RolePermission",
-                    r => r.HasOne<Permission>().WithMany()
-                        .HasForeignKey("PermissionId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__RolePermi__Permi__3C69FB99"),
-                    l => l.HasOne<Role>().WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__RolePermi__RoleI__3B75D760"),
-                    j =>
-                    {
-                        j.HasKey("RoleId", "PermissionId").HasName("PK__RolePerm__6400A1A8941518DA");
-                        j.ToTable("RolePermission");
-                    });
+        modelBuilder.Entity<RolePermission>(entity =>
+        {
+            entity.HasKey(e => new { e.RoleId, e.PermissionId }).HasName("PK__RolePerm__6400A1A8941518DA");
+
+            entity.ToTable("RolePermission");
+
+            entity.Property(e => e.DateCreation)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.Permission).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.PermissionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RolePermi__Permi__3C69FB99");
+
+            entity.HasOne(d => d.Role).WithMany(p => p.RolePermissions)
+                .HasForeignKey(d => d.RoleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__RolePermi__RoleI__3B75D760");
         });
 
         modelBuilder.Entity<SalesDetail>(entity =>

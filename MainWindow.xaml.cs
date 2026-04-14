@@ -45,11 +45,13 @@ namespace WpfApp1
                 }
                 else
                 {
-                    var loggedUser = service.ValidateUser(txtUsuario.Text, txtPassword.Password);
+                    var pass = Security.Security.HashPassword(txtPassword.Password);
+                    var loggedUser = service.ValidateUser(txtUsuario.Text, pass);
                     if (loggedUser != null)
                     {
-                        main main = new main();
                         SessionManager.loggedInUser = loggedUser;
+                        //SessionManager.Login(loggedUser,);
+                        main main = new main();
 
                         main.Show();
                         this.Close();

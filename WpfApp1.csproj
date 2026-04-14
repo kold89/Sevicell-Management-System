@@ -9,12 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Resources\" />
-    <Folder Include="Views\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FontAwesome5" Version="2.1.11" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.14">
       <PrivateAssets>all</PrivateAssets>
