@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <Folder Include="Resources\" />
+    <Folder Include="Views\Inventory\" />
+    <Folder Include="Views\Reports\" />
   </ItemGroup>
 
   <ItemGroup>

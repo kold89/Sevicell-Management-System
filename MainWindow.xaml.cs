@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,6 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp1.Data;
+using WpfApp1.Models;
 using WpfApp1.Security;
 using WpfApp1.Services;
 
@@ -46,11 +48,10 @@ namespace WpfApp1
                 else
                 {
                     var pass = Security.Security.HashPassword(txtPassword.Password);
-                    var loggedUser = service.ValidateUser(txtUsuario.Text, pass);
-                    if (loggedUser != null)
+                    ServicesResult<User?> loggedUser = service.ValidateUser(txtUsuario.Text, pass);
+                    if (loggedUser.Success)
                     {
-                        SessionManager.loggedInUser = loggedUser;
-                        //SessionManager.Login(loggedUser,);
+                        SessionManager.loggedInUser = loggedUser.Data;
                         main main = new main();
 
                         main.Show();

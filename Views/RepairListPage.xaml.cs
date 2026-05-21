@@ -44,5 +44,6 @@ namespace WpfApp1.Views
             modalRepairs.Owner = Window.GetWindow(this);
             bool? result = modalRepairs.ShowDialog();
         }
+
     }
 }

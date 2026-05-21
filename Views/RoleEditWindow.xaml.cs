@@ -48,13 +48,15 @@ namespace WpfApp1.Views
 
             // Obtener qué permisos tiene actualmente
             var idsAsignados = servicesRole.GetIdsPermisosPorRol(_rolExistente.Id);
-
-            // Marcarlos en la lista de la UI
-            foreach (var p in listForUI)
+            if (idsAsignados.Success)
             {
-                if (idsAsignados.Contains(p.PermisoId))
+                // Marcarlos en la lista de la UI
+                foreach (var p in listForUI)
                 {
-                    p.ItemSelected = true;
+                    if (idsAsignados.Data.Contains(p.PermisoId))
+                    {
+                        p.ItemSelected = true;
+                    }
                 }
             }
         }
@@ -132,7 +134,10 @@ namespace WpfApp1.Views
 
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
+
             if (!ValidateFilds()) return;
+
+            ServicesResult<bool> result;
 
             var idsSeleccionados = listForUI
                 .Where(p => p.ItemSelected)
@@ -140,42 +145,32 @@ namespace WpfApp1.Views
                 .ToList();
             bool exito = false;
 
-            if (_rolExistente == null) 
+            if (_rolExistente == null)
             {
-                var result = await servicesRole.RegistrarNuevoRolCompletoAsync(
-               txtNameRol.Text,
-               txtDescriptionRol.Text,
-               idsSeleccionados
-               );
-                if (result.Success)
-                {
-                    MessageBox.Show("Rol guardado correctamente.", "SEVICELL");
-                    this.DialogResult = true;
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Error interno al procesar el rol.", "Error");
-                }
+                result = await servicesRole.RegistrarNuevoRolCompletoAsync(
+                    txtNameRol.Text,
+                    txtDescriptionRol.Text,
+                    idsSeleccionados
+                    );
+
             }
             else // MODO EDICIÓN
             {
-                var resultEdit = await servicesRole.ActualizarRolCompletoAsync(_rolExistente.Id, txtNameRol.Text, txtDescriptionRol.Text, idsSeleccionados);
-
-                if (resultEdit.Success)
-                {
-                    MessageBox.Show("Rol guardado correctamente.", "SEVICELL");
-                    this.DialogResult = true;
-                    this.Close();
-                }
-                else
-                {
-                    MessageBox.Show("Error interno al procesar el rol.", "Error");
-                }
+                result = await servicesRole.ActualizarRolCompletoAsync(_rolExistente.Id, txtNameRol.Text, txtDescriptionRol.Text, idsSeleccionados);
             }
-           
 
+            if (result.Success)
+            {
+                MessageBox.Show("Datos guardados correctamente.", "SEVICELL");
+                this.DialogResult = true;
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Error interno al procesar el rol.", "Error");
+            }
         }
+
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
             this.DialogResult = false;

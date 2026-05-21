@@ -13,7 +13,6 @@ namespace WpfApp1.Services
     public abstract class BaseService
     {
         // 'protected' para que solo los hijos lo usen.
-        // 'readonly' para que no se cambie la conexión por accidente.
         protected readonly DBSevicellContext _db;
 
         public BaseService()
@@ -21,7 +20,7 @@ namespace WpfApp1.Services
             _db = new DBSevicellContext();
         }
 
-        protected async Task SaveAuditAsync(AuditAction action, string table, string objectId, string details)
+        protected async Task SaveAuditAsync(AuditAction action, string table, string objectId, string details, DBSevicellContext? db = null)
         {
             string actionName = "";
 
@@ -49,8 +48,13 @@ namespace WpfApp1.Services
             log.ObjectId = objectId;
             log.Details = details;
 
-            _db.AuditTables.Add(log);
-            await _db.SaveChangesAsync();
+            var dbContext = db ?? _db;
+            dbContext.AuditTables.Add(log);
+
+            if (db == null)
+            {
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
 

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -15,7 +16,6 @@ namespace WpfApp1.Services
 {
     class roleServices : BaseService
     {
-
         public ServicesResult<List<Role>>  GetListRoles()
         {
             try
@@ -71,16 +71,7 @@ namespace WpfApp1.Services
                     actionStatus = newStatus ? "habilitado" : "deshabilitado";
                     await db.SaveChangesAsync();
 
-                    await db.AuditTables.AddAsync(new AuditTable
-                    {
-                        DateCreate = DateTime.Now,
-                        UserId = SessionManager.loggedInUser.Id,
-                        Accion = "UPDATE",
-                        AffectedTable = "Roles",
-                        ObjectId = id.ToString(),
-                        Details = $"Rol {rol.Name} se ha cambiado su estado a {rol.Status}."
-                    });
-                    await db.SaveChangesAsync();
+                    await SaveAuditAsync(AuditAction.Update, "Roles", id.ToString(), $"Rol {rol.Name} se ha cambiado su estado a {rol.Status}.");
 
                     return ServicesResult<bool>.Ok(true, $"El rol ha sido {actionStatus} correctamente.");
                 }
@@ -129,39 +120,22 @@ namespace WpfApp1.Services
 
         public async Task<ServicesResult<bool>> RegistrarNuevoRolCompletoAsync(string name, string description, List<int> permisosIds)
         {
-            // El Service es el DUEÑO del contexto y de la transacción
             using (var db = new DBSevicellContext())
             {
                 using (var transaction = await db.Database.BeginTransactionAsync())
                 {
                     try
                     {
-                        // 1. Usamos las funciones internas del mismo service
                         var nuevoRol = new Role { Name = name, Description = description, Status = true };
                         db.Roles.Add(nuevoRol);
-                        await db.SaveChangesAsync(); // Guardamos para obtener el ID
+                        await db.SaveChangesAsync(); // Guarda para obtener el ID
 
                         // 2. Registramos permisos
-                        foreach (var pId in permisosIds)
-                        {
-                            db.RolePermissions.Add(new RolePermission
-                            {
-                                RoleId = nuevoRol.Id,
-                                PermissionId = pId,
-                                DateCreation = DateTime.Now,
-                            });
-                        }
+                        var newPermisions = BuildListPermissions(nuevoRol.Id, permisosIds);
+                        db.RolePermissions.AddRange(newPermisions);
 
-                        // 3. Registramos Auditoría 
-                        db.AuditTables.Add(new AuditTable
-                        {
-                            DateCreate = DateTime.Now,
-                            UserId = SessionManager.loggedInUser.Id,
-                            Accion = "INSERT",
-                            AffectedTable = "Roles",
-                            ObjectId = nuevoRol.Id.ToString(),
-                            Details = $"Rol {name} creado con {permisosIds.Count} permisos."
-                        });
+                        string mensaje = $"Rol {name} creado con {permisosIds.Count} permisos.";
+                        await SaveAuditAsync(AuditAction.Create, "Roles", nuevoRol.Id.ToString(), mensaje, db);
 
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
@@ -176,15 +150,23 @@ namespace WpfApp1.Services
             }
         }
 
-        public List<int> GetIdsPermisosPorRol(int rolId)
+        public ServicesResult<List<int>> GetIdsPermisosPorRol(int rolId)
         {
-            using (var db = new DBSevicellContext())
+            try 
             {
-                return db.RolePermissions
-                         .Where(rp => rp.RoleId == rolId)
-                         .Select(rp => rp.PermissionId)
-                         .ToList();
+                using (var db = new DBSevicellContext())
+                {
+                    var listPermissions = db.RolePermissions
+                             .Where(rp => rp.RoleId == rolId)
+                             .Select(rp => rp.PermissionId)
+                             .ToList();
+                    return ServicesResult<List<int>>.Ok(listPermissions, "Permisos obtenidos con exito.");
+                }
             }
+            catch (Exception ex)
+            {
+                return ServicesResult<List<int>>.Fail("Error inesperado. "+ ex.Message);
+            } 
         }
 
         public async Task<ServicesResult<bool>> ActualizarRolCompletoAsync(int rolId, string name, string description, List<int> nuevosPermisosIds)
@@ -200,38 +182,22 @@ namespace WpfApp1.Services
                         if (rolDb == null)
                             return ServicesResult<bool>.Fail("Error, rol no encontrado");
 
-                        // 2. Actualizar datos básicos
                         rolDb.Name = name;
                         rolDb.Description = description;
 
-                        // 3. Sincronizar Permisos (Borrar los actuales e insertar los nuevos)
-                        var permisosViejos = db.RolePermissions.Where(rp => rp.RoleId == rolId);
+                        // 3. Sincronizar Permisos
+                        var permisosViejos = db.RolePermissions.Where(x => x.RoleId == rolId);
                         db.RolePermissions.RemoveRange(permisosViejos);
 
-                        foreach (var pId in nuevosPermisosIds)
-                        {
-                            db.RolePermissions.Add(new RolePermission
-                            {
-                                RoleId = rolId,
-                                PermissionId = pId,
-                                DateCreation = DateTime.Now
-                            });
-                        }
+                        var newPermissions = BuildListPermissions(rolId, nuevosPermisosIds);
+                        db.RolePermissions.AddRange(newPermissions);
 
-                        // 4. Registrar Auditoría de la Edición
-                        db.AuditTables.Add(new AuditTable
-                        {
-                            DateCreate = DateTime.Now,
-                            UserId = SessionManager.loggedInUser.Id,
-                            Accion = "UPDATE",
-                            AffectedTable = "Roles",
-                            ObjectId = rolId.ToString(),
-                            Details = $"Rol modificado: {name}. Ahora tiene {nuevosPermisosIds.Count} permisos."
-                        });
-
+                        string mensaje = $"Rol modificado: {name}. Ahora tiene {nuevosPermisosIds.Count} permisos.";
+                        await SaveAuditAsync(AuditAction.Update, "Roles", rolId.ToString(), mensaje, db);
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
-                        return ServicesResult<bool>.Ok(true, "Datos actualizados con exito.");
+
+                        return ServicesResult<bool>.Ok(true, "Datos actualizados con éxito.");
                     }
                     catch (Exception ex)
                     {
@@ -242,5 +208,17 @@ namespace WpfApp1.Services
             }
         }
 
+        private List<RolePermission> BuildListPermissions(int roleId, List<int> newPermissionsId)
+        {
+            if(newPermissionsId.Count == 0)
+                return new List<RolePermission>();
+            
+            return newPermissionsId.Select(pId => new RolePermission
+            {
+                RoleId = roleId,
+                PermissionId = pId,
+                DateCreation = DateTime.Now
+            }).ToList();
+        }
     }
 }

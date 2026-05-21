@@ -98,5 +98,23 @@ namespace WpfApp1.Views
                 LoadData();
             }
         }
+
+        private void txtBuscar_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtBuscar.Text))
+            {
+                txtBuscar.Text = "Buscar...";
+                txtBuscar.Opacity = 0.5;
+            }
+        }
+
+        private void txtBuscar_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (txtBuscar.Text == "Buscar...")
+            {
+                txtBuscar.Text = "";
+                txtBuscar.Opacity = 1;
+            }
+        }
     }
 }

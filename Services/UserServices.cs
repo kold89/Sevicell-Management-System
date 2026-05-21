@@ -11,21 +11,29 @@ using WpfApp1.ViewModels;
 
 namespace WpfApp1.Services
 {
-    class UserServices
+    class UserServices : BaseService
     {
-        public User? ValidateUser(string user, string password)
+        public ServicesResult<User?> ValidateUser(string username, string password)
         {
             try {
                 using (var db = new DBSevicellContext())
                 {
-                    return db.Users.FirstOrDefault(x => x.Username == user
+                    var user =  db.Users.FirstOrDefault(x => x.Username == username
                     && x.Password == password
                     && x.Status == true);
+
+                    if (user == null)
+                    {
+                       return ServicesResult<User?>.Fail($"Error al validar el usuario {username}");
+                    }
+
+                    return ServicesResult<User?>.Ok(user, "Usuario validado exitosamente.");
+
                 }
             }
             catch (Exception ex) 
             {
-                return null;
+                return ServicesResult<User?>.Fail($"Error inesperado al validar el usuario {username}");
             } 
         }
 
@@ -46,7 +54,7 @@ namespace WpfApp1.Services
             }
         }
 
-        public void RegisterUser(User user)
+        public async Task<ServicesResult<User>> RegisterUserAsync(User user)
         {
             try
             {
@@ -55,16 +63,19 @@ namespace WpfApp1.Services
                     user.Password = Security.Security.HashPassword(user.Password);
 
                     db.Users.Add(user);
-                    db.SaveChanges();
+                    await SaveAuditAsync(AuditAction.Create, "Users", user.Id.ToString(), "Se creo un nuevo usuario", db);
+                    await db.SaveChangesAsync();
+
+                   return ServicesResult<User>.Ok(user, "Usuario creado exitosamente.");
                 }
             }
             catch (Exception ex)
             {
-               Console.WriteLine(ex.Message);
+                return ServicesResult<User>.Fail("Error inesperado al registrar al usuario. "+ ex.Message);
             }
         }
 
-        public void UpdateUser (User user, bool IsPasswordUpdated)
+        public async Task<ServicesResult<User>> UpdateUserAsync (User user, bool IsPasswordUpdated)
         {
             try
             {
@@ -73,12 +84,15 @@ namespace WpfApp1.Services
                     if (IsPasswordUpdated) user.Password = Security.Security.HashPassword(user.Password);
                     
                     db.Users.Update(user);
-                    db.SaveChanges();
+                    await SaveAuditAsync(AuditAction.Update, "Users", user.Id.ToString(), "Se actualizo el usuario "+ user.Username, db);
+                    await db.SaveChangesAsync();
+
+                    return ServicesResult<User>.Ok(user, "Usuario creado exitosamente.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                return ServicesResult<User>.Fail("Error inesperado al registrar al usuario. " + ex.Message);
             } 
         }
      

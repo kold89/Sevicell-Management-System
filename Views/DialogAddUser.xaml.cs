@@ -112,7 +112,7 @@ namespace WpfApp1.Views
 
             return true;
         }
-        private void btnGuardar_Click(object sender, RoutedEventArgs e)
+        private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
             if (!ValidateFields()) return;
 
@@ -129,7 +129,9 @@ namespace WpfApp1.Views
                 newUser.CreatedAt = DateTime.Now;
                 newUser.Status = true;
 
-                serviceUser.RegisterUser(newUser);
+                var user = await serviceUser.RegisterUserAsync(newUser);
+
+                if(user.Success)
                 MessageBox.Show("Usuario registrado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
@@ -143,7 +145,9 @@ namespace WpfApp1.Views
                 userExist.RoleId = (int)cbRoles.SelectedValue;
                 userExist.UpdatedAt = DateTime.Now;
         
-                serviceUser.UpdateUser(userExist, isPassDiferent);
+                var update = await serviceUser.UpdateUserAsync(userExist, isPassDiferent);
+
+                if (update.Success)
                 MessageBox.Show("Usuario Editado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 

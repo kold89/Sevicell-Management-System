@@ -9,93 +9,145 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Reparaciones">
 
-    <Grid Margin="30">
+    <Page.Resources>
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click"  Background="Transparent" BorderThickness="0" Cursor="Hand">
-                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="25" Foreground="#2196F3"/>
+        <DockPanel Grid.Row="0" Margin="0,0,0,20">
+            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" DockPanel.Dock="Left" 
+                    Background="Transparent" BorderThickness="0" Cursor="Hand">
+                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
             </Button>
-            <TextBlock Text="Listado de Reparaciones." FontSize="24" FontWeight="Bold" Margin="15,0,0,0"/>
-        </StackPanel>
+
+            <StackPanel Margin="15,0,0,0">
+                <TextBlock Text="Módulo de Reparaciones" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                <TextBlock Text="Visualice y gestione el estado de los dispositivos en taller" Foreground="#777" FontSize="13"/>
+            </StackPanel>
+        </DockPanel>
 
         <Grid Grid.Row="1" Margin="0,0,0,15">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="400"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0"  BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Background="White" Padding="5,2">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Search" Height="15" Foreground="Gray" Margin="5,0"/>
-                    <TextBox x:Name="txtBuscar" BorderThickness="0" Width="250" VerticalContentAlignment="Center" Opacity="0.5" Text="Buscar usuario..."/>
-                </StackPanel>
+            <Border Grid.Column="0" Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="10,6">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <fa5:SvgAwesome Icon="Solid_Search" Height="14" Foreground="#BBB" Margin="5,0,10,0"/>
+                    <TextBox x:Name="txtBuscar" Grid.Column="1" BorderThickness="0" VerticalContentAlignment="Center"
+                             FontSize="14" Foreground="#555" Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"
+                              ToolTip="Escriba nombre, IMEI O No. Ticket."/>
+                </Grid>
             </Border>
 
-            <Button x:Name="BtnAddRepair" Click="BtnAddRepair_Click"  Grid.Column="2" Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
+            <Button x:Name="BtnAddRepair" Grid.Column="2" Click="BtnAddRepair_Click"
+                    Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
                 <Button.Resources>
                     <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5"/>
+                        <Setter Property="CornerRadius" Value="6"/>
                     </Style>
                 </Button.Resources>
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Plus" Height="14" Foreground="White" Margin="0,0,8,0"/>
-                    <TextBlock Text="Nuevo Registro" Foreground="White" FontWeight="Bold"/>
+                    <fa5:SvgAwesome Icon="Solid_Plus" Height="12" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                    <TextBlock Text="NUEVA REPARACIÓN" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
         </Grid>
 
-        <DataGrid x:Name="dgRepairs" Grid.Row="2" AutoGenerateColumns="False" 
-              CanUserAddRows="False" HeadersVisibility="Column"
-              GridLinesVisibility="All"
-              VerticalGridLinesBrush="#aaaaaa"
-              HorizontalGridLinesBrush="#aaaaaa"
-              BorderThickness="1"
-              BorderBrush="#DDDDDD"
-              Background="White" RowHeight="30" FontSize="14" SelectionChanged="dgRoles_SelectionChanged">
+        <Border Grid.Row="2" Background="White" CornerRadius="10" BorderBrush="#EEE" BorderThickness="1" ClipToBounds="True">
+            <DataGrid x:Name="dgRepairs" AutoGenerateColumns="False" CanUserAddRows="False"
+                      GridLinesVisibility="None" Background="White" RowHeight="50"
+                      HeadersVisibility="Column" BorderThickness="0" IsReadOnly="True"
+                      SelectionMode="Single">
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#F8F9FA"/>
+                        <Setter Property="Foreground" Value="#666"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="15,10"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#EEE"/>
+                    </Style>
+                </DataGrid.Resources>
 
-                <DataGridTextColumn Header="Dispositivo" Binding="{Binding name}" Width="*"/>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Ticket" Binding="{Binding Id}" Width="80"/>
 
-                <DataGridTextColumn Header="Estado" Binding="{Binding status}" Width="180"/>
-                
-                <DataGridTextColumn Header="Cliente" Binding="{Binding status}" Width="180"/>
-                
-                <DataGridTextColumn Header="Responsable" Binding="{Binding status}" Width="180"/>
+                    <DataGridTemplateColumn Header="Cliente" Width="1.5*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Center" Margin="10,0">
+                                    <TextBlock Text="{Binding Dispositivo.Cliente.Nombre}" FontWeight="SemiBold" Foreground="#333"/>
+                                    <TextBlock Text="{Binding Dispositivo.Cliente.Telefono}" FontSize="11" Foreground="#999"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="Acciones" Width="150">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button x:Name="BtnSee"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
-                                    <fa5:SvgAwesome Icon="Solid_Info" Height="14" Foreground="Orange"/>
-                                </Button>
-                                
-                                <Button x:Name="BtnEdit"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
-                                    <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
-                                </Button>
+                    <DataGridTemplateColumn Header="Dispositivo" Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel VerticalAlignment="Center">
+                                    <TextBlock Text="{Binding Dispositivo.Modelo}" Foreground="#333"/>
+                                    <TextBlock Text="{Binding Dispositivo.Marca.Nombre}" FontSize="11" Foreground="#999"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                                <Button x:Name="BtnAssing"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
-                                    <fa5:SvgAwesome Icon="Solid_UserCog" Height="14" Foreground="Orange"/>
-                                </Button>
+                    <DataGridTemplateColumn Header="Estado" Width="140">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#E8F5E9" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding Estado.Nombre}" Foreground="#2E7D32" FontSize="11" FontWeight="Bold"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                                <Button x:Name="BtnDelete"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
-                                    <fa5:SvgAwesome Icon="Solid_Trash" Height="14" Foreground="Orange"/>
-                                </Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-
+                    <DataGridTemplateColumn Header="Acciones" Width="180">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Style="{StaticResource ActionButtonStyle}" ToolTip="Ver Detalle">
+                                        <fa5:SvgAwesome Icon="Solid_InfoCircle" Height="16" Foreground="#2196F3"/>
+                                    </Button>
+                                    <Button Style="{StaticResource ActionButtonStyle}" ToolTip="Editar Registro">
+                                        <fa5:SvgAwesome Icon="Solid_Edit" Height="16" Foreground="#FF9800"/>
+                                    </Button>
+                                    <Button Style="{StaticResource ActionButtonStyle}" ToolTip="Eliminar">
+                                        <fa5:SvgAwesome Icon="Solid_Trash" Height="16" Foreground="#F44336"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
 
 </Page>
