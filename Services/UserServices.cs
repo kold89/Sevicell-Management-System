@@ -11,7 +11,7 @@ using WpfApp1.ViewModels;
 
 namespace WpfApp1.Services
 {
-    class UserServices : BaseService
+    public class UserServices : BaseService
     {
         public ServicesResult<User?> ValidateUser(string username, string password)
         {

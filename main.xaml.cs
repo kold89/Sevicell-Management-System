@@ -46,5 +46,12 @@ namespace WpfApp1
 
             MainFrame.Navigate(confiCards);
         }
+
+        private void BtnInventory_Click(object sender, RoutedEventArgs e)
+        {
+            var confiCards = new WpfApp1.Views.Inventory.InventaryPage();
+
+            MainFrame.Navigate(confiCards);
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfApp1.ViewModels
 {
-    class ViewRoleDto
+    public class ViewRoleDto
     {
         public int id { get; set; }
         public string name { get; set; }

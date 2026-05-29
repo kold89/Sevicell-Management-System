@@ -24,7 +24,6 @@ namespace WpfApp1.Views
     /// </summary>
     public partial class UserListPage : Page
     {
-        private DBSevicellContext db = new DBSevicellContext();
         private readonly UserServices serviceUse = new UserServices();
         public UserListPage()
         {

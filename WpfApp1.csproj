@@ -2,15 +2,21 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <SignAssembly>True</SignAssembly>
+    <DelaySign>False</DelaySign>
+    <ApplicationIcon>Sin-título-21-de-mayo-de-2026-a-las-21.17.50 (1).ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Sin-título-21-de-mayo-de-2026-a-las-21.17.50 (1).ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Resources\" />
-    <Folder Include="Views\Inventory\" />
     <Folder Include="Views\Reports\" />
   </ItemGroup>
 

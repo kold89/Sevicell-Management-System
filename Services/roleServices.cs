@@ -14,7 +14,7 @@ using WpfApp1.ViewModels;
 
 namespace WpfApp1.Services
 {
-    class roleServices : BaseService
+    public class roleServices : BaseService
     {
         public ServicesResult<List<Role>>  GetListRoles()
         {

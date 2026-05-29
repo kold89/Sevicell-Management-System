@@ -52,7 +52,7 @@
                 </StackPanel>
             </Button>
 
-            <Button Style="{StaticResource MenuButtonStyle}">
+            <Button Name="BtnInventory" Click="BtnInventory_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Icon="Solid_Box" Height="16" Foreground="White" Margin="0,0,15,0"/>
                     <TextBlock Text="Inventario" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
