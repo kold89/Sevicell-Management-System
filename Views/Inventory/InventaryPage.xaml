@@ -22,7 +22,7 @@
 
         <UniformGrid Grid.Row="1" Columns="3" VerticalAlignment="Top">
 
-            <Button x:Name="btnProducts"  Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnProducts" Click="btnProducts_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_Boxes" Height="50" Foreground="#607D8B" Margin="0,0,0,15"/>
                     <TextBlock Text="Productos y Repuestos" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>

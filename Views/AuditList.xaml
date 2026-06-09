@@ -44,8 +44,7 @@
                     </Grid.ColumnDefinitions>
                     <fa5:SvgAwesome Icon="Solid_Search" Height="14" Foreground="#BBB" Margin="5,0,10,0"/>
                     <TextBox x:Name="txtBuscar" Grid.Column="1" BorderThickness="0" VerticalContentAlignment="Center"
-                      FontSize="14" Foreground="#555" Text="Buscar..."
-                      GotFocus="txtBuscar_GotFocus"  LostFocus="txtBuscar_LostFocus"/>
+                      FontSize="14" Foreground="#555" Text="Buscar..."/>
                 </Grid>
             </Border>
         </Grid>

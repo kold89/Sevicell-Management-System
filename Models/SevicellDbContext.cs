@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using WpfApp1.Models;
 
-namespace WpfApp1.Data;
+namespace WpfApp1.Models;
 
-public partial class DBSevicellContext : DbContext
+public partial class SevicellDbContext : DbContext
 {
-    public DBSevicellContext()
+    public SevicellDbContext()
     {
     }
 
-    public DBSevicellContext(DbContextOptions<DBSevicellContext> options)
+    public SevicellDbContext(DbContextOptions<SevicellDbContext> options)
         : base(options)
     {
     }
@@ -233,7 +232,15 @@ public partial class DBSevicellContext : DbContext
 
             entity.ToTable("Product");
 
+            entity.HasIndex(e => e.Code, "UQ_Code").IsUnique();
+
+            entity.Property(e => e.Code)
+                .HasMaxLength(50)
+                .IsUnicode(false);
             entity.Property(e => e.Name).HasMaxLength(100);
+            entity.Property(e => e.ProductDescription)
+                .HasMaxLength(250)
+                .HasColumnName("productDescription");
             entity.Property(e => e.SalePrice).HasColumnType("decimal(10, 2)");
 
             entity.HasOne(d => d.Brand).WithMany(p => p.Products)
@@ -273,6 +280,7 @@ public partial class DBSevicellContext : DbContext
             entity.Property(e => e.CreatedAt).HasColumnType("datetime");
             entity.Property(e => e.InvoiceNumber).HasMaxLength(50);
             entity.Property(e => e.SubTotal).HasColumnType("decimal(10, 2)");
+            entity.Property(e => e.SupplierNameCasual).HasMaxLength(50);
             entity.Property(e => e.Tax).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.TotalAmount).HasColumnType("decimal(10, 2)");
 
@@ -290,8 +298,6 @@ public partial class DBSevicellContext : DbContext
             entity.Property(e => e.Description).HasMaxLength(200);
             entity.Property(e => e.LaborCost).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.PartCost).HasColumnType("decimal(10, 2)");
-
-          
 
             entity.HasOne(d => d.RepairOrder).WithMany(p => p.RepairDetails)
                 .HasForeignKey(d => d.RepairOrderId)

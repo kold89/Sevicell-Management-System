@@ -26,44 +26,66 @@
     <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <!-- Fila 0: Encabezado -->
             <RowDefinition Height="Auto"/>
+            <!-- Fila 1: Barra de Herramientas -->
             <RowDefinition Height="*"/>
+            <!-- Fila 2: Espacio de Trabajo Principal -->
         </Grid.RowDefinitions>
 
+        <!-- RECURSOS LOCALES: Estilos reutilizables para los contadores (Badges) -->
+        <Grid.Resources>
+            <Style TargetType="Border" x:Key="BadgeCounterStyle">
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="Padding" Value="6,2"/>
+                <Setter Property="Margin" Value="8,0,0,0"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="BadgeCounterTextStyle">
+                <Setter Property="FontSize" Value="11"/>
+                <Setter Property="FontWeight" Value="Bold"/>
+            </Style>
+        </Grid.Resources>
+
+        <!-- ROW 0: ENCABEZADO PRINCIPAL -->
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
             <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" DockPanel.Dock="Left" 
-                    Background="Transparent" BorderThickness="0" Cursor="Hand">
-                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
+                Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center">
+                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18" Foreground="#2196F3"/>
             </Button>
 
-            <StackPanel Margin="15,0,0,0">
-                <TextBlock Text="Módulo de Reparaciones" FontSize="22" FontWeight="Bold" Foreground="#333"/>
-                <TextBlock Text="Visualice y gestione el estado de los dispositivos en taller" Foreground="#777" FontSize="13"/>
+            <StackPanel Margin="15,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="Módulo de Reparaciones" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+                <TextBlock Text="Visualice, controle y gestione el flujo de los dispositivos en soporte técnico" Foreground="#7F8C8D" FontSize="13" Margin="0,2,0,0"/>
             </StackPanel>
         </DockPanel>
 
-        <Grid Grid.Row="1" Margin="0,0,0,15">
+        <!-- ROW 1: BARRA DE BÚSQUEDA Y BOTÓN DE ACCIÓN ACCESIBLE -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="400"/>
+                <ColumnDefinition Width="450"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="10,6">
+            <!-- Buscador Estilizado -->
+            <Border Grid.Column="0" Background="White" CornerRadius="6" BorderBrush="#BDC3C7" BorderThickness="1" Padding="12,8">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <fa5:SvgAwesome Icon="Solid_Search" Height="14" Foreground="#BBB" Margin="5,0,10,0"/>
+                    <fa5:SvgAwesome Icon="Solid_Search" Height="14" Foreground="#95A5A6" Margin="0,0,10,0" VerticalAlignment="Center"/>
                     <TextBox x:Name="txtBuscar" Grid.Column="1" BorderThickness="0" VerticalContentAlignment="Center"
-                             FontSize="14" Foreground="#555" Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"
-                              ToolTip="Escriba nombre, IMEI O No. Ticket."/>
+                         FontSize="14" Foreground="#34495E" Background="Transparent"
+                         Text="{Binding TextoBusqueda, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTip="Escriba el nombre del cliente, IMEI o No. de Ticket para filtrar."/>
                 </Grid>
             </Border>
 
+            <!-- Botón de Registro Principal (Header) -->
             <Button x:Name="BtnAddRepair" Grid.Column="2" Click="BtnAddRepair_Click"
-                    Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
+                Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="20,10">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="6"/>
@@ -71,75 +93,192 @@
                 </Button.Resources>
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Icon="Solid_Plus" Height="12" Foreground="White" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                    <TextBlock Text="NUEVA REPARACIÓN" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                    <TextBlock Text="NUEVA REPARACIÓN" Foreground="White" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
         </Grid>
 
-        <Border Grid.Row="2" Background="White" CornerRadius="10" BorderBrush="#EEE" BorderThickness="1" ClipToBounds="True">
-            <DataGrid x:Name="dgRepairs" AutoGenerateColumns="False" CanUserAddRows="False"
-                      GridLinesVisibility="None" Background="White" RowHeight="50"
-                      HeadersVisibility="Column" BorderThickness="0" IsReadOnly="True"
-                      SelectionMode="Single">
+        <!-- ROW 2: CONTROL DE PESTAÑAS (FILTROS) Y DATAGRID COMPARTIDO -->
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <!-- Fila interna 0: Pestañas de Estados -->
+                <RowDefinition Height="*"/>
+                <!-- Fila interna 1: Tabla Única de Datos -->
+            </Grid.RowDefinitions>
 
-                <DataGrid.Resources>
-                    <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Background" Value="#F8F9FA"/>
-                        <Setter Property="Foreground" Value="#666"/>
+            <!-- 1. El TabControl funciona exclusivamente como una barra de filtros superiores -->
+            <TabControl Grid.Row="0" BorderThickness="0,0,0,1" BorderBrush="#BDC3C7" Background="Transparent"
+                    SelectedValuePath="Tag" SelectedValue="{Binding EstadoSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Padding" Value="16,10"/>
+                        <Setter Property="FontSize" Value="13"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
-                        <Setter Property="Padding" Value="15,10"/>
-                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                        <Setter Property="BorderBrush" Value="#EEE"/>
                     </Style>
-                </DataGrid.Resources>
+                </TabControl.Resources>
+
+                <!-- PESTAÑA: PENDIENTES -->
+                <TabItem Tag="PENDIENTE">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <fa5:SvgAwesome Icon="Solid_Clock" Height="13" Foreground="#7F8C8D" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Pendientes" VerticalAlignment="Center"/>
+                            <Border Style="{StaticResource BadgeCounterStyle}" Background="#EAEDED">
+                                <TextBlock Text="{Binding CantidadPendientes}" Style="{StaticResource BadgeCounterTextStyle}" Foreground="#7F8C8D"/>
+                            </Border>
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+
+                <!-- PESTAÑA: DIAGNÓSTICO -->
+                <TabItem Tag="DIAGNÓSTICO">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <fa5:SvgAwesome Icon="Solid_Stethoscope" Height="13" Foreground="#8E44AD" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Diagnóstico" VerticalAlignment="Center"/>
+                            <Border Style="{StaticResource BadgeCounterStyle}" Background="#EBDEF0">
+                                <TextBlock Text="{Binding CantidadDiagnostico}" Style="{StaticResource BadgeCounterTextStyle}" Foreground="#8E44AD"/>
+                            </Border>
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+
+                <!-- PESTAÑA: EN REPARACIÓN -->
+                <TabItem Tag="EN REPARACIÓN">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <fa5:SvgAwesome Icon="Solid_Wrench" Height="13" Foreground="#E67E22" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="En Taller" VerticalAlignment="Center"/>
+                            <Border Style="{StaticResource BadgeCounterStyle}" Background="#FDEBD0">
+                                <TextBlock Text="{Binding CantidadEnReparacion}" Style="{StaticResource BadgeCounterTextStyle}" Foreground="#E67E22"/>
+                            </Border>
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+
+                <!-- PESTAÑA: LISTO PARA ENTREGA -->
+                <TabItem Tag="LISTO PARA ENTREGA">
+                    <TabItem.Header>
+                        <StackPanel Orientation="Horizontal">
+                            <fa5:SvgAwesome Icon="Solid_CheckCircle" Height="13" Foreground="#117A65" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Listos" VerticalAlignment="Center"/>
+                            <Border Style="{StaticResource BadgeCounterStyle}" Background="#E8F8F5">
+                                <TextBlock Text="{Binding CantidadListos}" Style="{StaticResource BadgeCounterTextStyle}" Foreground="#117A65"/>
+                            </Border>
+                        </StackPanel>
+                    </TabItem.Header>
+                </TabItem>
+            </TabControl>
+
+            <!-- 2. DATAGRID COMPARTIDO (Muestra las filas filtradas dinámicamente) -->
+            <DataGrid Grid.Row="1" x:Name="dgReparaciones" AutoGenerateColumns="False" IsReadOnly="True" 
+                  Background="White" BorderThickness="0" RowHeight="38" FontSize="13" Foreground="#2C3E50"
+                  RowHeaderWidth="0" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#F2F4F4"
+                  Margin="0,15,0,0" ItemsSource="{Binding ReparacionesFiltradas}">
+
+                <!-- Estilo para los encabezados de las columnas -->
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#F8F9F9"/>
+                        <Setter Property="Foreground" Value="#34495E"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Padding" Value="10,8"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#BDC3C7"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
 
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Ticket" Binding="{Binding Id}" Width="80"/>
+                    <!-- Folio / Ticket -->
+                    <DataGridTextColumn Header="Ticket #" Binding="{Binding Id}" Width="80">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="Cliente" Width="1.5*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel VerticalAlignment="Center" Margin="10,0">
-                                    <TextBlock Text="{Binding Dispositivo.Cliente.Nombre}" FontWeight="SemiBold" Foreground="#333"/>
-                                    <TextBlock Text="{Binding Dispositivo.Cliente.Telefono}" FontSize="11" Foreground="#999"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <!-- Fecha de Ingreso -->
+                    <DataGridTextColumn Header="Fecha Ingreso" Binding="{Binding FechaIngreso, StringFormat=\{0:dd/MM/yyyy\}}" Width="120">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
 
-                    <DataGridTemplateColumn Header="Dispositivo" Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="{Binding Dispositivo.Modelo}" Foreground="#333"/>
-                                    <TextBlock Text="{Binding Dispositivo.Marca.Nombre}" FontSize="11" Foreground="#999"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                    <!-- Datos Operativos (Mapeados de tu BD) -->
+                    <DataGridTextColumn Header="Cliente" Binding="{Binding NombreCliente}" Width="*"/>
+                    <DataGridTextColumn Header="Modelo" Binding="{Binding Modelo}" Width="150"/>
 
+                    <!-- IMEI con Tipografía de Datos -->
+                    <DataGridTextColumn Header="IMEI" Binding="{Binding IMEI}" Width="140">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- COLUMNA REFINADA: Badges de Estado con Colores UX Basados en Triggers -->
                     <DataGridTemplateColumn Header="Estado" Width="140">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Border Background="#E8F5E9" CornerRadius="10" Padding="8,3" HorizontalAlignment="Left">
-                                    <TextBlock Text="{Binding Estado.Nombre}" Foreground="#2E7D32" FontSize="11" FontWeight="Bold"/>
+                                <Border x:Name="StatusBadge" CornerRadius="12" Padding="10,4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock x:Name="StatusText" Text="{Binding EstadoNombre}" FontWeight="Bold" FontSize="11"/>
                                 </Border>
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding EstadoNombre}" Value="PENDIENTE">
+                                        <Setter TargetName="StatusBadge" Property="Background" Value="#F2F4F4"/>
+                                        <Setter TargetName="StatusText" Property="Foreground" Value="#7F8C8D"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding EstadoNombre}" Value="DIAGNÓSTICO">
+                                        <Setter TargetName="StatusBadge" Property="Background" Value="#E8DAEF"/>
+                                        <Setter TargetName="StatusText" Property="Foreground" Value="#8E44AD"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding EstadoNombre}" Value="EN REPARACIÓN">
+                                        <Setter TargetName="StatusBadge" Property="Background" Value="#FDEBD0"/>
+                                        <Setter TargetName="StatusText" Property="Foreground" Value="#E67E22"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding EstadoNombre}" Value="LISTO PARA ENTREGA">
+                                        <Setter TargetName="StatusBadge" Property="Background" Value="#E8F8F5"/>
+                                        <Setter TargetName="StatusText" Property="Foreground" Value="#117A65"/>
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Acciones" Width="180">
+                    <!-- Técnico Responsable -->
+                    <DataGridTextColumn Header="Técnico" Binding="{Binding NombreTecnico}" Width="130"/>
+
+                    <!-- Costo Total Moneda -->
+                    <DataGridTextColumn Header="Total ($)" Binding="{Binding Total, StringFormat=\{0:N2\}}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="0,0,8,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- Botones Laterales de Acción -->
+                    <DataGridTemplateColumn Header="Acciones" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Style="{StaticResource ActionButtonStyle}" ToolTip="Ver Detalle">
-                                        <fa5:SvgAwesome Icon="Solid_InfoCircle" Height="16" Foreground="#2196F3"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Button x:Name="BtnEdit"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="5,0">
+                                        <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="#F39C12"/>
                                     </Button>
-                                    <Button Style="{StaticResource ActionButtonStyle}" ToolTip="Editar Registro">
-                                        <fa5:SvgAwesome Icon="Solid_Edit" Height="16" Foreground="#FF9800"/>
-                                    </Button>
-                                    <Button Style="{StaticResource ActionButtonStyle}" ToolTip="Eliminar">
-                                        <fa5:SvgAwesome Icon="Solid_Trash" Height="16" Foreground="#F44336"/>
+                                    <Button x:Name="BtnDelete"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="5,0">
+                                        <fa5:SvgAwesome Icon="Solid_Trash" Height="14" Foreground="#E74C3C"/>
                                     </Button>
                                 </StackPanel>
                             </DataTemplate>
@@ -147,7 +286,6 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-        </Border>
+        </Grid>
     </Grid>
-
 </Page>

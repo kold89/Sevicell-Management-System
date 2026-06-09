@@ -21,6 +21,10 @@ public partial class Product
 
     public bool? Status { get; set; }
 
+    public string? Code { get; set; }
+
+    public string? ProductDescription { get; set; }
+
     public virtual Brand? Brand { get; set; }
 
     public virtual Category? Category { get; set; }
@@ -28,8 +32,6 @@ public partial class Product
     public virtual ICollection<InventoryMovement> InventoryMovements { get; set; } = new List<InventoryMovement>();
 
     public virtual ICollection<PurchaseDetail> PurchaseDetails { get; set; } = new List<PurchaseDetail>();
-
-    public virtual ICollection<RepairDetail> RepairDetails { get; set; } = new List<RepairDetail>();
 
     public virtual ICollection<SalesDetail> SalesDetails { get; set; } = new List<SalesDetail>();
 }

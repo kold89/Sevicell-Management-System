@@ -17,7 +17,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
             <Button x:Name="btnBack" Click="btnBack_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="0,0,15,0">
-                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2D2D30"/>
+                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
             </Button>
             <StackPanel>
                 <TextBlock Text="Clasificación de Inventario" FontSize="24" FontWeight="Bold" Foreground="#2D2D30"/>
@@ -25,9 +25,10 @@
             </StackPanel>
         </StackPanel>
 
-        <TabControl Grid.Row="1" Background="White" BorderBrush="#E0E0E0" BorderThickness="1">
+        <TabControl SelectedValuePath="Tag" SelectedValue="{Binding TipoDataSeleccionado, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Grid.Row="1" Background="White" BorderBrush="#E0E0E0" BorderThickness="1">
 
-            <TabItem Padding="15,6">
+            <TabItem Tag="1" Padding="15,6">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <fa5:SvgAwesome Icon="Solid_Tags" Height="12" Foreground="#4CAF50" Margin="0,0,8,0" VerticalAlignment="Center"/>
@@ -63,18 +64,50 @@
                             <fa5:SvgAwesome Icon="Solid_Search" Height="15" Foreground="Gray" HorizontalAlignment="Left" Margin="10,0,0,0"/>
                         </Grid>
 
-                        <DataGrid Grid.Row="1" x:Name="dgCategories" AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0">
+                        <DataGrid Grid.Row="1" x:Name="dgCategories" Style="{StaticResource ModernDataGrid}"  RowHeight="30" FontSize="14"
+                                  AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0" GridLinesVisibility="Vertical"  VerticalGridLinesBrush="#eeeeee">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="60"/>
-                                <DataGridTextColumn Header="Categoría" Binding="{Binding name}" Width="180"/>
+                                <DataGridTextColumn Header="Categoría" Binding="{Binding name}" Width="*"/>
                                 <DataGridTextColumn Header="Estado" Binding="{Binding status}" Width="*"/>
+
+                                <DataGridTemplateColumn Header="Acciones" Width="150">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button x:Name="BtnEditCategory" Click="BtnEditCategory_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                                    <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
+                                                </Button>
+                                                <Button x:Name="BtnDisableCategory" Click="BtnDisableCategory_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="10,0">
+                                                    <fa5:SvgAwesome Height="14">
+                                                        <fa5:SvgAwesome.Style>
+                                                            <Style TargetType="{x:Type fa5:SvgAwesome}">
+                                                                <Setter Property="Icon" Value="Solid_Trash" />
+                                                                <Setter Property="Foreground" Value="Red" />
+                                                                <Setter Property="ToolTip" Value="Dar de baja" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
+                                                                        <Setter Property="Icon" Value="Solid_Check" />
+                                                                        <Setter Property="Foreground" Value="Green" />
+                                                                        <Setter Property="ToolTip" Value="Habilitar usuario" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </fa5:SvgAwesome.Style>
+                                                    </fa5:SvgAwesome>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>
                 </Grid>
             </TabItem>
 
-            <TabItem Padding="15,6">
+            <TabItem Tag="2" Padding="15,6">
                 <TabItem.Header>
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                         <fa5:SvgAwesome Icon="Solid_Trademark" Height="12" Foreground="#4CAF50" Margin="0,0,8,0" VerticalAlignment="Center"/>
@@ -94,8 +127,8 @@
                             <TextBlock Text="Nombre de la Marca" Margin="0,0,0,5" FontWeight="SemiBold"/>
                             <TextBox x:Name="txtBrandName" Height="35" VerticalContentAlignment="Center" Margin="0,0,0,15"/>
 
-                            <Button x:Name="btnSaveBrand" Content="Guardar Marca" Height="35" Background="#4CAF50" Foreground="White" FontWeight="Bold" Margin="0,10,0,5"/>
-                            <Button x:Name="btnClearBrand" Content="Limpiar Campos" Height="35" Background="Transparent" BorderBrush="Gray"/>
+                            <Button x:Name="btnSaveBrand" Click="btnSaveBrand_Click" Content="Guardar Marca" Height="35" Background="#4CAF50" Foreground="White" FontWeight="Bold" Margin="0,10,0,5"/>
+                            <Button x:Name="btnClearBrand" Click="btnClearBrand_Click" Content="Limpiar Campos" Height="35" Background="Transparent" BorderBrush="Gray"/>
                         </StackPanel>
                     </Border>
 
@@ -110,11 +143,43 @@
                             <fa5:SvgAwesome Icon="Solid_Search" Height="15" Foreground="Gray" HorizontalAlignment="Left" Margin="10,0,0,0"/>
                         </Grid>
 
-                        <DataGrid Grid.Row="1" x:Name="dgBrands" AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0">
+                        <DataGrid Grid.Row="1" x:Name="dgBrands" Style="{StaticResource ModernDataGrid}"  RowHeight="30" FontSize="14"
+                                  AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0"  GridLinesVisibility="Vertical"  VerticalGridLinesBrush="#eeeeee">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="80"/>
+                                <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="60"/>
                                 <DataGridTextColumn Header="Marca de Dispositivo / Accesorio" Binding="{Binding name}" Width="*"/>
                                 <DataGridTextColumn Header="Estado" Binding="{Binding status}" Width="*"/>
+
+                                <DataGridTemplateColumn Header="Acciones" Width="150">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <Button x:Name="BtnEditBrand" Click="BtnEditBrand_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                                    <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
+                                                </Button>
+                                                <Button x:Name="BtnDisableBrand" Click="BtnDisableBrand_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="10,0">
+                                                    <fa5:SvgAwesome Height="14">
+                                                        <fa5:SvgAwesome.Style>
+                                                            <Style TargetType="{x:Type fa5:SvgAwesome}">
+                                                                <Setter Property="Icon" Value="Solid_Trash" />
+                                                                <Setter Property="Foreground" Value="Red" />
+                                                                <Setter Property="ToolTip" Value="Dar de baja" />
+
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
+                                                                        <Setter Property="Icon" Value="Solid_Check" />
+                                                                        <Setter Property="Foreground" Value="Green" />
+                                                                        <Setter Property="ToolTip" Value="Habilitar usuario" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </fa5:SvgAwesome.Style>
+                                                    </fa5:SvgAwesome>
+                                                </Button>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
                     </Grid>

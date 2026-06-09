@@ -11,8 +11,6 @@ public partial class RepairDetail
 
     public int? ServiceId { get; set; }
 
-    public int? ProductId { get; set; }
-
     public int? Quantity { get; set; }
 
     public decimal? LaborCost { get; set; }
@@ -20,8 +18,6 @@ public partial class RepairDetail
     public decimal? PartCost { get; set; }
 
     public string? Description { get; set; }
-
-    public virtual Product? Product { get; set; }
 
     public virtual RepairOrder? RepairOrder { get; set; }
 
