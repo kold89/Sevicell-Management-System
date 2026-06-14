@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:fa5="http://schemas.fontawesome.com/icons/"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:controles="clr-namespace:WpfApp1.ControlsUI"
       xmlns:local="clr-namespace:WpfApp1.Views.Inventory"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
@@ -14,6 +15,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
@@ -44,7 +46,7 @@
                 </StackPanel>
             </Border>
 
-            <Button x:Name="BtnAddUser" Click="BtnAddUser_Click" Grid.Column="2" Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
+            <Button x:Name="BtnAddProduct" Click="BtnAddProduct_Click" Grid.Column="2" Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -94,5 +96,10 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+
+        <controles:PaginadorControl x:Name="MiPaginador" 
+                                Grid.Row="3" 
+                                Margin="0,15,0,0"
+                                PaginaCambiada="MiPaginador_PaginaCambiada"/>
     </Grid>
 </Page>

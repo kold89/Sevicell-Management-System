@@ -24,7 +24,8 @@
             </Setter>
         </Style>
 
-        <Style x:Key="MenuButtonStyle" TargetType="Button">
+        <Style x:Key="MenuButtonStyle" TargetType="RadioButton">
+            <Setter Property="Template" Value="{x:Null}"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="Height" Value="40"/>
@@ -33,19 +34,21 @@
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button">
+                    <ControlTemplate TargetType="RadioButton">
                         <Border x:Name="border" 
-                                Background="{TemplateBinding Background}" 
-                                BorderBrush="#3D3D40" 
-                                BorderThickness="0,0,0,0.3">
-                            <ContentPresenter Margin="30,0,0,0" VerticalAlignment="Center"/>
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="#3D3D40" 
+                        BorderThickness="4,0,0,0.3">
+                            <ContentPresenter Margin="26,0,0,0" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="#3E3E42"/>
                             </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#2196F3"/>
+
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#3E3E42"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#2196F3"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -91,6 +94,39 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-        
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#3499db"/>
+            <Setter Property="BorderBrush" Value="#2980b9"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="10,5"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="nodoBorde" 
+                        Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}" 
+                        Padding="{TemplateBinding Padding}"
+                        CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="nodoBorde" Property="Background" Value="#2980b9"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="nodoBorde" Property="Background" Value="#1f618d"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Application.Resources>
 </Application>

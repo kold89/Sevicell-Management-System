@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -27,37 +28,66 @@ namespace WpfApp1.Views.Inventory
         public Products()
         {
             InitializeComponent();
+            // 1. Definimos cuántos registros queremos por página (ejemplo: 15)
+            MiPaginador.RegistrosPorPagina = 10;
             LoadData();
         }
 
-        private void BtnAddUser_Click(object sender, RoutedEventArgs e)
-        {
-            DialogAddProducto modalAddProducts = new DialogAddProducto();
-            modalAddProducts.Owner = Window.GetWindow(this);
-            bool? result = modalAddProducts.ShowDialog();
-
-            if (result == true)
-            {
-                LoadData();
-            }
-        }
         /// <summary>
         /// Función que carga la lista de productos al Datagrid.
         /// </summary>
+        //private async void LoadData()
+        //{
+        //    ServicesResult<List<ProductsDto>> productDto = await productsServices.listProducForGrid();
+        //    if (productDto.Success)
+        //    {
+        //        dgProducts.ItemsSource = productDto.Data;
+        //    }
+        //    else
+        //    {
+        //        dgProducts.ItemsSource = null;
+        //        MessageBox.Show(productDto.Message);
+        //    }
+        //}
+
         private async void LoadData()
         {
+            // Nota: Lo ideal a futuro es que tu service acepte parámetros de paginación,
+            // por ejemplo: productsServices.listProducForGrid(MiPaginador.PaginaActual, MiPaginador.RegistrosPorPagina);
+
             ServicesResult<List<ProductsDto>> productDto = await productsServices.listProducForGrid();
-            if (productDto.Success)
+
+            if (productDto.Success && productDto.Data != null)
             {
-                dgProducts.ItemsSource = productDto.Data;
+                int totalRegistros = productDto.Data.Count;
+                int cantidadPorPagina = MiPaginador.RegistrosPorPagina;
+
+                // 3. Calculamos matemáticamente el total de páginas necesarias
+                int totalPaginas = (int)Math.Ceiling((double)totalRegistros / cantidadPorPagina);
+                MiPaginador.TotalPaginas = totalPaginas < 1 ? 1 : totalPaginas;
+
+                // 4. Filtramos la lista completa usando LINQ (.Skip y .Take) para mostrar solo el segmento actual
+                var datosPaginados = productDto.Data
+                    .Skip((MiPaginador.PaginaActual - 1) * cantidadPorPagina)
+                    .Take(cantidadPorPagina)
+                    .ToList();
+
+                dgProducts.ItemsSource = datosPaginados;
             }
             else
             {
                 dgProducts.ItemsSource = null;
-                MessageBox.Show(productDto.Message);
+                MessageBox.Show(productDto?.Message ?? "Error al cargar los productos.");
             }
         }
 
+        // Este evento se dispara sólito cada vez que el usuario presione una flecha
+        private void MiPaginador_PaginaCambiada(object sender, EventArgs e)
+        {
+            // Al cambiar de página, simplemente volvemos a invocar a LoadData.
+            // Como LoadData ahora lee "MiPaginador.PaginaActual", filtrará el DataGrid automáticamente.
+            LoadData();
+        }
         private void BtnSee_Click(object sender, RoutedEventArgs e)
         {
             var selected = (ProductsDto)dgProducts.SelectedItem;
@@ -71,7 +101,10 @@ namespace WpfApp1.Views.Inventory
 
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
         {
-            DialogAddProducto modalEditProduc = new DialogAddProducto();
+            var selectedItem = (ProductsDto)dgProducts.SelectedItem;
+            var productSelected = productsServices.GetProductById(selectedItem.id);
+
+            DialogAddProducto modalEditProduc = new DialogAddProducto(productSelected);
             modalEditProduc.Owner = Window.GetWindow(this);
             bool? resutl = modalEditProduc.ShowDialog();
             if (resutl == true) {
@@ -79,16 +112,23 @@ namespace WpfApp1.Views.Inventory
             }
         }
 
-        private void BtnDisable_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
              if (this.NavigationService.CanGoBack)
             {
                 this.NavigationService.GoBack();
+            }
+        }
+
+        private void BtnAddProduct_Click(object sender, RoutedEventArgs e)
+        {
+            DialogAddProducto modalAddProducts = new DialogAddProducto();
+            modalAddProducts.Owner = Window.GetWindow(this);
+            bool? result = modalAddProducts.ShowDialog();
+
+            if (result == true)
+            {
+                LoadData();
             }
         }
     }

@@ -46,9 +46,9 @@
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnStockMovements"  Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnStockMovements" Click="btnStockMovements_Click"  Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
-                    <fa5:SvgAwesome Icon="Solid_ExchangeAlt" Height="50" Foreground="#673AB7" Margin="0,0,0,15"/>
+                    <fa5:SvgAwesome Icon="Solid_ExchangeAlt" Height="50" Foreground="#70798c" Margin="0,0,0,15"/>
                     <TextBlock Text="Ajustes de Inventario" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                     <TextBlock Text="Auditoría de pérdidas y movimientos" Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>

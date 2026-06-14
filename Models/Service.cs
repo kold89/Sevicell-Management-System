@@ -16,4 +16,9 @@ public partial class Service
     public bool? Status { get; set; }
 
     public virtual ICollection<RepairDetail> RepairDetails { get; set; } = new List<RepairDetail>();
+
+    internal static object UpdateProductAsync(Product product)
+    {
+        throw new NotImplementedException();
+    }
 }
