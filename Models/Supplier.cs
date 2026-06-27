@@ -15,5 +15,7 @@ public partial class Supplier
 
     public string? Address { get; set; }
 
+    public string? AccountNumber { get; set; }
+
     public virtual ICollection<PurchaseInvoice> PurchaseInvoices { get; set; } = new List<PurchaseInvoice>();
 }

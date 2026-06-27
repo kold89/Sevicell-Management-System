@@ -31,59 +31,247 @@
 
         <!-- 🔹 Menú lateral -->
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#2D2D30">
-            <Button Style="{StaticResource MenuButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Home" Height="16" Foreground="White" Margin="0,0,15,0"/>
-                    <TextBlock Text="Inicio" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
-                </StackPanel>
-            </Button>
 
-            <Button Style="{StaticResource MenuButtonStyle}">
+            <!-- Inicio -->
+            <RadioButton Style="{StaticResource MenuButtonStyle}" IsChecked="True">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_ShoppingCart" Height="16" Foreground="White" Margin="0,0,15,0"/>
-                    <TextBlock Text="Ventas" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
-                </StackPanel>
-            </Button>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
+                            Icon="Solid_Home"
+                            Height="16"
+                            Margin="0,0,15,0"/>
 
-            <Button x:Name="btnRepairs" Click="btnRepairs_Click" Style="{StaticResource MenuButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Tools" Height="16" Foreground="White" Margin="0,0,15,0"/>
-                    <TextBlock Text="Reparaciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    <TextBlock Style="{StaticResource MenuTextStyle}"
+                       Text="Inicio"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontFamily="Segoe UI Semibold"/>
                 </StackPanel>
-            </Button>
+            </RadioButton>
 
-            <Button Name="BtnInventory" Click="BtnInventory_Click" Style="{StaticResource MenuButtonStyle}">
+            <!-- Ventas -->
+            <RadioButton Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Box" Height="16" Foreground="White" Margin="0,0,15,0"/>
-                    <TextBlock Text="Inventario" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
-                </StackPanel>
-            </Button>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
+                            Icon="Solid_ShoppingCart"
+                            Height="16"
+                            Margin="0,0,15,0"/>
 
-            <Button Style="{StaticResource MenuButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_ChartBar" Height="16" Foreground="White" Margin="0,0,15,0"/>
-                    <TextBlock Text="Reportes" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    <TextBlock Style="{StaticResource MenuTextStyle}"
+                       Text="Ventas"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontFamily="Segoe UI Semibold"/>
                 </StackPanel>
-            </Button>
+            </RadioButton>
 
-            <Button x:Name="btnConfiguraciones" Click="btnConfiguraciones_Click" Style="{StaticResource MenuButtonStyle}">
+            <!-- Reparaciones -->
+            <RadioButton x:Name="btnRepairs"
+                 Click="btnRepairs_Click"
+                 Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Cog" Height="16" Foreground="White" Margin="0,0,15,0"/>
-                    <TextBlock Text="Configuraciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
+                            Icon="Solid_Tools"
+                            Height="16"
+                            Margin="0,0,15,0"/>
+
+                    <TextBlock Style="{StaticResource MenuTextStyle}"
+                       Text="Reparaciones"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontFamily="Segoe UI Semibold"/>
                 </StackPanel>
-            </Button>
+            </RadioButton>
+
+            <!-- Inventario -->
+            <RadioButton x:Name="BtnInventory"
+                 Click="BtnInventory_Click"
+                 Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
+                            Icon="Solid_Box"
+                            Height="16"
+                            Margin="0,0,15,0"/>
+
+                    <TextBlock Style="{StaticResource MenuTextStyle}"
+                       Text="Inventario"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </RadioButton>
+
+            <!-- Reportes -->
+            <RadioButton Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
+                            Icon="Solid_ChartBar"
+                            Height="16"
+                            Margin="0,0,15,0"/>
+
+                    <TextBlock Style="{StaticResource MenuTextStyle}"
+                       Text="Reportes"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </RadioButton>
+
+            <!-- Configuraciones -->
+            <RadioButton x:Name="btnConfiguraciones"
+                 Click="btnConfiguraciones_Click"
+                 Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
+                            Icon="Solid_Cog"
+                            Height="16"
+                            Margin="0,0,15,0"/>
+
+                    <TextBlock Style="{StaticResource MenuTextStyle}"
+                       Text="Configuraciones"
+                       VerticalAlignment="Center"
+                       FontSize="14"
+                       FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </RadioButton>
+
         </StackPanel>
-
+        
         <!-- 🔹 Barra superior -->
         <Grid Grid.Column="1" Grid.Row="0" Background="#1E1E1E">
             <DockPanel Margin="10">
-                <TextBlock Text="SEVICELL PRO" FontSize="16" Foreground="White" FontWeight="Bold" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                <TextBlock Text="SEVICELL PRO" FontSize="16" Foreground="White" 
+                   FontWeight="Bold" VerticalAlignment="Center" DockPanel.Dock="Left"/>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <TextBlock Text="Bienvenido," FontSize="15" Foreground="Gray" Margin="0,0,7,0"/>
-                    <TextBlock Name="LblUserName" FontSize="15"  Text="Usuario" Foreground="SkyBlue" FontWeight="SemiBold"/>
+                <!-- Controles derechos -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" 
+                    VerticalAlignment="Center" DockPanel.Dock="Right">
+
+                    <!-- Bienvenido -->
+                    <TextBlock Text="Bienvenido," FontSize="15" Foreground="Gray" 
+                       Margin="0,0,7,0" VerticalAlignment="Center"/>
+                    <TextBlock Name="LblUserName" FontSize="15" Text="Usuario" 
+                       Foreground="SkyBlue" FontWeight="SemiBold" 
+                       VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+                    <!-- 🔔 Botón Campana -->
+                    <Grid VerticalAlignment="Center" Margin="0,0,15,0">
+                        <Button x:Name="BtnNotifications"
+                        Click="BtnNotifications_Click"
+                        Width="36" Height="36"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        ToolTip="Notificaciones">
+                            <fa5:SvgAwesome Icon="Solid_Bell" 
+                                    Foreground="White" 
+                                    Width="18" Height="18"/>
+                        </Button>
+
+                        <!-- Badge contador -->
+                        <Ellipse x:Name="BadgeEllipse"
+                         Width="16" Height="16"
+                         Fill="#E74C3C"
+                         HorizontalAlignment="Right"
+                         VerticalAlignment="Top"
+                         Visibility="Collapsed"/>
+                        <TextBlock x:Name="BadgeCount"
+                           Text="0"
+                           Foreground="White"
+                           FontSize="9"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right"
+                           VerticalAlignment="Top"
+                           Margin="0,0,1,0"
+                           IsHitTestVisible="False"
+                           Visibility="Collapsed"/>
+                    </Grid>
+
+                    <!-- ⏻ Logout -->
+                    <Button x:Name="BtnLogout"
+                    Click="BtnLogout_Click"
+                    Width="36" Height="36"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    ToolTip="Cerrar sesión">
+                        <fa5:SvgAwesome Icon="Solid_SignOutAlt" 
+                                Foreground="#E74C3C" 
+                                Width="18" Height="18"/>
+                    </Button>
+
                 </StackPanel>
             </DockPanel>
+            <!-- 🔔 Popup de notificaciones -->
+            <Popup x:Name="NotificationPopup"
+           PlacementTarget="{Binding ElementName=BtnNotifications}"
+           Placement="Bottom"
+           StaysOpen="False"
+           AllowsTransparency="True">
+                <Border Background="White" 
+                BorderBrush="#DDDDDD" 
+                BorderThickness="1"
+                CornerRadius="6"
+                Width="300"
+                Effect="{StaticResource ShadowEffect}">
+                    <StackPanel>
+
+                        <!-- Header -->
+                        <Border Background="#1E1E1E" CornerRadius="6,6,0,0" Padding="12,8">
+                            <TextBlock Text="🔔 Notificaciones" 
+                               Foreground="White" 
+                               FontWeight="SemiBold" 
+                               FontSize="13"/>
+                        </Border>
+
+                        <!-- Lista de notificaciones -->
+                        <ItemsControl x:Name="NotificationsList" MaxHeight="280">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1" Padding="12,10">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" 
+                                               FontWeight="SemiBold" 
+                                               FontSize="12" 
+                                               Foreground="#2D2D30"/>
+                                            <TextBlock Text="{Binding Message}" 
+                                               FontSize="11" 
+                                               Foreground="#666" 
+                                               TextWrapping="Wrap"
+                                               Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding TimeAgo}" 
+                                               FontSize="10" 
+                                               Foreground="#E74C3C"
+                                               Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- Sin notificaciones -->
+                        <TextBlock x:Name="NoNotificationsText"
+                           Text="Sin notificaciones nuevas"
+                           Foreground="Gray"
+                           FontSize="12"
+                           HorizontalAlignment="Center"
+                           Padding="12,16"
+                           Visibility="Visible"/>
+
+                        <!-- Footer -->
+                        <Border Background="#F9F9F9" CornerRadius="0,0,6,6" Padding="12,8">
+                            <Button Content="Marcar todas como leídas"
+                            Click="BtnMarkAllRead_Click"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Foreground="SkyBlue"
+                            FontSize="11"
+                            Cursor="Hand"
+                            HorizontalAlignment="Center"/>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+            </Popup>
         </Grid>
 
         <!-- 🔹 Contenido dinámico -->

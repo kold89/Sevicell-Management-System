@@ -18,6 +18,7 @@
 
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
             <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" DockPanel.Dock="Left" 
+                    Style="{StaticResource btnGoBackStyle}"
                 Background="Transparent" BorderThickness="0" Cursor="Hand">
                 <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
             </Button>
@@ -35,14 +36,8 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0"  BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Background="White" Padding="5,2">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Search" Height="14" Foreground="#BBB" Margin="5,0,10,0"/>
-                    <TextBox x:Name="txtBuscar" Grid.Column="1" BorderThickness="0" VerticalContentAlignment="Center"
-                             FontSize="14" Foreground="#555" Text="Buscar..."
-                             GotFocus="txtBuscar_GotFocus"  LostFocus="txtBuscar_LostFocus"/>
-                </StackPanel>
-            </Border>
+                    <TextBox x:Name="txtBuscar" Grid.Column="0" 
+                             Style="{StaticResource SearchTextBoxStyle}"/>
 
             <Button x:Name="BtnAddUser" Click="BtnAddUser_Click" Grid.Column="2" Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
                 <Button.Resources>

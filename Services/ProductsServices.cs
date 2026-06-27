@@ -2,10 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
+using System.Windows.Markup;
 using WpfApp1.Data;
+using WpfApp1.Models;
 using WpfApp1.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WpfApp1.Services
 {
@@ -16,11 +22,12 @@ namespace WpfApp1.Services
             using (var db = new DBSevicellContext())
             {
                 var data = await db.Products
-                    .Join(db.Brands, 
+                    .Join(db.Brands,
                     p => p.BrandId, b => b.Id,
-                    (p, b) => new {
-                       product = p, 
-                       brand = b
+                    (p, b) => new
+                    {
+                        product = p,
+                        brand = b
                     }
                     ).Join(db.Categories,
                     pb => pb.product.CategoryId, c => c.Id,
@@ -49,15 +56,24 @@ namespace WpfApp1.Services
             }
         }
 
+        public Product GetProductById(int id)
+        {
+            using (var db = new DBSevicellContext())
+            {
+                return db.Products.Where(x => x.Id == id).FirstOrDefault();
+            }
+        }
+
         public ServicesResult<ProductsDto> SearchProductById(int idProduct)
         {
             using (var db = new DBSevicellContext())
             {
-                var data =  db.Products
+                var data = db.Products
                     .Where(x => x.Id == idProduct)
                     .Join(db.Brands,
                     p => p.BrandId, b => b.Id,
-                    (p, b) => new {
+                    (p, b) => new
+                    {
                         product = p,
                         brand = b
                     }
@@ -87,5 +103,60 @@ namespace WpfApp1.Services
             }
         }
 
+        public ServicesResult<(List<Brand>, List<Category>)> listCategoryAndBrand()
+        {
+            try
+            {
+                using (var db = new DBSevicellContext())
+                {
+                    List<Brand> brands = new List<Brand>();
+                    List<Category> categories = new List<Category>();
+
+                    brands = db.Brands.Where(x => x.Status == true).ToList();
+                    categories = db.Categories.Where(x => x.Status == true).ToList();
+
+                    var data = (brands, categories);
+                    return ServicesResult<(List<Brand>, List<Category>)>.Ok(data, "Categorias y marcas obtenidas exitosamente.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<(List<Brand>, List<Category>)>.Fail("Error al recuperar la información.");
+
+            }
+        }
+
+        public async Task<ServicesResult<bool>> RegisterProductAsync(Product product)
+        {
+            try
+            {
+                using (var db = new DBSevicellContext())
+                {
+                    db.Products.Add(product);
+                    await SaveAuditAsync(AuditAction.Create, "Products", product.Id.ToString(), "Se creo un nuevo producto", db);
+                    await db.SaveChangesAsync();
+
+                    return ServicesResult<bool>.Ok(true, "Producto creado exitosamente.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<bool>.Fail("Error inesperado al registrar el producto. " + ex.Message);
+            }
+        }
+
+        public async Task<ServicesResult<bool>> UpdateProductAsync(Product product)
+        {
+
+            using (var db = new DBSevicellContext())
+            {
+                db.Products.Update(product);
+                await SaveAuditAsync(AuditAction.Update, "Products", product.Id.ToString(), "Se actualizo el producto " , db);
+                await db.SaveChangesAsync();
+
+                return ServicesResult<bool>.Ok(true, "Producto actualizado correctamente.");
+            }
+
+        }
     }
 }

@@ -439,6 +439,7 @@ public partial class SevicellDbContext : DbContext
 
             entity.ToTable("Supplier");
 
+            entity.Property(e => e.AccountNumber).HasMaxLength(50);
             entity.Property(e => e.Address).HasMaxLength(200);
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(100);

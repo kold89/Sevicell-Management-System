@@ -19,6 +19,10 @@ public partial class InventoryMovement
 
     public string? Description { get; set; }
 
+    public int NewStock { get; set; }
+
+    public int PreviousStock { get; set; }
+
     public virtual Product? Product { get; set; }
 
     public virtual User? User { get; set; }

@@ -4,10 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1.Views.Inventory"
+        xmlns:controles="clr-namespace:WpfApp1"
+        xmlns:fa5="http://schemas.fontawesome.com/icons/"
+        
         mc:Ignorable="d"
         Background="#FBFBFF"
         WindowStartupLocation="CenterOwner"
-        Title="DialogAddProducto" Height="550" Width="420">
+        Title="DialogAddProducto" Height="560" Width="420">
     
     <Grid Margin="20,15" Background="#F8FAFC">
         <Grid.RowDefinitions>
@@ -17,23 +20,40 @@
         </Grid.RowDefinitions>
 
         <Grid.Resources>
-            <Style TargetType="TextBox">
-                <Setter Property="Height" Value="32"/>
-                <Setter Property="Padding" Value="6,4"/>
-                <Setter Property="Margin" Value="0,4,0,12"/>
-                <Setter Property="BorderBrush" Value="#CBD5E1"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="TextBox">
-                            <Border Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6">
-                                <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
 
-            <Style TargetType="ComboBox">
+            <Style TargetType="controles:PriceTexBox">
+                    <Setter Property="Height" Value="32"/>
+                    <Setter Property="Padding" Value="6,4"/>
+                    <Setter Property="Margin" Value="0,4,0,12"/>
+                    <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TextBox">
+                                <Border Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6">
+                                    <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+
+                <Style TargetType="controles:IntTexBox">
+                    <Setter Property="Height" Value="32"/>
+                    <Setter Property="Padding" Value="6,4"/>
+                    <Setter Property="Margin" Value="0,4,0,12"/>
+                    <Setter Property="BorderBrush" Value="#CBD5E1"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TextBox">
+                                <Border Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6">
+                                    <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+
+                <Style TargetType="ComboBox">
                 <Setter Property="Height" Value="32"/>
                 <Setter Property="Margin" Value="0,4,10,12"/>
             </Style>
@@ -60,9 +80,25 @@
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="0">
-                <TextBlock Text="Código" FontWeight="Bold" FontFamily="Bookman Old Style"/>
-                <TextBox x:Name="TxtCodigo"></TextBox>
+            <StackPanel Grid.Row="0" Orientation="Horizontal" >
+                <StackPanel Margin="0,0,20,0">
+                    <TextBlock Text="Código" FontWeight="Bold" FontFamily="Bookman Old Style"/>
+                    <TextBox Width="220"
+                             x:Name="TxtCodigo"
+                             KeyDown="TxtCodigo_KeyDown"
+                             IsReadOnly="True"></TextBox>
+                </StackPanel>
+                <StackPanel>
+                    <Button x:Name="btngenerateCode"
+                        Click="btngenerateCode_Click"
+                        Grid.Column="1" 
+                        Content="Generar Código" 
+                        Width="120" 
+                        Height="35"
+                       
+                        Margin="0,15,0,0"
+                            ToolTip="Código de producto."></Button>
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Grid.Row="1">
@@ -73,33 +109,49 @@
             <StackPanel Orientation="Horizontal" Grid.Row="2">
                 <StackPanel Margin="0,0,20,0">
                     <TextBlock Text="Precio de Venta" FontWeight="SemiBold"  FontFamily="Bookman Old Style"/>
-                    <TextBox x:Name="TxtPrecioVenta" Width="170"></TextBox>
+                    <!--<TextBox x:Name="TxtPrecioVenta" Width="170"></TextBox>-->
+                    <controles:PriceTexBox x:Name="TxtPrecioVenta" 
+                         Height="35" 
+                         VerticalContentAlignment="Center"
+                         Width="170"/>
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="Stock Inicial" FontWeight="Bold" FontFamily="Bookman Old Style"/>
-                    <TextBox x:Name="TxtStockInicial" Width="170"></TextBox>
+                    <TextBlock Name="lbStockInitial" Text="Stock Inicial" FontWeight="Bold" FontFamily="Bookman Old Style"/>
+                    <controles:IntTexBox x:Name="TxtStockInicial" 
+                       Height="35" 
+                       VerticalContentAlignment="Center"
+                       Width="170"/>
                 </StackPanel>
             </StackPanel>
 
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <StackPanel Margin="0,0,20,0">
                     <TextBlock Text="Stock minimo" FontWeight="Bold" FontFamily="Bookman Old Style"/>
-                    <TextBox x:Name="TxtStockMinimo" Width="180"></TextBox>
+                    <controles:IntTexBox x:Name="TxtStockMinimo" 
+                           Height="35" 
+                           VerticalContentAlignment="Center"
+                           Width="170"/>
                 </StackPanel>
-                <CheckBox Content="¿Está activo?" VerticalAlignment="Center" Margin="0,10,0,0" FontFamily="Segoe UI" Foreground="#4A5568"></CheckBox>
+                <CheckBox x:Name="CkStatus" Content="¿Está activo?" VerticalAlignment="Center" Margin="0,10,0,0" FontFamily="Segoe UI" Foreground="#4A5568"></CheckBox>
             </StackPanel>
 
             <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,10,0,0">
 
                 <StackPanel>
-                    <TextBlock Text="Estado:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
-                    <ComboBox x:Name="CboCategoria" Width="170"></ComboBox>
+                    <TextBlock Text="Categoría:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
+                    <ComboBox x:Name="CboCategory"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              Width="170"></ComboBox>
                 </StackPanel>
 
                 <StackPanel>
-                    <TextBlock Text="Estado:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
-                    <ComboBox x:Name="CboProveedor" Width="170"></ComboBox>
+                    <TextBlock Text="Marca:" FontWeight="Bold" FontFamily="Bookman Old Style"/>
+                    <ComboBox x:Name="CboBrand" 
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              Width="170"></ComboBox>
                 </StackPanel>
             </StackPanel>
 
@@ -114,7 +166,8 @@
         </Grid>
 
         <DockPanel Grid.Row="2" LastChildFill="False" Margin="0,15,0,0">
-            <Button DockPanel.Dock="Right" Content="Guardar" Width="90" Height="34" Margin="8,0,0,0" Foreground="White" Cursor="Hand">
+
+            <Button x:Name="BtnSave" Click="BtnSave_Click" DockPanel.Dock="Right" Content="Guardar" Width="90" Height="34" Margin="8,0,0,0" Foreground="White" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="green" CornerRadius="6">
@@ -124,10 +177,21 @@
                 </Button.Template>
             </Button>
 
-            <Button DockPanel.Dock="Right" Content="Cancelar" Width="90" Height="34" Foreground="white" Cursor="Hand">
+            <Button x:Name="BtnCancel" Click="BtnCancel_Click" DockPanel.Dock="Right" Content="Cancelar" Width="90" Height="34" Foreground="white" Cursor="Hand">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Border Background="gray" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+            <Button x:Name="BtnClear" Click="BtnClear_Click" DockPanel.Dock="Right" Width="50" Height="34" Margin="0,0,10,0" Foreground="White"  Cursor="Hand" ToolTip="Limpiar campos">
+                <fa5:SvgAwesome Icon="Solid_Broom" Height="20" Foreground="#222222"/>
+
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="LightGray" CornerRadius="15">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                         </Border>
                     </ControlTemplate>

@@ -18,7 +18,9 @@
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
-            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" DockPanel.Dock="Left" 
+            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" 
+                    Style="{StaticResource btnGoBackStyle}"
+                    DockPanel.Dock="Left" 
              Background="Transparent" BorderThickness="0" Cursor="Hand">
                 <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
             </Button>
@@ -36,17 +38,9 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Border Grid.Column="0" Background="White" CornerRadius="8" BorderBrush="#DDD" BorderThickness="1" Padding="10,6">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <fa5:SvgAwesome Icon="Solid_Search" Height="14" Foreground="#BBB" Margin="5,0,10,0"/>
-                    <TextBox x:Name="txtBuscar" Grid.Column="1" BorderThickness="0" VerticalContentAlignment="Center"
-                      FontSize="14" Foreground="#555" Text="Buscar..."/>
-                </Grid>
-            </Border>
+            <TextBox x:Name="txtBuscar" Grid.Column="0" 
+                     Style="{StaticResource SearchTextBoxStyle}" 
+                     />
         </Grid>
 
         <DataGrid x:Name="dgAudit" Grid.Row="2" AutoGenerateColumns="False" 

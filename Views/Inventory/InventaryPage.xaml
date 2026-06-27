@@ -26,7 +26,7 @@
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_Boxes" Height="50" Foreground="#607D8B" Margin="0,0,0,15"/>
                     <TextBlock Text="Productos y Repuestos" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Alta y modificación de stock general" Foreground="Gray" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Alta y administración del producto." Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
@@ -34,7 +34,7 @@
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_Tags" Height="50" Foreground="#3F51B5" Margin="0,0,0,15"/>
                     <TextBlock Text="Categorías y Marcas" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Separación de Accesorios vs Repuestos" Foreground="Gray" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Administración de marcas y categorías" Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
@@ -46,26 +46,26 @@
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnStockMovements"  Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnStockMovements" Click="btnStockMovements_Click"  Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
-                    <fa5:SvgAwesome Icon="Solid_ExchangeAlt" Height="50" Foreground="#673AB7" Margin="0,0,0,15"/>
+                    <fa5:SvgAwesome Icon="Solid_ExchangeAlt" Height="50" Foreground="#70798c" Margin="0,0,0,15"/>
                     <TextBlock Text="Ajustes de Inventario" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Auditoría de pérdidas y movimientos" Foreground="Gray" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Registro de ajustes al inventario" Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnSuppliers"  Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnSuppliers" Click="btnSuppliers_Click"  Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_Handshake" Height="50" Foreground="#FF5722" Margin="0,0,0,15"/>
                     <TextBlock Text="Proveedores" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Catálogo de distribuidores mayoristas" Foreground="Gray" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Información de distribuidores mayoristas" Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnStockAlerts" Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnStockAlerts" Click="btnStockAlerts_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_ExclamationTriangle" Height="50" Foreground="#E91E63" Margin="0,0,0,15"/>
-                    <TextBlock Text="Alertas de Reorden" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Alertas" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
                     <TextBlock Text="Productos debajo del stock mínimo" Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
