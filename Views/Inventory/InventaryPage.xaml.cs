@@ -39,5 +39,14 @@ namespace WpfApp1.Views.Inventory
         {
             this.NavigationService.Navigate(new WpfApp1.Views.Inventory.InventoryMovement());
         }
+
+        private void btnStockAlerts_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void btnSuppliers_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.suppliersPage());
+        }
     }
 }

@@ -1,14 +1,16 @@
-﻿<Page x:Class="WpfApp1.Views.Inventory.Products"
+﻿<Page x:Class="WpfApp1.Views.Inventory.suppliersPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:fa5="http://schemas.fontawesome.com/icons/"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:controles="clr-namespace:WpfApp1.ControlsUI"
       xmlns:local="clr-namespace:WpfApp1.Views.Inventory"
+      xmlns:controles="clr-namespace:WpfApp1.ControlsUI"
+      
       mc:Ignorable="d" 
+        xmlns:fa5="http://schemas.fontawesome.com/icons/"
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="Products">
+      Title="suppliersPage">
+
 
     <Grid Margin="30">
         <Grid.RowDefinitions>
@@ -28,7 +30,7 @@
             </Button>
 
             <StackPanel Margin="15,0,0,0">
-                <TextBlock Text="Módulo de Productos" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                <TextBlock Text="Módulo de Proveedores" FontSize="22" FontWeight="Bold" Foreground="#333"/>
                 <TextBlock Text="Dar de Alta y editar datos." Foreground="#777" FontSize="13"/>
             </StackPanel>
         </DockPanel>
@@ -44,7 +46,7 @@
          Style="{StaticResource SearchTextBoxStyle}" 
          Text="{Binding ProductIdInput, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Button x:Name="BtnAddProduct" Click="BtnAddProduct_Click" Grid.Column="2" Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
+            <Button x:Name="BtnAddSupplier" Click="BtnAddSupplier_Click" Grid.Column="2" Background="#2196F3" BorderThickness="0" Cursor="Hand" Padding="15,8">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="5"/>
@@ -57,7 +59,7 @@
             </Button>
         </Grid>
 
-        <DataGrid x:Name="dgProducts" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
+        <DataGrid x:Name="dgSupplier" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
                CanUserAddRows="False" HeadersVisibility="Column"
                GridLinesVisibility="All"
                VerticalGridLinesBrush="#aaaaaa"
@@ -68,24 +70,22 @@
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
-                
-                <DataGridTextColumn Header="Código" Binding="{Binding code}" Width="auto"/>
 
-                <DataGridTextColumn Header="Nombre de producto" Binding="{Binding name}" Width="*"/>
+                <DataGridTextColumn Header="Nombre del Proveedor" Binding="{Binding name}" Width="*"/>
 
-                <DataGridTextColumn Header="Stock" Binding="{Binding stock}" Width="auto"/>
+                <DataGridTextColumn Header="Telefono" Binding="{Binding phone}" Width="auto"/>
 
-                <DataGridTextColumn Header="Precio de Venta" Binding="{Binding salesPrice}" Width="150"/>
-                <DataGridTextColumn Header="Stock minimo" Binding="{Binding minimunStock}" Width="150"/>
+                <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="150"/>
+                <DataGridTextColumn Header="Dirección" Binding="{Binding address}" Width="150"/>
 
                 <DataGridTemplateColumn Header="Acciones" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Button x:Name="BtnSee" Click="BtnSee_Click"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                <Button x:Name="BtnSee" Click="BtnSee_Click"  Background="Transparent" BorderThickness="0" Cursor="" Margin="20,0,10,0">
                                     <fa5:SvgAwesome Icon="Solid_Eye" Height="14" Foreground="LightGreen"/>
                                 </Button>
-                                <Button x:Name="BtnEdit" Click="BtnEdit_Click"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                <Button x:Name="BtnEdit" Click="BtnEdit_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
                                     <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
                                 </Button>
                             </StackPanel>
@@ -95,9 +95,9 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <controles:PaginadorControl x:Name="MiPaginador" 
+        <!--<controles:PaginadorControl x:Name="MiPaginador" 
                                 Grid.Row="3" 
                                 Margin="0,15,0,0"
-                                PaginaCambiada="MiPaginador_PaginaCambiada"/>
+                                PaginaCambiada="MiPaginador_PaginaCambiada"/>-->
     </Grid>
 </Page>

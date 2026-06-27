@@ -154,6 +154,10 @@ namespace WpfApp1.Views.Inventory
 
                     if (result.Success)
                         MessageBox.Show("Producto registrado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    else
+                    {
+                        MessageBox.Show("Error al registrar el producto.","Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
                 else
                 {

@@ -50,7 +50,7 @@
             </Button>
 
             <StackPanel Margin="15,0,0,0" VerticalAlignment="Center">
-                <TextBlock Text="Módulo de Reajuste Híbrido" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+                <TextBlock Text="Módulo de Reajuste" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
                 <TextBlock Text="Busque el repuesto y ajústelo directamente o consulte la auditoría de mermas" Foreground="#7F8C8D" FontSize="13" Margin="0,2,0,0"/>
             </StackPanel>
         </DockPanel>
@@ -63,18 +63,14 @@
             </Grid.ColumnDefinitions>
 
             <!-- Buscador Estilizado con Icono -->
-            <Border Grid.Column="0" Background="White" CornerRadius="6" BorderBrush="#BDC3C7" BorderThickness="1" Padding="12,8">
-                <Grid>
+                <Grid Grid.Column="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <fa5:SvgAwesome Icon="Solid_Search" Height="14" Foreground="#95A5A6" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                    <TextBox x:Name="txtBuscar" Grid.Column="1" BorderThickness="0" VerticalContentAlignment="Center"
-                         FontSize="14" Foreground="#34495E" Background="Transparent"
-                         ToolTip="Escriba el nombre del repuesto, categoría o motivo del ajuste."/>
+                    <TextBox x:Name="txtBuscar" Grid.Column="1"     Style="{StaticResource SearchTextBoxStyle}" 
+                     />
                 </Grid>
-            </Border>
         </Grid>
 
         <!-- ROW 2: CONTENEDOR OPERATIVO CON DOS PESTAÑAS PRINCIPALES -->
@@ -98,7 +94,7 @@
 
                         <DataGrid.Columns>
                             <!-- Código del Producto -->
-                            <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="80">
+                            <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="auto">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -109,26 +105,26 @@
                             </DataGridTextColumn>
 
                             <!-- Datos del Repuesto -->
-                            <DataGridTextColumn Header="Nombre del Repuesto" Binding="{Binding name}" Width="*"/>
-                            <DataGridTextColumn Header="Categoría" Binding="{Binding category}" Width="180"/>
+                            <DataGridTextColumn Header="Producto" Binding="{Binding name}" Width="*"/>
 
-                            <!-- Stock Mínimo -->
-                            <DataGridTextColumn Header="Stock Mínimo" Binding="{Binding minimunStock}" Width="120">
+
+                            <!-- Stock Actual -->
+                            <DataGridTextColumn Header="Stock Actual" Binding="{Binding stock}" Width="100">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontFamily" Value="Consolas"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
                                         <Setter Property="HorizontalAlignment" Value="Center"/>
                                         <Setter Property="VerticalAlignment" Value="Center"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
 
-                            <!-- Stock Actual -->
-                            <DataGridTextColumn Header="Stock Actual" Binding="{Binding stock}" Width="120">
+                            <!-- Stock Mínimo -->
+                            <DataGridTextColumn Header="Stock Mínimo" Binding="{Binding minimunStock}" Width="100">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontFamily" Value="Consolas"/>
-                                        <Setter Property="FontWeight" Value="Bold"/>
                                         <Setter Property="HorizontalAlignment" Value="Center"/>
                                         <Setter Property="VerticalAlignment" Value="Center"/>
                                     </Style>
@@ -146,16 +142,16 @@
                                         <DataTemplate.Triggers>
                                             <DataTrigger Binding="{Binding EsBajoStock}" Value="True">
                                                 <Setter TargetName="StockBadge" Property="Background" Value="#FFF9E7"/>
-                                                <Setter TargetName="StockBadge" Property="BorderBrush" Value="#F39C12"/>
+                                                <Setter TargetName="StockBadge" Property="BorderBrush" Value="#FF7373"/>
                                                 <Setter TargetName="StockBadge" Property="BorderThickness" Value="1"/>
-                                                <Setter TargetName="StockBadgeText" Property="Text" Value="⚠️ BAJO STOCK"/>
-                                                <Setter TargetName="StockBadgeText" Property="Foreground" Value="#D68910"/>
+                                                <Setter TargetName="StockBadgeText" Property="Text" Value="BAJO STOCK"/>
+                                                <Setter TargetName="StockBadgeText" Property="Foreground" Value="#FF7373"/>
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding EsBajoStock}" Value="False">
                                                 <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
                                                 <Setter TargetName="StockBadge" Property="BorderBrush" Value="#117A65"/>
                                                 <Setter TargetName="StockBadge" Property="BorderThickness" Value="1"/>
-                                                <Setter TargetName="StockBadgeText" Property="Text" Value="✅ STOCK SEGURO"/>
+                                                <Setter TargetName="StockBadgeText" Property="Text" Value="STOCK SEGURO"/>
                                                 <Setter TargetName="StockBadgeText" Property="Foreground" Value="#117A65"/>
                                             </DataTrigger>
                                         </DataTemplate.Triggers>
@@ -164,7 +160,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- BOTÓN DE ACCIÓN RÁPIDA: Reajustar directamente desde la fila -->
-                            <DataGridTemplateColumn Header="Acción" Width="130">
+                            <DataGridTemplateColumn Header="Acción" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button x:Name="BtnReajustarFila" Click="BtnReajustarFila_Click" 

@@ -18,6 +18,8 @@ namespace WpfApp1.ViewModels
         public string status { get; set; }
         public string code  { get; set; }
         public string description { get; set; }
+        // REVISIÓN: Asegúrate de que no haya un ";" antes del "=>"
+        public bool EsBajoStock => stock <= minimunStock;
 
     }
 }

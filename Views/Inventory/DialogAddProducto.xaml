@@ -20,23 +20,8 @@
         </Grid.RowDefinitions>
 
         <Grid.Resources>
-            <Style TargetType="TextBox">
-                <Setter Property="Height" Value="32"/>
-                <Setter Property="Padding" Value="6,4"/>
-                <Setter Property="Margin" Value="0,4,0,12"/>
-                <Setter Property="BorderBrush" Value="#CBD5E1"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="TextBox">
-                            <Border Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6">
-                                <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </Style>
 
-                <Style TargetType="controles:PriceTexBox">
+            <Style TargetType="controles:PriceTexBox">
                     <Setter Property="Height" Value="32"/>
                     <Setter Property="Padding" Value="6,4"/>
                     <Setter Property="Margin" Value="0,4,0,12"/>
