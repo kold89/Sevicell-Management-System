@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Background="#F8F8F8"
-        Title="DiallogMovementInventory" Height="400" Width="460">
+        Title="DiallogMovementInventory" Height="450" Width="460">
     <Grid>
         <!-- Formulario simplificado para el Pop-up del Modal -->
         <StackPanel Margin="20" Width="400">
@@ -38,7 +38,7 @@
             <TextBox Text="{Binding MotivoAjuste, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" Height="80" Padding="5"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button Content="Cancelar"  Margin="0,0,10,0" Padding="15,5" Background="White" Click="Button_Click"/>
+                <Button Content="Cancelar"  Margin="0,0,10,0" Padding="15,5" Background="Gray" Click="Button_Click"/>
                 <Button Content="Guardar" Command="{Binding GuardarAjusteCommand}" Padding="15,5" Background="#2196F3" Foreground="White"/>
             </StackPanel>
         </StackPanel>
