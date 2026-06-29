@@ -17,9 +17,9 @@ namespace WpfApp1.Services
         /// <summary>
         /// Consulta el historial utilizando LINQ para mayor legibilidad y mantenibilidad.
         /// </summary>
-        public async Task<ServicesResult<List<InventoryAuditDto>>> GetMovementHistory()
+        public async Task<ServicesResult<List<InventoryAuditsDto>>> GetMovementHistory()
         {
-            var result = new ServicesResult<List<InventoryAuditDto>>();
+            var result = new ServicesResult<List<InventoryAuditsDto>>();
 
             try
             {
@@ -29,7 +29,7 @@ namespace WpfApp1.Services
                     var historia = await (from m in db.InventoryMovements
                                           join p in db.Products on m.ProductId equals p.Id
                                           orderby m.MovementDate descending // Los más recientes primero
-                                          select new InventoryAuditDto
+                                          select new InventoryAuditsDto
                                           {
                                               Folio = m.Id,
                                               ProductoNombre = p.Name,
@@ -41,8 +41,8 @@ namespace WpfApp1.Services
                                               EsIncremento = m.MovementType.ToUpper() == "ENTRADA",
 
                                               // Valores base temporales para Stock
-                                              StockAnterior = 0,
-                                              StockNuevo = 0,
+                                              StockAnterior = m.PreviousStock,
+                                              StockNuevo = m.NewStock,
 
                                               // Guardamos la cantidad pura para formatearla en memoria abajo
                                               CantidadConSigno = m.Quantity.ToString(),
@@ -53,7 +53,7 @@ namespace WpfApp1.Services
                     {
                         item.CantidadConSigno = item.EsIncremento ? $"+{item.CantidadConSigno}" : $"-{item.CantidadConSigno}";
                     }
-                    return ServicesResult<List<InventoryAuditDto>>.Ok(historia, "Historial cargado correctamente");
+                    return ServicesResult<List<InventoryAuditsDto>>.Ok(historia, "Historial cargado correctamente");
                     
 
                 }
@@ -62,7 +62,7 @@ namespace WpfApp1.Services
             {
                 var message = $"Error al procesar: {ex.Message}";
 
-                return ServicesResult<List<InventoryAuditDto>>.Fail("Historial cargado correctamente" + message);
+                return ServicesResult<List<InventoryAuditsDto>>.Fail("Historial cargado correctamente" + message);
 
             }
 
@@ -100,7 +100,7 @@ namespace WpfApp1.Services
 
                     var movimiento = new Models.InventoryMovement
                     {
-                        //ProductId = dto.ProductId,
+                        ProductId = product.Id,
                         MovementType = esEntrada ? "ENTRADA" : "SALIDA",
                         Quantity = dto.Cantidad,
                         Description = dto.Motivo,
@@ -113,7 +113,7 @@ namespace WpfApp1.Services
 
                     //// 6. Un solo SaveChanges = una sola transacción atómica
                     //// Si falla cualquier cosa, EF revierte ambas operaciones
-                    //await db.SaveChangesAsync();
+                    await db.SaveChangesAsync();
 
                     return ServicesResult<bool>.Ok(true, "Movimiento guardado correctamente.");
                 }

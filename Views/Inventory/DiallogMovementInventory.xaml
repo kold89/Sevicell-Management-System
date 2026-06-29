@@ -9,37 +9,43 @@
         Background="#F8F8F8"
         Title="DiallogMovementInventory" Height="450" Width="460">
     <Grid>
-        <!-- Formulario simplificado para el Pop-up del Modal -->
         <StackPanel Margin="20" Width="400">
             <TextBlock Text="Ajustar Stock Manual" FontSize="20" FontWeight="Bold" Margin="0,0,0,15"/>
             <Separator Background="#DDDDDD"></Separator>
             <TextBlock Text="Producto Seleccionado:" FontWeight="SemiBold" Margin="0,5"/>
-            <TextBox Text="{Binding ProductoSeleccionado.Nombre}" IsReadOnly="True" Background="#F1F5F9" Padding="5"/>
+            <TextBox Name="txtProduct" IsReadOnly="True" Background="#F1F5F9" Padding="5"/>
 
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+                
                 <StackPanel Grid.Column="0" Margin="0,0,10,0">
                     <TextBlock Text="Tipo de Ajuste:" FontWeight="SemiBold"/>
-                    <ComboBox SelectedValue="{Binding TipoAjusteSeleccionado}" SelectedValuePath="Tag" Padding="6">
-                        <ComboBoxItem Content="Incrementar (+)" Tag="Incremento"/>
-                        <ComboBoxItem Content="Disminuir (-)" Tag="Disminucion"/>
+                    <ComboBox Name="cbType"  SelectedValuePath="Tag" Padding="6">
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="Cantidad:" FontWeight="SemiBold"/>
-                    <TextBox Text="{Binding CantidadAjustar, UpdateSourceTrigger=PropertyChanged}" Padding="5"/>
+                    <TextBox Name="txtCant" Padding="5"/>
                 </StackPanel>
             </Grid>
 
-            <TextBlock Text="Justificación / Motivo del Cambio:" FontWeight="SemiBold" Margin="0,5"/>
-            <TextBox Text="{Binding MotivoAjuste, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" Height="80" Padding="5"/>
+            <TextBlock Text="Justificación / Motivo del Cambio:" 
+                       FontWeight="SemiBold" Margin="0,5"/>
+            
+            <TextBox Name="txtDescription" TextWrapping="Wrap"
+                     AcceptsReturn="True" Height="80" Padding="5"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button Content="Cancelar"  Margin="0,0,10,0" Padding="15,5" Background="Gray" Click="Button_Click"/>
-                <Button Content="Guardar" Command="{Binding GuardarAjusteCommand}" Padding="15,5" Background="#2196F3" Foreground="White"/>
+                <Button Name="BtnClose" 
+                        Click="BtnClose_Click" Content="Cancelar"  
+                        Margin="0,0,10,0" Padding="15,5" Background="Gray"/>
+                
+                <Button Name="BtnSave" Content="Guardar"
+                        Click="BtnSave_Click"  Padding="15,5"
+                        Background="#2196F3" Foreground="White"/>
             </StackPanel>
         </StackPanel>
     </Grid>

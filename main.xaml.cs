@@ -44,6 +44,12 @@ namespace WpfApp1
             }
         }
 
+        private void BtnDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            var confiCards = new WpfApp1.Views.Dashboard();
+
+            MainFrame.Navigate(confiCards);
+        }
         private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
         {
             var confiCards = new WpfApp1.Views.ConfigDashboardPage();
@@ -164,6 +170,6 @@ namespace WpfApp1
             if (diff.TotalMinutes < 60) return $"hace {(int)diff.TotalMinutes} min";
             if (diff.TotalHours < 24) return $"hace {(int)diff.TotalHours} h";
             return $"hace {(int)diff.TotalDays} días";
-        }
+        }    
     }
 }

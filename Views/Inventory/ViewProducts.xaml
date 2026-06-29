@@ -57,35 +57,137 @@
             </Button>
         </Grid>
 
-        <DataGrid x:Name="dgProducts" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
+        <Border Grid.Row="2"
+        Background="White"
+        BorderBrush="#EEEEEE"
+        BorderThickness="1"
+        CornerRadius="12">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="20" ShadowDepth="2" Opacity="0.05" Color="Black"/>
+            </Border.Effect>
+            
+            <DataGrid x:Name="dgProducts" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
                CanUserAddRows="False" HeadersVisibility="Column"
-               GridLinesVisibility="All"
-               VerticalGridLinesBrush="#aaaaaa"
-               HorizontalGridLinesBrush="#aaaaaa"
-               BorderThickness="1"
+               GridLinesVisibility="Horizontal"
+               BorderThickness="0"
                BorderBrush="#DDDDDD"
-               Background="White" RowHeight="30" FontSize="14">
+               Background="White" RowHeight="44" FontSize="13">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
-                
-                <DataGridTextColumn Header="Código" Binding="{Binding code}" Width="auto"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding id}">
+                    <DataGridTextColumn.ElementStyle>
 
-                <DataGridTextColumn Header="Nombre de producto" Binding="{Binding name}" Width="*"/>
+                        <Style TargetType="TextBlock">
 
-                <DataGridTextColumn Header="Stock" Binding="{Binding stock}" Width="auto"/>
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="16,0"/>
+                                <Setter Property="Foreground" Value="#212121"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="12.5"/>
 
-                <DataGridTextColumn Header="Precio de Venta" Binding="{Binding salesPrice}" Width="150"/>
-                <DataGridTextColumn Header="Stock minimo" Binding="{Binding minimunStock}" Width="150"/>
+                            </Style>
 
-                <DataGridTemplateColumn Header="Acciones" Width="150">
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="CÓDIGO" Binding="{Binding code}" Width="auto">
+                    <DataGridTextColumn.ElementStyle>
+
+                        <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="16,0"/>
+                                <Setter Property="Foreground" Value="#212121"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="12.5"/>
+                            </Style>
+
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="NOMBRE DE PRODUCTO" Binding="{Binding name}" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+
+                        <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="16,0"/>
+                                <Setter Property="Foreground" Value="#212121"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="FontFamily" Value="Segoe UI"/>
+                                <Setter Property="FontSize" Value="12.5"/>
+                            </Style>
+
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="STOCK" Binding="{Binding stock}" Width="auto">
+                    <DataGridTextColumn.ElementStyle>
+
+                        <Style TargetType="TextBlock">
+
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="16,0"/>
+                                <Setter Property="Foreground" Value="#212121"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="12.5"/>
+
+                            </Style>
+
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="PRECIO DE VENTA" Binding="{Binding salesPrice}" Width="150">
+                    <DataGridTextColumn.ElementStyle>
+
+                        <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="16,0"/>
+                                <Setter Property="Foreground" Value="#212121"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="12.5"/>
+
+                            </Style>
+
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="STOCK MINIMO" Binding="{Binding minimunStock}" Width="150">
+                    <DataGridTextColumn.ElementStyle>
+
+                        <Style TargetType="TextBlock">
+
+                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                <Setter Property="Margin" Value="16,0"/>
+                                <Setter Property="Foreground" Value="#212121"/>
+                                <Setter Property="FontWeight" Value="Medium"/>
+                                <Setter Property="FontFamily" Value="Consolas"/>
+                                <Setter Property="FontSize" Value="12.5"/>
+
+                            </Style>
+
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTemplateColumn Header="ACCIONES" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
-                                <Button x:Name="BtnSee" Click="BtnSee_Click"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                <Button x:Name="BtnSee" Click="BtnSee_Click"  Width="30" Style="{StaticResource ActionButtonStyle}"
+                                    Height="30"
+                                    Margin="3"
+                                    Background="#F5F5F5"
+                                    BorderBrush="Transparent"
+                                    Cursor="Hand">
                                     <fa5:SvgAwesome Icon="Solid_Eye" Height="14" Foreground="LightGreen"/>
                                 </Button>
-                                <Button x:Name="BtnEdit" Click="BtnEdit_Click"  Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                <Button x:Name="BtnEdit" Click="BtnEdit_Click"  Width="30" Style="{StaticResource ActionButtonStyle}"
+                                        Height="30"
+                                        Margin="3"
+                                        Background="#F5F5F5"
+                                        BorderBrush="Transparent"
+                                        Cursor="Hand">
                                     <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
                                 </Button>
                             </StackPanel>
@@ -94,6 +196,7 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        </Border>
 
         <controles:PaginadorControl x:Name="MiPaginador" 
                                 Grid.Row="3" 

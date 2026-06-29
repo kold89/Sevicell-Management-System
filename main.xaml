@@ -33,7 +33,7 @@
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#2D2D30">
 
             <!-- Inicio -->
-            <RadioButton Style="{StaticResource MenuButtonStyle}" IsChecked="True">
+            <RadioButton Name="BtnDashboard" Click="BtnDashboard_Click" Style="{StaticResource MenuButtonStyle}" IsChecked="True">
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
                             Icon="Solid_Home"

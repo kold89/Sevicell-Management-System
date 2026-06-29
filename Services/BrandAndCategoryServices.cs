@@ -106,12 +106,12 @@ namespace WpfApp1.Services
                     brand.Status = newStatus;
                     await db.SaveChangesAsync();
 
-                    return ServicesResult<bool>.Ok(true, $"Usuario {brand.Name} {status} con exito."); ;
+                    return ServicesResult<bool>.Ok(true, $"Marca {brand.Name} {status} con exito."); ;
                 }
             }
             catch (Exception ex)
             {
-                return ServicesResult<bool>.Fail("Sucedio un error inesperado.");
+                return ServicesResult<bool>.Fail("Ocurrio un error inesperado.");
             }
         }
 

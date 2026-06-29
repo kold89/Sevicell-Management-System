@@ -13,16 +13,13 @@ namespace WpfApp1.Views.Inventory
 {
     public partial class InventoryMovement : Page, INotifyPropertyChanged
     {
-        // Servicios
         private readonly ProductsServices productService = new ProductsServices();
-        // NOTA: Asumo que tienes un servicio para el historial, si no, puedes adaptarlo a tu arquitectura
         private readonly movementInventoryService inventoryService = new movementInventoryService();
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Listas maestras en memoria para filtrado rápido local
         private List<ProductsDto> _allProducts = new List<ProductsDto>();
-        private List<InventoryAuditDto> _allAuditLogs = new List<InventoryAuditDto>();
+        private List<InventoryAuditsDto> _allAuditLogs = new List<InventoryAuditsDto>();
 
         private int _tipoDataSeleccionado;
         public int TabItemSelected
@@ -35,7 +32,6 @@ namespace WpfApp1.Views.Inventory
                     _tipoDataSeleccionado = value;
                     OnPropertyChanged();
 
-                    // Dispara la carga de datos correspondiente a la pestaña activa sin congelar la UI
                     _ = LoadData(_tipoDataSeleccionado);
                 }
             }
@@ -52,7 +48,6 @@ namespace WpfApp1.Views.Inventory
                     _productIdInput = value;
                     OnPropertyChanged();
 
-                    // El buscador filtra la pestaña que esté actualmente activa
                     FiltrarDatosSegunPestaña();
                 }
             }
@@ -63,7 +58,6 @@ namespace WpfApp1.Views.Inventory
             InitializeComponent();
             this.DataContext = this;
 
-            // Forzar la carga inicial de la Pestaña 1
             TabItemSelected = 1;
         }
 
@@ -92,10 +86,10 @@ namespace WpfApp1.Views.Inventory
                 else if (type == 2) // Pestaña: Historial de Auditoría
                 {
                     // Consumo de servicio de historial (mapeado a tu estructura de tabla)
-                    ServicesResult<List<InventoryAuditDto>> auditResult = await inventoryService.GetMovementHistory();
+                    ServicesResult<List<InventoryAuditsDto>> auditResult = await inventoryService.GetMovementHistory();
                     if (auditResult.Success)
                     {
-                        _allAuditLogs = auditResult.Data ?? new List<InventoryAuditDto>();
+                        _allAuditLogs = auditResult.Data ?? new List<InventoryAuditsDto>();
                         FiltrarDatosSegunPestaña();
                     }
                     else
@@ -154,26 +148,23 @@ namespace WpfApp1.Views.Inventory
 
         private void BtnReajustarFila_Click(object sender, RoutedEventArgs e)
         {
-            var boton = sender as Button;
-            if (boton != null && boton.DataContext is ProductsDto productoSeleccionado)
-            {
-                // 1. Instanciar la ventana modal
-                DiallogMovementInventory modalReajustar = new DiallogMovementInventory();
-                modalReajustar.Owner = Window.GetWindow(this);
+            var botom = sender as Button;
+            if (botom?.DataContext is not ProductsDto productsDto)
+                return;
 
-                // 2. PASAR INFORMACIÓN A LA MODAL:
-                // Para que tu modal sepa qué producto va a ajustar, puedes pasarle el objeto a su constructor 
-                // o usar una propiedad pública que crees dentro de 'DiallogMovementInventory'. Ejemplo:
-                // modalReajustar.SelectedProduct = productoSeleccionado;
+            var productSelected = productService.SearchProductById(productsDto.id);
 
-                // 3. Mostrar la modal y evaluar el resultado del guardado en SQL
-                bool? result = modalReajustar.ShowDialog();
+            if (productSelected == null || !productSelected.Success)
+                return;
+
+            DiallogMovementInventory win = new DiallogMovementInventory(productSelected.Data);
+                win.Owner = Window.GetWindow(this);
+                bool? result = win.ShowDialog();
+
                 if (result == true)
                 {
-                    // Si se guardó con éxito en la base de datos, refrescamos la pestaña actual
                     _ = LoadData(_tipoDataSeleccionado);
                 }
-            }
         }
 
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
@@ -189,22 +180,4 @@ namespace WpfApp1.Views.Inventory
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-    #region DTO Auxiliar para el Historial (Si no lo tienes creado)
-    /// <summary>
-    /// Estructura de datos requerida por los Bindings de tu segunda tabla (dgAuditoria)
-    /// </summary>
-    public class InventoryAuditDto
-    {
-        public int Folio { get; set; }
-        public string ProductoNombre { get; set; }
-        public int StockAnterior { get; set; }
-        public string CantidadConSigno { get; set; }
-        public bool EsIncremento { get; set; }
-        public int StockNuevo { get; set; }
-        public string Motivo { get; set; }
-        public DateTime? Fecha { get; set; }
-        public string UsuarioResponsable { get; set; }
-    }
-    #endregion
 }
