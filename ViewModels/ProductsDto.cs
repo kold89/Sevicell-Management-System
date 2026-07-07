@@ -11,6 +11,7 @@ namespace WpfApp1.ViewModels
         public int id {  get; set; }
         public string name { get; set; }
         public double salesPrice { get; set; }
+        public double unitPrice { get; set; }
         public int stock {  get; set; }
         public int minimunStock { get; set; }
         public string category { get; set; }
@@ -18,7 +19,6 @@ namespace WpfApp1.ViewModels
         public string status { get; set; }
         public string code  { get; set; }
         public string description { get; set; }
-        // REVISIÓN: Asegúrate de que no haya un ";" antes del "=>"
         public bool EsBajoStock => stock <= minimunStock;
 
     }

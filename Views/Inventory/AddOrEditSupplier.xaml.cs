@@ -43,7 +43,7 @@ namespace WpfApp1.Views.Inventory
             txtName.Text = _supplier.Name;
             txtEmail.Text = _supplier?.Email;
             txtPhone.Text = _supplier?.Phone;
-            txtCta.Text = "Pendiente crear en base de datos.";
+            txtCta.Text = _supplier.AccountNumber;
             txtAddres.Text = _supplier.Address;
         }
         private void BtnCancel_Click(object sender, RoutedEventArgs e)

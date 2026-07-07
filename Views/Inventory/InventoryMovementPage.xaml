@@ -89,8 +89,14 @@
             <!-- PESTAÑA 1: INVENTARIO ACTIVO DE REPUESTOS -->
             <TabItem Tag="1" Header="Inventario de Repuestos">
                 <Grid Margin="15">
-                    <DataGrid x:Name="dgRepuestos" Style="{StaticResource ModernDataGrid}"  RowHeight="30" FontSize="14"
-                                  AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0" GridLinesVisibility="Vertical"  VerticalGridLinesBrush="#eeeeee">
+                    <DataGrid x:Name="dgRepuestos" Style="{StaticResource ModernDataGrid}"  
+                                  AutoGenerateColumns="False" 
+                               CanUserAddRows="False" HeadersVisibility="Column"
+                                 IsReadOnly="True"
+                                 GridLinesVisibility="Horizontal"
+                                 BorderThickness="0"
+                                 BorderBrush="#DDDDDD"
+                                 Background="White" RowHeight="44" FontSize="13">
 
                         <DataGrid.Columns>
                             <!-- Código del Producto -->
@@ -105,23 +111,43 @@
                             </DataGridTextColumn>
 
                             <!-- Datos del Repuesto -->
-                            <DataGridTextColumn Header="Producto" Binding="{Binding name}" Width="*"/>
+                            <DataGridTextColumn Header="PRODUCTO" Binding="{Binding name}" Width="*"/>
 
 
                             <!-- Stock Actual -->
-                            <DataGridTextColumn Header="Stock Actual" Binding="{Binding stock}" Width="100">
-                                <DataGridTextColumn.ElementStyle>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="FontFamily" Value="Consolas"/>
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Setter Property="HorizontalAlignment" Value="Center"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
-                                    </Style>
-                                </DataGridTextColumn.ElementStyle>
-                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="STOCK ACTUAL" Width="Auto">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <!-- El Grid ayuda a manejar los márgenes y alineaciones hacia la celda -->
+                                        <Grid Margin="0,0,16,0" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <Border x:Name="StockBadge" Style="{StaticResource BadgeBorderStyle}">
+                                                <TextBlock x:Name="StockText" 
+                               Text="{Binding stock}" 
+                               Style="{StaticResource BadgeTextStyle}"
+                               FontFamily="Consolas"
+                               FontWeight="SemiBold"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <DataTemplate.Triggers>
+                                            <!-- Si el stock es crítico (menor a 0 o menor al mínimo) -->
+                                            <DataTrigger Binding="{Binding EsBajoStock}" Value="True">
+                                                <Setter TargetName="StockBadge" Property="Background" Value="#FDEDEC"/>
+                                                <Setter TargetName="StockText" Property="Foreground" Value="#C0392B"/>
+                                            </DataTrigger>
+
+                                            <!-- Si el stock está bien -->
+                                            <DataTrigger Binding="{Binding EsBajoStock}" Value="False">
+                                                <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
+                                                <Setter TargetName="StockText" Property="Foreground" Value="#117A65"/>
+                                            </DataTrigger>
+                                        </DataTemplate.Triggers>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
 
                             <!-- Stock Mínimo -->
-                            <DataGridTextColumn Header="Stock Mínimo" Binding="{Binding minimunStock}" Width="100">
+                            <DataGridTextColumn Header="STOCK MINIMO" Binding="{Binding minimunStock}" Width="120">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontFamily" Value="Consolas"/>
@@ -132,7 +158,7 @@
                             </DataGridTextColumn>
 
                             <!-- COLUMNA DINÁMICA: Estado del Stock (Badge de Advertencia/Éxito) -->
-                            <DataGridTemplateColumn Header="Estado Stock" Width="150">
+                            <DataGridTemplateColumn Header="ESTADO STOCK" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="StockBadge" Style="{StaticResource BadgeBorderStyle}">
@@ -160,7 +186,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- BOTÓN DE ACCIÓN RÁPIDA: Reajustar directamente desde la fila -->
-                            <DataGridTemplateColumn Header="Acción" Width="150">
+                            <DataGridTemplateColumn Header="ACCION" Width="150">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button x:Name="BtnReajustarFila" Click="BtnReajustarFila_Click" 
@@ -186,12 +212,17 @@
             <!-- PESTAÑA 2: HISTORIAL DE AUDITORÍA DE MOVIMIENTOS -->
             <TabItem Tag="2" Header="Historial de Auditoría">
                 <Grid Margin="15">
-                    <DataGrid x:Name="dgAuditoria" Style="{StaticResource ModernDataGrid}"  RowHeight="30" FontSize="14"
-                                  AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0" GridLinesVisibility="Vertical"  VerticalGridLinesBrush="#eeeeee">
+                    <DataGrid x:Name="dgAuditoria" Style="{StaticResource ModernDataGrid}" 
+                                  AutoGenerateColumns="False"  CanUserAddRows="False" HeadersVisibility="Column"
+                                 GridLinesVisibility="Horizontal"
+                                 BorderThickness="0"
+                                 IsReadOnly="True"
+                                 BorderBrush="#DDDDDD"
+                                 Background="White" RowHeight="44" FontSize="13">
 
                         <DataGrid.Columns>
                             <!-- Folio de Auditoría -->
-                            <DataGridTextColumn Header="Folio" Binding="{Binding Folio}" Width="80">
+                            <DataGridTextColumn Header="FOLIO" Binding="{Binding Folio}" Width="80">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -202,10 +233,10 @@
                             </DataGridTextColumn>
 
                             <!-- Producto Afectado -->
-                            <DataGridTextColumn Header="Producto Reajustado" Binding="{Binding ProductoNombre}" Width="*"/>
+                            <DataGridTextColumn Header="PRODUCTO REAJUSTADO" Binding="{Binding ProductoNombre}" Width="*"/>
 
                             <!-- Stock Anterior -->
-                            <DataGridTextColumn Header="Stock Ant." Binding="{Binding StockAnterior}" Width="110">
+                            <DataGridTextColumn Header="STOCK ANT." Binding="{Binding StockAnterior}" Width="120">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontFamily" Value="Consolas"/>
@@ -216,7 +247,7 @@
                             </DataGridTextColumn>
 
                             <!-- COLUMNA DINÁMICA: Cantidad Ajustada (Verde si suma, Rojo si resta) -->
-                            <DataGridTemplateColumn Header="Movimiento" Width="120">
+                            <DataGridTemplateColumn Header="MOVIMIENTO" Width="100">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Border x:Name="AuditBadge" Style="{StaticResource BadgeBorderStyle}">
@@ -238,7 +269,7 @@
                             </DataGridTemplateColumn>
 
                             <!-- Stock Resultante -->
-                            <DataGridTextColumn Header="Nuevo Stock" Binding="{Binding StockNuevo}" Width="120">
+                            <DataGridTextColumn Header="NUEVO STOCK" Binding="{Binding StockNuevo}" Width="120">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontFamily" Value="Consolas"/>
@@ -250,9 +281,9 @@
                             </DataGridTextColumn>
 
                             <!-- Notas y Auditoría del Ajuste -->
-                            <DataGridTextColumn Header="Motivo del Cambio" Binding="{Binding Motivo}" Width="250"/>
-                            <DataGridTextColumn Header="Fecha Ajuste" Binding="{Binding Fecha, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
-                            <DataGridTextColumn Header="Realizado por" Binding="{Binding UsuarioResponsable}" Width="120"/>
+                            <DataGridTextColumn Header="MOTIVO DEL CAMBIO" Binding="{Binding Motivo}" Width="250"/>
+                            <DataGridTextColumn Header="FECHA DE AJUSTE" Binding="{Binding Fecha, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
+                            <!--<DataGridTextColumn Header="REALIZADO POR" Binding="{Binding UsuarioResponsable}" Width="120"/>-->
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>

@@ -38,7 +38,7 @@
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnPurchases"  Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnPurchases" Click="btnPurchases_Click"  Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_TruckLoading" Height="50" Foreground="#FF9800" Margin="0,0,0,15"/>
                     <TextBlock Text="Entrada por Compras" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
@@ -62,11 +62,11 @@
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnStockAlerts" Click="btnStockAlerts_Click" Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnInvoiceHistory" Click="btnInvoiceHistory_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
-                    <fa5:SvgAwesome Icon="Solid_ExclamationTriangle" Height="50" Foreground="#E91E63" Margin="0,0,0,15"/>
-                    <TextBlock Text="Alertas" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Productos debajo del stock mínimo" Foreground="Gray" HorizontalAlignment="Center"/>
+                    <fa5:SvgAwesome Icon="Solid_List" Height="50" Foreground="#0e9594" Margin="0,0,0,15"/>
+                    <TextBlock Text="Facturas de compras" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Visualizacion de las facturas de compra." Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 

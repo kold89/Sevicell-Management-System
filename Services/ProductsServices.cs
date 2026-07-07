@@ -11,6 +11,7 @@ using System.Windows.Markup;
 using WpfApp1.Data;
 using WpfApp1.Models;
 using WpfApp1.ViewModels;
+using WpfApp1.Views.Inventory;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WpfApp1.Services
@@ -44,7 +45,7 @@ namespace WpfApp1.Services
                         description = pb.product.ProductDescription ?? "",
                         status = pb.product.Status == true ? "Activo" : "Inactivo"
                     }
-                    ).ToListAsync();
+                    ).OrderByDescending(x => x.id).ToListAsync();
 
                 if (data.Count == 0)
                 {
@@ -56,6 +57,28 @@ namespace WpfApp1.Services
             }
         }
 
+        public async Task<ServicesResult<List<ProductsDto>>> ListAllProducts()
+        {
+            try 
+            {
+                using (var db = new SevicellDbContext())
+                {
+                    var products = await db.Products.Select( x => new ProductsDto
+                    {
+                        id = x.Id,
+                        code = x.Code,
+                        name = x.Name,
+                        salesPrice =  Convert.ToDouble(x.SalePrice)                        
+                    }).ToListAsync();
+
+                    return ServicesResult<List<ProductsDto>>.Ok(products, "Productos obtenidos exitosamente.");
+                }
+            }
+            catch (Exception ex) 
+            {
+                return ServicesResult<List<ProductsDto>>.Fail("Error al obtener el listado de productos.");
+            }
+        }
         public Product GetProductById(int id)
         {
             using (var db = new DBSevicellContext())

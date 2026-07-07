@@ -67,14 +67,44 @@
                             Style="{StaticResource SearchTextBoxStyle}" 
                             />      
 
-                        <DataGrid Grid.Row="1" x:Name="dgCategories" Style="{StaticResource ModernDataGrid}"  RowHeight="30" FontSize="14"
-                                  AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0" GridLinesVisibility="Vertical"  VerticalGridLinesBrush="#eeeeee">
+                        <DataGrid Grid.Row="1" x:Name="dgCategories" Style="{StaticResource ModernDataGrid}"
+                                   CanUserAddRows="False" HeadersVisibility="Column"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                 GridLinesVisibility="Horizontal"
+                                 BorderThickness="0"
+                                 BorderBrush="#DDDDDD"
+                                 Background="White" RowHeight="44" FontSize="13">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="60"/>
-                                <DataGridTextColumn Header="Categoría" Binding="{Binding name}" Width="*"/>
-                                <DataGridTextColumn Header="Estado" Binding="{Binding status}" Width="*"/>
+                                <DataGridTextColumn Header="CATEGORIA" Binding="{Binding name}" Width="*"/>
+                                <DataGridTemplateColumn Header="ESTADO"  Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,16,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Border x:Name="StockBadge" Style="{StaticResource BadgeBorderStyle}">
+                                                    <TextBlock x:Name="statusText" 
+                                                     Text="{Binding status}" 
+                                                     Style="{StaticResource BadgeTextStyle}"
+                                                     FontWeight="Bold"/>
+                                                </Border>
+                                            </Grid>
 
-                                <DataGridTemplateColumn Header="Acciones" Width="150">
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
+                                                    <Setter TargetName="StockBadge" Property="Background" Value="#FDEDEC"/>
+                                                    <Setter TargetName="statusText" Property="Foreground" Value="#C0392B"/>
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding status}" Value="Activo">
+                                                    <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
+                                                    <Setter TargetName="statusText" Property="Foreground" Value="#117A65"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTemplateColumn Header="ACCIONES" Width="150">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
@@ -145,14 +175,45 @@
                             <TextBox x:Name="txtSearchBrand" Style="{StaticResource SearchTextBoxStyle}"/>
                         </Grid>
 
-                        <DataGrid Grid.Row="1" x:Name="dgBrands" Style="{StaticResource ModernDataGrid}"  RowHeight="30" FontSize="14"
-                                  AutoGenerateColumns="False" IsReadOnly="True" Background="White" RowHeaderWidth="0"  GridLinesVisibility="Vertical"  VerticalGridLinesBrush="#eeeeee">
+                        <DataGrid Grid.Row="1" x:Name="dgBrands" Style="{StaticResource ModernDataGrid}"
+                                   CanUserAddRows="False" HeadersVisibility="Column"
+                                  AutoGenerateColumns="False"
+                                  IsReadOnly="True"
+                                     GridLinesVisibility="Horizontal"
+                                     BorderThickness="0"
+                                     BorderBrush="#DDDDDD"
+                                     Background="White" RowHeight="44" FontSize="13">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="60"/>
-                                <DataGridTextColumn Header="Marca de Dispositivo / Accesorio" Binding="{Binding name}" Width="*"/>
-                                <DataGridTextColumn Header="Estado" Binding="{Binding status}" Width="*"/>
+                                <DataGridTextColumn Header="MARCA" Binding="{Binding name}" Width="*"/>
+                                <DataGridTemplateColumn Header="ESTADO"  Width="*">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,0,16,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                <Border x:Name="StockBadge" Style="{StaticResource BadgeBorderStyle}">
+                                                    <TextBlock x:Name="statusText" 
+                                                     Text="{Binding status}" 
+                                                     Style="{StaticResource BadgeTextStyle}"
+                                                     FontWeight="Bold"/>
+                                                </Border>
+                                            </Grid>
 
-                                <DataGridTemplateColumn Header="Acciones" Width="150">
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
+                                                    <Setter TargetName="StockBadge" Property="Background" Value="#FDEDEC"/>
+                                                    <Setter TargetName="statusText" Property="Foreground" Value="#C0392B"/>
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding status}" Value="Activo">
+                                                    <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
+                                                    <Setter TargetName="statusText" Property="Foreground" Value="#117A65"/>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                
+                                <DataGridTemplateColumn Header="ACCIONES" Width="150">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">

@@ -51,23 +51,46 @@
             </Button>
         </Grid>
 
-        <DataGrid x:Name="dgRoles" Grid.Row="2" AutoGenerateColumns="False" 
-                  CanUserAddRows="False" HeadersVisibility="Column"
-                  GridLinesVisibility="All"
-                  VerticalGridLinesBrush="#aaaaaa"
-                  HorizontalGridLinesBrush="#aaaaaa"
-                  BorderThickness="1"
-                  BorderBrush="#DDDDDD"
-                  Background="White" RowHeight="30" FontSize="14">
+        <DataGrid x:Name="dgRoles"  Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
+               CanUserAddRows="False" HeadersVisibility="Column"
+               GridLinesVisibility="Horizontal"
+                  IsReadOnly="True"
+               BorderThickness="0"
+               BorderBrush="#DDDDDD"
+               Background="White" RowHeight="44" FontSize="13">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
 
-                <DataGridTextColumn Header="Tipo de Rol" Binding="{Binding name}" Width="*"/>
-                
-                <DataGridTextColumn Header="Estado" Binding="{Binding status}" Width="180"/>
+                <DataGridTextColumn Header="TIPO DE ROL" Binding="{Binding name}" Width="*"/>
 
-                <DataGridTemplateColumn Header="Acciones" Width="150">
+                <DataGridTemplateColumn Header="ESTADO"  Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,16,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Border x:Name="StockBadge" Style="{StaticResource BadgeBorderStyle}">
+                                    <TextBlock x:Name="statusText" 
+                         Text="{Binding status}" 
+                         Style="{StaticResource BadgeTextStyle}"
+                         FontWeight="Bold"/>
+                                </Border>
+                            </Grid>
+
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
+                                    <Setter TargetName="StockBadge" Property="Background" Value="#FDEDEC"/>
+                                    <Setter TargetName="statusText" Property="Foreground" Value="#C0392B"/>
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding status}" Value="Activo">
+                                    <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
+                                    <Setter TargetName="statusText" Property="Foreground" Value="#117A65"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="ACCIONES" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

@@ -33,23 +33,6 @@ namespace WpfApp1.Views.Inventory
             LoadData();
         }
 
-        /// <summary>
-        /// Función que carga la lista de productos al Datagrid.
-        /// </summary>
-        //private async void LoadData()
-        //{
-        //    ServicesResult<List<ProductsDto>> productDto = await productsServices.listProducForGrid();
-        //    if (productDto.Success)
-        //    {
-        //        dgProducts.ItemsSource = productDto.Data;
-        //    }
-        //    else
-        //    {
-        //        dgProducts.ItemsSource = null;
-        //        MessageBox.Show(productDto.Message);
-        //    }
-        //}
-
         private async void LoadData()
         {
             // Nota: Lo ideal a futuro es que tu service acepte parámetros de paginación,

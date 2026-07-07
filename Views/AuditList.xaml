@@ -43,27 +43,46 @@
                      />
         </Grid>
 
-        <DataGrid x:Name="dgAudit" Grid.Row="2" AutoGenerateColumns="False" 
-                  CanUserAddRows="False" HeadersVisibility="Column"
-                  GridLinesVisibility="All"
-                  VerticalGridLinesBrush="#aaaaaa"
-                  HorizontalGridLinesBrush="#aaaaaa"
-                  BorderThickness="1"
-                  BorderBrush="#DDDDDD"
-                  Background="White" RowHeight="30" FontSize="14">
+        <DataGrid x:Name="dgAudit" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
+               CanUserAddRows="False" HeadersVisibility="Column"
+               GridLinesVisibility="Horizontal"
+               IsReadOnly="True"
+               BorderThickness="0"
+               BorderBrush="#DDDDDD"
+               Background="White" RowHeight="44" FontSize="13">
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="auto">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                            <Setter Property="Margin" Value="0,0,16,0"/>
+                            <Setter Property="FontFamily" Value="Consolas"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Fecha y Hora" Binding="{Binding DateCreate, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="150"/>
+                <DataGridTextColumn Header="FECHA Y HORA" Binding="{Binding DateCreate, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="170">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="0,0,16,0"/>
+                            <Setter Property="FontFamily" Value="Consolas"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Acción Realizada" Binding="{Binding Accion}" Width="auto"/>
+                <DataGridTextColumn Header="ACCION REALIZADA" Binding="{Binding Accion}" Width="auto"/>
                 
-                <DataGridTextColumn Header="Tabla Afectada" Binding="{Binding AffectedTable}" Width="150"/>
+                <DataGridTextColumn Header="TABLA AFECTADA" Binding="{Binding AffectedTable}" Width="150"/>
                 
-                <DataGridTextColumn Header="Detalles" Binding="{Binding Details}" Width="*"/>
+                <DataGridTextColumn Header="DETALLES" Binding="{Binding Details}" Width="*"/>
 
-                <DataGridTemplateColumn Header="Acciones" Width="80">
+                <DataGridTemplateColumn Header="ACCIONES" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">

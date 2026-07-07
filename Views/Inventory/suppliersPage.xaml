@@ -60,25 +60,24 @@
         </Grid>
 
         <DataGrid x:Name="dgSupplier" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
-               CanUserAddRows="False" HeadersVisibility="Column"
-               GridLinesVisibility="All"
-               VerticalGridLinesBrush="#aaaaaa"
-               HorizontalGridLinesBrush="#aaaaaa"
-               BorderThickness="1"
-               BorderBrush="#DDDDDD"
-               Background="White" RowHeight="30" FontSize="14">
+                CanUserAddRows="False" HeadersVisibility="Column"
+                 GridLinesVisibility="Horizontal"
+                  IsReadOnly="True"
+                 BorderThickness="0"
+                 BorderBrush="#DDDDDD"
+                 Background="White" RowHeight="44" FontSize="13">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
 
-                <DataGridTextColumn Header="Nombre del Proveedor" Binding="{Binding name}" Width="*"/>
+                <DataGridTextColumn Header="PROVEEDOR" Binding="{Binding name}" Width="auto"/>
 
-                <DataGridTextColumn Header="Telefono" Binding="{Binding phone}" Width="auto"/>
+                <DataGridTextColumn Header="TELEFONO" Binding="{Binding phone}" Width="auto"/>
 
-                <DataGridTextColumn Header="Email" Binding="{Binding email}" Width="150"/>
-                <DataGridTextColumn Header="Dirección" Binding="{Binding address}" Width="150"/>
+                <DataGridTextColumn Header="EMAIL" Binding="{Binding email}" Width="150"/>
+                <DataGridTextColumn Header="DIRECCION" Binding="{Binding address}" Width="*"/>
 
-                <DataGridTemplateColumn Header="Acciones" Width="150">
+                <DataGridTemplateColumn Header="ACCIONES" Width="150">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
