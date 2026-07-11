@@ -1,39 +1,38 @@
-﻿<Page x:Class="WpfApp1.Views.Inventory.PurchaseInvoiceListPage"
+﻿<Page x:Class="WpfApp1.Views.Sales.SalesInovoiceListPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:WpfApp1.Views.Inventory"
+      xmlns:local="clr-namespace:WpfApp1.Views.Sales"
       xmlns:fa5="http://schemas.fontawesome.com/icons/"
       xmlns:conv="clr-namespace:WpfApp1.Converters"
+      xmlns:controles="clr-namespace:WpfApp1"      
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="PurchaseInvoiceListPage">
+      Title="SalesInovoiceListPage">
 
     <Page.Resources>
-        <conv:BoolToTipoConverter x:Key="BoolToTipoConverter"/>
+        <conv:BoolToTipoConverter x:Key="BoolToClienteTipoConverter"/>
     </Page.Resources>
-    
     <Grid Background="#F1F5F9" Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- ENCABEZADO -->
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
-            <Button x:Name="BtnGoBack" 
-                     Click="BtnGoBack_Click" 
-                     DockPanel.Dock="Left" 
-                     Style="{StaticResource btnGoBackStyle}"
-                     Cursor="Hand">
+            <Button x:Name="BtnGoBack"
+                    Click="BtnGoBack_Click"
+                    DockPanel.Dock="Left"
+                    Style="{StaticResource btnGoBackStyle}"
+                    Cursor="Hand">
                 <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18"/>
             </Button>
 
             <StackPanel Margin="15,0,0,0">
-                <TextBlock Text="Facturas de Compra" FontSize="22" FontWeight="Bold" Foreground="#333"/>
-                <TextBlock Text="Consulta de facturas de compra registradas." Foreground="#777" FontSize="13"/>
+                <TextBlock Text="Facturas de ventas" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                <TextBlock Text="Consulta de facturas de ventas registradas." Foreground="#777" FontSize="13"/>
             </StackPanel>
         </DockPanel>
 
@@ -42,13 +41,14 @@
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
             </Border.Effect>
+
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1.4*"/>
                     <ColumnDefinition Width="1.4*"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Margin="0,0,12,0">
@@ -96,10 +96,10 @@
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Margin="0,0,12,0">
-                    <TextBlock Text="Proveedor" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <ComboBox x:Name="CboFiltroProveedor"
-                              DisplayMemberPath="name"
-                              SelectedValuePath="id"
+                    <TextBlock Text="Tipo de Fact." Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CboFilterTypeInvoice"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
                               Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
@@ -111,6 +111,7 @@
                 <Button Name="BtnBuscar" Grid.Column="4" Content="🔍 Buscar" Width="120" Height="38" VerticalAlignment="Bottom"
                         Background="#2563EB" Foreground="White" FontSize="13" FontWeight="SemiBold"
                         BorderThickness="0" Cursor="Hand" Margin="0,0,0,5" Click="BtnBuscar_Click"/>
+
             </Grid>
         </Border>
 
@@ -122,17 +123,16 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- LISTADO -->
             <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="4">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
                 </Border.Effect>
-                <DataGrid x:Name="DgFacturas"
+                <DataGrid x:Name="DgFacturasVentas"
                           Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
                           BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
                           HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
                           AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
-                          IsReadOnly="True" SelectionChanged="DgFacturas_SelectionChanged">
+                          IsReadOnly="True" SelectionChanged="DgFacturasVentas_SelectionChanged">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="Transparent"/>
@@ -146,16 +146,16 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="N° FACTURA" Binding="{Binding InvoiceNumber}" Width="*"/>
                         <DataGridTextColumn Header="FECHA" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="110"/>
-                        <DataGridTextColumn Header="PROVEEDOR / VENDEDOR" Binding="{Binding SupplierDisplay}" Width="*"/>
+                        <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerDisplay}" Width="*"/>
 
-                        <DataGridTemplateColumn Header="TIPO" Width="100">
+                        <DataGridTemplateColumn Header="TIPO" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border Background="{Binding IsFormal, Converter={StaticResource BoolToTipoConverter}, ConverterParameter=Background}"
-                                            CornerRadius="4" Padding="8,3" HorizontalAlignment="Left" Margin="0,0,0,0">
-                                        <TextBlock Text="{Binding IsFormal, Converter={StaticResource BoolToTipoConverter}}"
+                                    <Border Background="{Binding IsRegisteredCustomer, Converter={StaticResource BoolToClienteTipoConverter}, ConverterParameter=Background}"
+                                            CornerRadius="4" Padding="8,3" HorizontalAlignment="Left">
+                                        <TextBlock Text="{Binding IsRegisteredCustomer, Converter={StaticResource BoolToClienteTipoConverter}}"
                                                    FontSize="11" FontWeight="SemiBold"
-                                                   Foreground="{Binding IsFormal, Converter={StaticResource BoolToTipoConverter}, ConverterParameter=Foreground}"/>
+                                                   Foreground="{Binding IsRegisteredCustomer, Converter={StaticResource BoolToClienteTipoConverter}, ConverterParameter=Foreground}"/>
                                     </Border>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
@@ -182,10 +182,10 @@
                 </Border.Effect>
                 <Grid>
                     <TextBlock x:Name="TxtSinSeleccion"
-                               Text="Seleccione una factura para ver el detalle."
-                               Foreground="#94A3B8" FontSize="13"
-                               HorizontalAlignment="Center" VerticalAlignment="Center"
-                               TextWrapping="Wrap" TextAlignment="Center" MaxWidth="200"/>
+                       Text="Seleccione una factura para ver el detalle."
+                       Foreground="#94A3B8" FontSize="13"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       TextWrapping="Wrap" TextAlignment="Center" MaxWidth="200"/>
 
                     <ScrollViewer x:Name="PanelDetalle" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
@@ -194,12 +194,12 @@
 
                             <Border Background="#F8FAFC" CornerRadius="6" Padding="12" Margin="0,0,0,12">
                                 <StackPanel>
-                                    <TextBlock x:Name="TxtDetProveedor" FontWeight="SemiBold" Foreground="#334155" FontSize="14"/>
+                                    <TextBlock x:Name="TxtDetCliente" FontWeight="SemiBold" Foreground="#334155" FontSize="14"/>
                                     <TextBlock x:Name="TxtDetTipo" Foreground="#64748B" FontSize="12" Margin="0,2,0,0"/>
                                 </StackPanel>
                             </Border>
 
-                            <TextBlock Text="Productos ingresados" FontWeight="SemiBold" Foreground="#334155" FontSize="13" Margin="0,0,0,8"/>
+                            <TextBlock Text="Productos vendidos" FontWeight="SemiBold" Foreground="#334155" FontSize="13" Margin="0,0,0,8"/>
 
                             <DataGrid x:Name="DgDetalleLineas"
                                       Background="Transparent" RowBackground="Transparent"
@@ -227,7 +227,7 @@
                                             </Style>
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
-                                    <DataGridTextColumn Header="PRECIO" Binding="{Binding PurchasePrice, StringFormat={}{0:N2}}" Width="75">
+                                    <DataGridTextColumn Header="PRECIO" Binding="{Binding UnitPrice, StringFormat={}{0:N2}}" Width="75">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -251,9 +251,13 @@
                                 <TextBlock Text="Subtotal:" Foreground="#64748B" FontSize="13"/>
                                 <TextBlock x:Name="TxtDetSubtotal" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
                             </Grid>
+                            <Grid Margin="0,0,0,6">
+                                <TextBlock Text="Descuento:" Foreground="#64748B" FontSize="13"/>
+                                <TextBlock x:Name="TxtDetDescuento" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
+                            </Grid>
                             <Grid Margin="0,0,0,10">
-                                <TextBlock Text="Impuesto:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetImpuesto" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
+                                <TextBlock Text="Método de Pago:" Foreground="#64748B" FontSize="13"/>
+                                <TextBlock x:Name="TxtDetMetodoPago" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
                             </Grid>
                             <Grid>
                                 <TextBlock Text="TOTAL:" FontWeight="Bold" FontSize="14" Foreground="#1E293B"/>

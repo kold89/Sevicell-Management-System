@@ -65,7 +65,6 @@ namespace WpfApp1.Views.Inventory
 
         public bool ValidateFields()
         {
-            // Validar Nombre
             if (string.IsNullOrWhiteSpace(txtDescription.Text))
             {
                 MessageBox.Show("La justificación es obligatorio.", "Validación",
@@ -73,7 +72,6 @@ namespace WpfApp1.Views.Inventory
                 txtDescription.Focus();
                 return false;
             }
-            //Valida apellidos
             if (string.IsNullOrWhiteSpace(txtCant.Text))
             {
                 MessageBox.Show("Por favor, ingrese la cantidad.",
@@ -87,15 +85,9 @@ namespace WpfApp1.Views.Inventory
                         "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
-            //valida Usuario
             return true;
         }
 
-        public class movement
-        {
-            public int Id { get; set; }
-            public string Name { get; set; }
-        }
 
         private async void BtnSave_Click(object sender, RoutedEventArgs e)
         {
@@ -107,16 +99,18 @@ namespace WpfApp1.Views.Inventory
             movement.Motivo = txtDescription.Text;
             movement.EsIncremento = (int)cbType.SelectedValue == 1 ? true : false;
 
-
             var result = await serviceMovement.SaveMovement(movement);
-            if (result.Success)
+            if (!result.Success)
             {
-                MessageBox.Show("Movimiento registrado exitosamente.",
+                MessageBox.Show(result.Message,
                             "Información", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                this.DialogResult = true;
-                this.Close();
+                return;
             }
+
+            MessageBox.Show("Movimiento registrado exitosamente.",
+                        "Información", MessageBoxButton.OK, MessageBoxImage.Information);
+            this.DialogResult = true;
+            this.Close();
         }
     }
 }

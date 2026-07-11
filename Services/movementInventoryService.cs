@@ -83,6 +83,11 @@ namespace WpfApp1.Services
                     bool esEntrada = dto.EsIncremento;
                     int stockAnterior = product.Stock ?? 0;
 
+                    if (!esEntrada && stockAnterior == 0)
+                    {
+                        return ServicesResult<bool>.Fail("El ajuste no es posible ya que el stock es 0.");
+                    }
+
                     int stockNuevo = esEntrada
                         ? stockAnterior + dto.Cantidad
                         : stockAnterior - dto.Cantidad;

@@ -170,6 +170,14 @@ namespace WpfApp1
             if (diff.TotalMinutes < 60) return $"hace {(int)diff.TotalMinutes} min";
             if (diff.TotalHours < 24) return $"hace {(int)diff.TotalHours} h";
             return $"hace {(int)diff.TotalDays} días";
-        }    
+        }
+
+        private void BtnSales_Click(object sender, RoutedEventArgs e)
+        {
+            var confiCards = new WpfApp1.Views.Sales.MenuSalesInvoicePages();
+
+            MainFrame.Navigate(confiCards);
+        }
+
     }
 }

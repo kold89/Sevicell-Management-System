@@ -4,8 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1.Views.Inventory"
-        xmlns:controles="clr-namespace:WpfApp1"
         xmlns:fa5="http://schemas.fontawesome.com/icons/"
+        xmlns:controles="clr-namespace:WpfApp1"
+        
         mc:Ignorable="d"
         Background="#FBFBFF"
         WindowStartupLocation="CenterOwner"

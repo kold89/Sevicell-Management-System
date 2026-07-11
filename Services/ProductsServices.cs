@@ -68,7 +68,8 @@ namespace WpfApp1.Services
                         id = x.Id,
                         code = x.Code,
                         name = x.Name,
-                        salesPrice =  Convert.ToDouble(x.SalePrice)                        
+                        salesPrice =  Convert.ToDouble(x.SalePrice),
+                        stock = x.Stock ?? 0
                     }).ToListAsync();
 
                     return ServicesResult<List<ProductsDto>>.Ok(products, "Productos obtenidos exitosamente.");

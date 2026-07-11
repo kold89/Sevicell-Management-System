@@ -26,7 +26,7 @@
             <TextBlock Text="LOGO" Foreground="White"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"></TextBlock>
-            
+
         </Grid>
 
         <!-- 🔹 Menú lateral -->
@@ -49,7 +49,7 @@
             </RadioButton>
 
             <!-- Ventas -->
-            <RadioButton Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="BtnSales" Click="BtnSales_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
                             Icon="Solid_ShoppingCart"
@@ -135,7 +135,7 @@
             </RadioButton>
 
         </StackPanel>
-        
+
         <!-- 🔹 Barra superior -->
         <Grid Grid.Column="1" Grid.Row="0" Background="#1E1E1E">
             <DockPanel Margin="10">
@@ -276,9 +276,13 @@
 
         <!-- 🔹 Contenido dinámico -->
         <Grid Grid.Column="1" Grid.Row="1" Background="#F5F5F5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="478*"/>
+                <ColumnDefinition Width="73*"/>
+            </Grid.ColumnDefinitions>
             <Frame Name="MainFrame" 
            NavigationUIVisibility="Hidden" 
-           BorderThickness="0"/>
+           BorderThickness="0" Grid.ColumnSpan="2"/>
         </Grid>
     </Grid>
 </Window>

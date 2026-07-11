@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1.Views.Inventory"
+        xmlns:controles="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         Background="#F8F8F8"
@@ -22,13 +23,16 @@
                 </Grid.ColumnDefinitions>
                 
                 <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                    <TextBlock Text="Tipo de Ajuste:" FontWeight="SemiBold"/>
-                    <ComboBox Name="cbType"  SelectedValuePath="Tag" Padding="6">
+                    <TextBlock Text="Tipo de Ajuste:" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                    <ComboBox Name="cbType"  SelectedValuePath="Tag" Padding="8">
                     </ComboBox>
                 </StackPanel>
                 <StackPanel Grid.Column="1">
                     <TextBlock Text="Cantidad:" FontWeight="SemiBold"/>
-                    <TextBox Name="txtCant" Padding="5"/>
+                    <controles:IntTexBox x:Name="txtCant" 
+                                         Padding="5">                        
+                    </controles:IntTexBox>
+                    <!--<TextBox Name="txtCant" Padding="5"/>-->
                 </StackPanel>
             </Grid>
 

@@ -17,4 +17,10 @@ namespace WpfApp1.ViewModels
         public DateTime Fecha { get; set; }
 
     }
+
+    public class movement
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+    }
 }
