@@ -1,0 +1,266 @@
+﻿<Page x:Class="WpfApp1.Views.Sales.SalesInvoicePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp1.Views.Sales"
+      xmlns:controles="clr-namespace:WpfApp1"
+      xmlns:fa5="http://schemas.fontawesome.com/icons/"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="SalesInvoicePage">
+
+    <Grid Background="#F1F5F9" Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ENCABEZADO -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <DockPanel Grid.Column="0">
+                <Button x:Name="BtnGoBack" 
+                        Click="BtnGoBack_Click" 
+                        DockPanel.Dock="Left" 
+                        Style="{StaticResource btnGoBackStyle}"
+                        Cursor="Hand">
+                    <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18"/>
+                </Button>
+
+                <StackPanel Margin="15,0,0,0">
+                    <TextBlock Text="Registro de Venta" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                    <TextBlock Text="Venta de productos y accesorios a clientes." Foreground="#777" FontSize="13"/>
+                </StackPanel>
+            </DockPanel>
+
+            <Border Grid.Column="1" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="8" Padding="14,10">
+                <CheckBox x:Name="ChkClienteRegistrado" VerticalAlignment="Center" Cursor="Hand">
+                    <StackPanel Margin="8,-2,0,0">
+                        <TextBlock Text="Cliente Registrado" Foreground="#1E40AF" FontSize="13" FontWeight="SemiBold"/>
+                        <TextBlock Text="Habilitar para asociar la venta a un cliente" Foreground="#60A5FA" FontSize="11"/>
+                    </StackPanel>
+                </CheckBox>
+            </Border>
+        </Grid>
+
+        <!-- DATOS DE CABECERA -->
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="18" Margin="0,0,0,16">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- CLIENTE -->
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Text="Cliente" Foreground="#334155" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CboCliente"
+                              DisplayMemberPath="name"
+                              SelectedValuePath="id"
+                              Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"
+                              IsEnabled="False"/>
+                    <TextBlock x:Name="TxtClienteMostrador" Text="Venta de mostrador (sin cliente asociado)"
+                               Foreground="#94A3B8" FontSize="12" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <!-- METODO DE PAGO -->
+                <StackPanel Grid.Column="1" Margin="12,0,12,0">
+                    <TextBlock Text="Método de Pago" Foreground="#334155" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CboMetodoPago"
+                              DisplayMemberPath="name"
+                              SelectedValuePath="id"
+                              Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"/>
+                </StackPanel>
+
+                <!-- FECHA -->
+                <StackPanel Grid.Column="2" Margin="12,0,0,0">
+                    <TextBlock Text="Fecha de Venta" Foreground="#334155" FontSize="13" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <Border x:Name="BorderFecha" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseLeftButtonUp="BorderFecha_MouseLeftButtonUp">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TxtFechaSeleccionada" Grid.Column="0" Foreground="#1E293B" FontSize="14" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                            <fa5:SvgAwesome Grid.Column="1" Icon="Solid_CalendarAlt" Height="14" Foreground="#64748B" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+                    <Popup x:Name="PopupCalendario" PlacementTarget="{Binding ElementName=BorderFecha}" Placement="Bottom" StaysOpen="False" IsOpen="False">
+                        <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="4">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <Calendar x:Name="CalFechaVenta" SelectedDatesChanged="CalFechaVenta_SelectedDatesChanged"/>
+                        </Border>
+                    </Popup>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- AGREGAR PRODUCTO -->
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="18" Margin="0,0,0,16">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Text="Escriba descripción o escanee código de barras" Foreground="#475569" FontSize="12" Margin="0,0,0,6"/>
+                    <TextBox x:Name="TxtBuscarProducto" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" Foreground="#1E293B" FontSize="14" VerticalContentAlignment="Center" Padding="10,0" TextChanged="TxtBuscarProducto_TextChanged"/>
+
+                    <Popup x:Name="PopupSugerencias" PlacementTarget="{Binding ElementName=TxtBuscarProducto}"
+                        Placement="Bottom" Width="{Binding ActualWidth, ElementName=TxtBuscarProducto}"
+                        StaysOpen="False" IsOpen="False">
+                        <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
+                            </Border.Effect>
+                            <ListBox x:Name="LstSugerencias" MaxHeight="180" BorderThickness="0">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="Transparent" Padding="8,6" Cursor="Hand"
+                                                PreviewMouseLeftButtonUp="SugerenciaItem_MouseLeftButtonUp">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding code}" FontWeight="SemiBold" Foreground="Gray" Margin="0,0,8,0"/>
+                                                <TextBlock Text="{Binding name}" FontWeight="SemiBold"/>
+                                                <TextBlock Text="{Binding salesPrice, StringFormat=' - {0:C}'}" Foreground="Gray" Margin="8,0,0,0"/>
+                                                <TextBlock Text="{Binding stock, StringFormat=' (Stock: {0})'}" Foreground="#94A3B8" Margin="4,0,0,0"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Border>
+                    </Popup>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="0,0,12,0">
+                    <TextBlock Text="Cantidad" Foreground="#475569" FontSize="12" Margin="0,0,0,6"/>
+                    <controles:IntTexBox x:Name="TxtCant" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" Foreground="#1E293B" FontSize="14" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="1"></controles:IntTexBox>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Margin="0,0,12,0">
+                    <TextBlock Text="Precio Venta" Foreground="#475569" FontSize="12" Margin="0,0,0,6"/>
+                    <controles:PriceTexBox x:Name="TxtPrice" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" Foreground="#1E293B" FontSize="14" VerticalContentAlignment="Center" HorizontalContentAlignment="Right" Text="0.00"></controles:PriceTexBox>
+                </StackPanel>
+
+                <Button Grid.Column="3" Name="BtnAddProduct" Click="BtnAddProduct_Click" Content="＋ Agregar" Width="130" Height="38" VerticalAlignment="Bottom" Background="#2563EB" Foreground="White" FontSize="13" FontWeight="SemiBold" BorderThickness="0" Cursor="Hand" Margin="0,0,0,0"/>
+            </Grid>
+        </Border>
+
+        <!-- DETALLE -->
+        <Border Grid.Row="3" Background="White" CornerRadius="8" Padding="4">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
+            <DataGrid x:Name="DgSalesDetail" Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC" BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column" AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#64748B"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="12,12"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="CODIGO" Binding="{Binding Code}" Width="auto"/>
+                    <DataGridTextColumn Header="NOMBRE DE PRODUCTO" Binding="{Binding ProductNameVisual}" Width="*"/>
+                    <DataGridTextColumn Header="CANTIDAD" Binding="{Binding Quantity}" Width="100">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="Margin" Value="0,0,20,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="PRECIO VENTA" Binding="{Binding UnitPrice, StringFormat={}{0:N2}}" Width="140">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="Margin" Value="0,0,20,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="TOTAL LÍNEA" Binding="{Binding TotalItem, StringFormat={}{0:N2}}" Width="140">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="Foreground" Value="#2563EB"/>
+                                <Setter Property="Margin" Value="0,0,20,0"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button x:Name="BtnRemove" Width="25" Style="{StaticResource ActionButtonStyle}"
+                                            Height="30" Margin="5" Background="#FEF2F2" BorderBrush="Transparent"
+                                            Cursor="Hand" Click="BtnRemove_Click" CommandParameter="{Binding}"
+                                            ToolTip="Quitar de la lista">
+                                        <fa5:SvgAwesome Icon="Solid_Times" Height="14" Foreground="#DC2626"/>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- TOTALES Y ACCIONES -->
+        <Grid Grid.Row="4" Margin="0,16,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button x:Name="BtnCancelar" Content="Cancelar" Width="110" Height="42" Background="White" Foreground="#64748B" BorderBrush="#CBD5E1" BorderThickness="1" FontSize="13" FontWeight="SemiBold" Cursor="Hand" Margin="0,0,12,0" Click="BtnCancelar_Click"/>
+                <Button x:Name="BtnSaveInvoice" Content="💾 Guardar Venta" Width="180" Height="42" Background="#2563EB" Foreground="White" FontSize="13" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Click="BtnSaveInvoice_Click"/>
+            </StackPanel>
+
+            <Border Grid.Column="1" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="14" Width="260">
+                <StackPanel>
+                    <Grid Margin="0,0,0,6">
+                        <TextBlock Text="Subtotal:" Foreground="#64748B" FontSize="13"/>
+                        <TextBlock x:Name="txSubtotal" Text="0.00" Foreground="#1E293B" FontSize="14" FontWeight="SemiBold" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,6">
+                        <TextBlock Text="Descuento:" Foreground="#64748B" FontSize="13" VerticalAlignment="Center"/>
+                        <controles:PriceTexBox x:Name="TxtDescuento" Width="110" Height="30" HorizontalAlignment="Right"
+                                                Background="White" BorderBrush="#CBD5E1" FontSize="13" HorizontalContentAlignment="Right"
+                                                Text="0.00" TextChanged="TxtDescuento_TextChanged"/>
+                    </Grid>
+                    <Border BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Margin="0,2,0,6"/>
+                    <Grid>
+                        <TextBlock Text="TOTAL VENTA:" Foreground="#1E293B" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="txTotal" Text="0.00" Foreground="#2563EB" FontSize="20" FontWeight="Bold" HorizontalAlignment="Right"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
