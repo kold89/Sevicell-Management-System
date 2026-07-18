@@ -34,13 +34,34 @@ namespace WpfApp1
         {
             InitializeComponent();
             InitializeNotifications();
+            AppPermissionsMenu();
 
+            PermissionManager.PermisosActualizados += AppPermissionsMenu;
             this.WindowState = WindowState.Maximized;
 
             // 1. Mostrar el nombre del usuario logueado
             if (SessionManager.loggedInUser != null)
             {
                 LblUserName.Text = SessionManager.loggedInUser.Name;
+            }
+        }
+
+        private void AppPermissionsMenu()
+        {
+            var MapsModules = new Dictionary<RadioButton, string>
+            {
+                { BtnSales, "MODULE_SALES_VIEW" },
+                { BtnCredits, "MODULE_CREDITS_VIEW" },
+                { BtnInventory, "MODULE_INVENTORY_VIEW" },
+                { BtnReports, "MODULE_REPORTS_VIEW" },
+                { btnConfiguraciones, "MODULE_CONFIG_VIEW" },
+                { btnRepairs, "MODULE_REPAIRS_VIEW" },
+            };
+
+            foreach (var item in MapsModules)
+            {
+                item.Key.Visibility = PermissionManager.Puede(item.Value)
+                    ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 
@@ -157,9 +178,14 @@ namespace WpfApp1
 
             if (resultado == MessageBoxResult.Yes)
             {
-                // Abre tu ventana de login y cierra esta
-                // new Login().Show();
-                Application.Current.Shutdown();
+                
+                SessionManager.Logout();
+                PermissionManager.ClearPermission();
+
+                var loginWindow = new MainWindow(); 
+                loginWindow.Show();
+
+                this.Close();
             }
         }
 
@@ -179,5 +205,11 @@ namespace WpfApp1
             MainFrame.Navigate(confiCards);
         }
 
+        private void BtnCredits_Click(object sender, RoutedEventArgs e)
+        {
+            var confiCards = new WpfApp1.Views.Credit.CreditContracts();
+
+            MainFrame.Navigate(confiCards);
+        }
     }
 }

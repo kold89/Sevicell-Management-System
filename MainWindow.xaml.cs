@@ -27,7 +27,7 @@ namespace WpfApp1
 
         }
 
-        private void btnIngresar(object sender, RoutedEventArgs e)
+        private async void btnIngresar(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -52,6 +52,8 @@ namespace WpfApp1
                     if (loggedUser.Success)
                     {
                         SessionManager.loggedInUser = loggedUser.Data;
+                        int roleId = loggedUser.Data.RoleId ?? 0;
+                        await PermissionManager.LoadPermissionAsync(roleId);
                         main main = new main();
 
                         main.Show();

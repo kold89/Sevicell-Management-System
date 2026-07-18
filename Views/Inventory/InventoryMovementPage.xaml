@@ -44,9 +44,11 @@
 
         <!-- ROW 0: ENCABEZADO PRINCIPAL (Título y Subtítulo) -->
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
-            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" DockPanel.Dock="Left" 
-                Background="Transparent" BorderThickness="0" Cursor="Hand" VerticalAlignment="Center">
-                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18" Foreground="#2196F3"/>
+            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" 
+          Style="{StaticResource btnGoBackStyle}"
+          Cursor="Hand" 
+          Margin="0,0,15,0">
+                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
             </Button>
 
             <StackPanel Margin="15,0,0,0" VerticalAlignment="Center">

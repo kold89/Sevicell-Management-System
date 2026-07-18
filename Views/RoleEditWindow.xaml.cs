@@ -162,6 +162,8 @@ namespace WpfApp1.Views
             if (result.Success)
             {
                 MessageBox.Show("Datos guardados correctamente.", "SEVICELL");
+                await PermissionManager.LoadPermissionAsync(_rolExistente.Id);
+
                 this.DialogResult = true;
                 this.Close();
             }

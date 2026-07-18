@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfApp1.ViewModels
 {
-    class SalesInvoiceDetailsViewDTO
+    public class SalesInvoiceDetailsViewDTO
     {
         public int Id { get; set; }
         public string InvoiceNumber { get; set; }
@@ -32,10 +32,11 @@ namespace WpfApp1.ViewModels
         public bool IsRegisteredCustomer { get; set; }  // true = CustomerId tiene valor, false = venta de mostrador
         public decimal? TotalAmount { get; set; }
     }
-    public class custumerDTO { 
+    public class custumerDTO
+    {
         public int Id { get; set; }
-        public string Name {  get; set; }
-        public string Mail {  get; set; }
+        public string Name { get; set; }
+        public string Mail { get; set; }
         public string Phone { get; set; }
         public string Address { get; set; }
     }
@@ -45,7 +46,7 @@ namespace WpfApp1.ViewModels
     public class SalesInvoiceTypeDto
     {
         public int Id { get; set; }
-        public string  Name { get; set; }
+        public string Name { get; set; }
     }
     /// <summary>
     /// Filtros de búsqueda del listado de ventas.
@@ -55,6 +56,7 @@ namespace WpfApp1.ViewModels
         public DateTime? DateFrom { get; set; }
         public DateTime? DateTo { get; set; }
         public int? TypeFilter { get; set; } // 0/null = todos, 1 = registrado, 2 = mostrador
+        public int? PaymentMethodId { get; set; } // null = todos los tipos de venta
         public string? InvoiceNumber { get; set; }
     }
     /// <summary>
@@ -68,4 +70,25 @@ namespace WpfApp1.ViewModels
         public decimal UnitPrice { get; set; }
         public decimal TotalItem => Quantity * UnitPrice;
     }
+
+    /// <summary>
+    /// Fila del resumen de ventas agrupado por día (Nivel 1 del reporte diario).
+    /// </summary>
+    public class DailySalesSummaryDto
+    {
+        public DateTime Date { get; set; }
+        public int InvoiceCount { get; set; }
+        public decimal TotalAmount { get; set; }
+    }
+
+    /// <summary>
+    /// Métricas para las tarjetas superiores (total en efectivo, días con venta, promedio por día).
+    /// </summary>
+    public class SalesSummaryMetricsDto
+    {
+        public decimal CashTotal { get; set; }
+        public int DistinctDaysCount { get; set; }
+        public decimal AveragePerDay { get; set; }
+    }
+
 }

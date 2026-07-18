@@ -96,7 +96,7 @@ namespace WpfApp1.Services
             {
                 var data = new List<SalesInvoiceTypeDto>();
 
-                data.Add( new SalesInvoiceTypeDto{ Id = 0, Name = "--Seleccione un tipo--" });
+                data.Add( new SalesInvoiceTypeDto{ Id = 0, Name = "--Todos--" });
                 data.Add( new SalesInvoiceTypeDto{ Id = 1, Name = "Formal" });
                 data.Add( new SalesInvoiceTypeDto { Id = 2, Name = "Informal" });
 
@@ -107,7 +107,41 @@ namespace WpfApp1.Services
                 return ServicesResult<List<SalesInvoiceTypeDto>>.Fail("Error al obtener los datos.");
             }
         }
+        /// <summary>
+        /// Obtiene el listado de las ventas del dia seleccionado.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        //public async Task<ServicesResult<List<SalesInvoiceListDto>>> GetListSaleInvoiceAsync(SalesInvoiceFilterDto filter)
+        //{
+        //    try
+        //    {
+        //        var nextDayStart = filter.DateTo.Value.AddDays(1).AddTicks(-1);
+        //        var result = await _db.SalesInvoices.Include(x => x.Customer)
+        //            .Where(x => x.CreatedAt >= filter.DateFrom 
+        //        && x.CreatedAt < nextDayStart).
+        //        Select(x => new SalesInvoiceListDto
+        //        {
+        //            Id = x.Id,
+        //            InvoiceNumber = x.InvoiceNumber,
+        //            CustomerDisplay = x.Customer != null ? x.Customer.Name : "Cliente de mostrador",
+        //            CreatedAt =x.CreatedAt,
+        //            TotalAmount = x.TotalAmount,
+        //            IsRegisteredCustomer = x.CustomerId != null,
+        //        }).ToListAsync();
 
+        //        if (result.Count == 0)
+        //        {
+        //            return ServicesResult<List<SalesInvoiceListDto>>.Fail("Error no se encontraron ventas.");
+        //        }
+        //        return ServicesResult<List<SalesInvoiceListDto>>.Ok(result, "Listado obtenido correctamente.");
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ServicesResult<List<SalesInvoiceListDto>>.Fail("Error al obtener las ventas: " + ex.Message);
+        //    }
+        //}
         /// <summary>
         /// Obtiene el listado de ventas, aplicando los filtros recibidos.
         /// </summary>
@@ -116,23 +150,26 @@ namespace WpfApp1.Services
             try
             {
                 var query = _db.SalesInvoices
-                    .Include(x => x.Customer) // 👉 ajustar nombre de la propiedad de navegación si es distinto
+                    .Include(x => x.Customer) 
                     .AsQueryable();
 
                 if (filter.DateFrom.HasValue)
                     query = query.Where(x => x.CreatedAt >= filter.DateFrom.Value);
 
                 if (filter.DateTo.HasValue)
-                    query = query.Where(x => x.CreatedAt <= filter.DateTo.Value.AddDays(1).AddTicks(-1));
+                    query = query.Where(x => x.CreatedAt < filter.DateTo.Value.AddDays(1).AddTicks(-1));
 
                 if (filter.TypeFilter == 1)
                     query = query.Where(x => x.CustomerId != null);
                 else if (filter.TypeFilter == 2)
                     query = query.Where(x => x.CustomerId == null);
 
+                if (filter.PaymentMethodId.HasValue && filter.PaymentMethodId.Value > 0)
+                    query = query.Where(x => x.PaymentMethodId == filter.PaymentMethodId.Value);
+
                 if (!string.IsNullOrWhiteSpace(filter.InvoiceNumber))
                     query = query.Where(x => x.InvoiceNumber.Contains(filter.InvoiceNumber));
-
+                var sql = query.ToQueryString();
                 var result = await query
                     .OrderByDescending(x => x.CreatedAt)
                     .Select(x => new SalesInvoiceListDto
@@ -197,6 +234,130 @@ namespace WpfApp1.Services
             catch (Exception ex)
             {
                 return ServicesResult<SalesInvoiceDetailsViewDTO>.Fail("Error al obtener el detalle: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Nivel 1: resumen de ventas agrupado por día.
+        /// </summary>
+        public async Task<ServicesResult<List<DailySalesSummaryDto>>> GetDailySalesSummaryAsync(DateTime? dateFrom, DateTime? dateTo, int? paymentMethodId = null)
+        {
+            try
+            {
+                var query = _db.SalesInvoices.AsQueryable();
+
+                if (dateFrom.HasValue)
+                    query = query.Where(x => x.CreatedAt >= dateFrom.Value);
+
+                if (dateTo.HasValue)
+                    query = query.Where(x => x.CreatedAt <= dateTo.Value.AddDays(1).AddTicks(-1));
+
+                if (paymentMethodId.HasValue && paymentMethodId.Value > 0)
+                    query = query.Where(x => x.PaymentMethodId == paymentMethodId.Value);
+                var sql = query.ToQueryString();
+                var result = await query
+                    .GroupBy(x => x.CreatedAt!.Value.Date)
+                    .Select(g => new DailySalesSummaryDto
+                    {
+                        Date = g.Key,
+                        InvoiceCount = g.Count(),
+                        TotalAmount = g.Sum(x => x.TotalAmount) ?? 0
+                    })
+                    .OrderByDescending(x => x.Date)
+                    .ToListAsync();
+
+                return ServicesResult<List<DailySalesSummaryDto>>.Ok(result, "Resumen obtenido correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<List<DailySalesSummaryDto>>.Fail("Error al obtener el resumen: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Nivel 2: facturas de un día específico.
+        /// </summary>
+        public async Task<ServicesResult<List<SalesInvoiceListDto>>> GetInvoicesByDayAsync(DateTime day, int? paymentMethodId = null)
+        {
+            var filter = new SalesInvoiceFilterDto
+            {
+                DateFrom = day.Date,
+                DateTo = day.Date,
+                PaymentMethodId = paymentMethodId,
+            };
+
+            return await GetInvoicesAsync(filter);
+        }
+
+        /// <summary>
+        /// Métricas de resumen para las tarjetas superiores: total en efectivo,
+        /// días distintos con venta, y promedio de venta por día.
+        /// </summary>
+        public async Task<ServicesResult<SalesSummaryMetricsDto>> GetSalesSummaryMetricsAsync(DateTime? dateFrom, DateTime? dateTo, int? paymentMethodId = null)
+        {
+            try
+            {
+                var query = _db.SalesInvoices
+                    .Include(x => x.PaymentMethod) 
+                    .AsQueryable();
+
+                if (dateFrom.HasValue)
+                    query = query.Where(x => x.CreatedAt >= dateFrom.Value);
+
+                if (dateTo.HasValue)
+                    query = query.Where(x => x.CreatedAt <= dateTo.Value.AddDays(1).AddTicks(-1));
+
+                if (paymentMethodId.HasValue && paymentMethodId.Value > 0)
+                    query = query.Where(x => x.PaymentMethodId == paymentMethodId.Value);
+
+                var invoices = await query.ToListAsync();
+
+                decimal? cashTotal = invoices
+                    .Where(x => paymentMethodId == 0 ||
+                               (x.PaymentMethod != null && x.PaymentMethod.Id == paymentMethodId))
+                    .Sum(x => x.TotalAmount);
+
+                int distinctDays = invoices.Select(x => x.CreatedAt!.Value.Date).Distinct().Count();
+
+                decimal? totalGeneral = invoices.Sum(x => x.TotalAmount);
+                decimal? averagePerDay = distinctDays > 0 ? totalGeneral / distinctDays : 0;
+
+                var dto = new SalesSummaryMetricsDto
+                {
+                    CashTotal = cashTotal ?? 0,
+                    DistinctDaysCount = distinctDays,
+                    AveragePerDay = averagePerDay ?? 0
+                };
+
+                return ServicesResult<SalesSummaryMetricsDto>.Ok(dto, "Métricas obtenidas correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<SalesSummaryMetricsDto>.Fail("Error al obtener las métricas: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Años disponibles (con al menos una venta), para llenar el filtro de Año.
+        /// </summary>
+        public async Task<ServicesResult<List<int>>> GetAvailableYearsAsync()
+        {
+            try
+            {
+                var years = await _db.SalesInvoices
+                    .Select(x => x.CreatedAt!.Value.Year)
+                    .Distinct()
+                    .OrderByDescending(y => y)
+                    .ToListAsync();
+
+                if (years.Count == 0)
+                    years.Add(DateTime.Today.Year);
+
+                return ServicesResult<List<int>>.Ok(years, "Años obtenidos correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<List<int>>.Fail("Error al obtener los años: " + ex.Message);
             }
         }
     }

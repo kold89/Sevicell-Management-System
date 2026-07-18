@@ -63,7 +63,21 @@
                        FontFamily="Segoe UI Semibold"/>
                 </StackPanel>
             </RadioButton>
+            <!-- Contratos -->
+            <RadioButton x:Name="BtnCredits" Click="BtnCredits_Click"  Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
+                Icon="Solid_FileContract"
+                Height="16"
+                Margin="0,0,15,0"/>
 
+                    <TextBlock Style="{StaticResource MenuTextStyle}"
+           Text="Creditos"
+           VerticalAlignment="Center"
+           FontSize="14"
+           FontFamily="Segoe UI Semibold"/>
+                </StackPanel>
+            </RadioButton>
             <!-- Reparaciones -->
             <RadioButton x:Name="btnRepairs"
                  Click="btnRepairs_Click"
@@ -101,7 +115,7 @@
             </RadioButton>
 
             <!-- Reportes -->
-            <RadioButton Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="BtnReports" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
                             Icon="Solid_ChartBar"

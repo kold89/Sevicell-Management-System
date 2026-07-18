@@ -12,27 +12,28 @@
 
     <Grid Background="#F1F5F9" Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
             <Button x:Name="BtnGoBack"
-              Click="BtnGoBack_Click"
-              DockPanel.Dock="Left"
-              Style="{StaticResource btnGoBackStyle}"
-              Cursor="Hand">
+                    Click="BtnGoBack_Click"
+                    DockPanel.Dock="Left"
+                    Style="{StaticResource btnGoBackStyle}"
+                    Cursor="Hand">
                 <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18"/>
             </Button>
 
             <StackPanel Margin="15,0,0,0">
-                <TextBlock Text="Detalles de ventas" FontSize="22" FontWeight="Bold" Foreground="#333"/>
-                <TextBlock Text="Ventas registradas." Foreground="#777" FontSize="13"/>
+                <TextBlock Text="Ventas por Día" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                <TextBlock Text="Histórico de ventas agrupado por fecha." Foreground="#777" FontSize="13"/>
             </StackPanel>
         </DockPanel>
-        <!--tarjetas de datos-->
+
+        <!-- TARJETAS DE MÉTRICAS -->
         <Grid Grid.Row="1" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.4*"/>
@@ -41,125 +42,99 @@
                 <ColumnDefinition Width="30"/>
                 <ColumnDefinition Width="1.4*"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="15">
+
+            <Border Grid.Column="0" Background="#f6fff8" CornerRadius="8" Padding="15" >
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
                 </Border.Effect>
                 <StackPanel VerticalAlignment="Center" Margin="30,5">
-                    <TextBlock FontSize="15" Text="Total en efectivo" ></TextBlock>
-                    <TextBlock FontSize="22" FontFamily="Segoe UI Semibold" Text="L. 28,950.00" Margin="0,2,0,0"></TextBlock>
+                    <TextBlock Foreground="#0077b6" FontWeight="SemiBold" FontSize="15" Text="Total en Ventas"/>
+                    <TextBlock Foreground="#03045e" x:Name="TxtTotalEfectivo" FontSize="22" FontFamily="Segoe UI Semibold" Text="L. 0.00" Margin="5,2,0,0"/>
                 </StackPanel>
             </Border>
-            <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15" >
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
-                </Border.Effect>
-                <StackPanel VerticalAlignment="Center" Margin="30,5" >
-                    <TextBlock FontSize="15" Text="Dias con Ventas"></TextBlock>
-                    <TextBlock FontSize="22" FontFamily="Segoe UI Semibold" Text="15" Margin="0,2,0,0"></TextBlock>
-                </StackPanel>
-            </Border>
-            <Border Grid.Column="4" Background="White" CornerRadius="8" Padding="15">
+
+            <Border Grid.Column="2" Background="#f6fff8" CornerRadius="8" Padding="15">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
                 </Border.Effect>
                 <StackPanel VerticalAlignment="Center" Margin="30,5">
-                    <TextBlock FontSize="15" Text="Promedio por día"></TextBlock>
-                    <TextBlock FontSize="22" FontFamily="Segoe UI Semibold" Text="L. 28,950.00" Margin="0,2,0,0"></TextBlock>
+                    <TextBlock Foreground="#0077b6" FontWeight="SemiBold" FontSize="15" Text="Dias con Venta"/>
+                    <TextBlock Foreground="#fb8500" x:Name="TxtDiasConVentas" FontSize="22" FontFamily="Segoe UI Semibold" Text="0" Margin="0,2,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="4" Background="#f6fff8" CornerRadius="8" Padding="15">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+                </Border.Effect>
+                <StackPanel VerticalAlignment="Center" Margin="30,5">
+                    <TextBlock Foreground="#0077b6" FontWeight="SemiBold" FontSize="15" Text="Promedio por día"/>
+                    <TextBlock Foreground="#3c6e71"  x:Name="TxtPromedioPorDia" FontSize="22" FontFamily="Segoe UI Semibold" Text="L. 0.00" Margin="0,2,0,0"/>
                 </StackPanel>
             </Border>
         </Grid>
-        <!-- FILTROS -->
+
+        <!-- FILTRO AÑO / MES -->
         <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="18" Margin="0,0,0,16">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
             </Border.Effect>
-
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.4*"/>
-                    <ColumnDefinition Width="1.4*"/>
                     <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1.2*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0" Margin="0,0,12,0">
-                    <TextBlock Text="Fecha Desde" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <Border x:Name="BorderFechaDesde" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseLeftButtonUp="BorderFechaDesde_MouseLeftButtonUp">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="TxtFechaDesdeSeleccionada" Grid.Column="0" Text="Todas" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                            <fa5:SvgAwesome Grid.Column="1" Icon="Solid_CalendarAlt" Height="14" Foreground="#64748B" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        </Grid>
-                    </Border>
-                    <Popup x:Name="PopupCalendarioDesde" PlacementTarget="{Binding ElementName=BorderFechaDesde}" Placement="Bottom" StaysOpen="False" IsOpen="False">
-                        <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="4">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
-                            </Border.Effect>
-                            <Calendar x:Name="CalFechaDesde" SelectedDatesChanged="CalFechaDesde_SelectedDatesChanged"/>
-                        </Border>
-                    </Popup>
+                    <TextBlock Text="Año" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CboAnio"
+                              Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Margin="0,0,12,0">
-                    <TextBlock Text="Fecha Hasta" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <Border x:Name="BorderFechaHasta" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" MouseLeftButtonUp="BorderFechaHasta_MouseLeftButtonUp">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock x:Name="TxtFechaHastaSeleccionada" Grid.Column="0" Text="Todas" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                            <fa5:SvgAwesome Grid.Column="1" Icon="Solid_CalendarAlt" Height="14" Foreground="#64748B" Margin="0,0,10,0" VerticalAlignment="Center"/>
-                        </Grid>
-                    </Border>
-                    <Popup x:Name="PopupCalendarioHasta" PlacementTarget="{Binding ElementName=BorderFechaHasta}" Placement="Bottom" StaysOpen="False" IsOpen="False">
-                        <Border Background="White" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="6" Padding="4">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
-                            </Border.Effect>
-                            <Calendar x:Name="CalFechaHasta" SelectedDatesChanged="CalFechaHasta_SelectedDatesChanged"/>
-                        </Border>
-                    </Popup>
+                    <TextBlock Text="Mes" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CboMes"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2" Margin="0,0,12,0">
-                    <TextBlock Text="Año." Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <ComboBox x:Name="CboFilterTypeInvoice"
-                      DisplayMemberPath="Name"
-                      SelectedValuePath="Id"
-                      Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"/>
+                    <TextBlock Text="Tipo de Venta" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <ComboBox x:Name="CboTipoVenta"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"/>
                 </StackPanel>
-
-                <Button Name="BtnSearch" Grid.Column="3" Content="🔍 Buscar" Width="120" Height="38" VerticalAlignment="Bottom"
-                Background="#2563EB" Foreground="White" FontSize="13" FontWeight="SemiBold"
-                BorderThickness="0" Cursor="Hand" Margin="0,0,12,0" Click="BtnSearch_Click"/>
-
+                
+                <Button Grid.Column="3" Name="BtnBuscar" Content="🔍 Buscar" Width="120" Height="38" VerticalAlignment="Bottom"
+                        Background="#2563EB" Foreground="White" FontSize="13" FontWeight="SemiBold"
+                        BorderThickness="0" Cursor="Hand" Click="BtnBuscar_Click"/>
             </Grid>
         </Border>
 
-        <!-- LISTADO + DETALLE -->
+        <!-- NIVEL 1 (izquierda) + NIVEL 2 (derecha) -->
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="1.3*"/>
+                <ColumnDefinition Width="1.6*"/>
             </Grid.ColumnDefinitions>
 
+            <!-- NIVEL 1: LISTA DE DÍAS -->
             <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="4">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
                 </Border.Effect>
-                <DataGrid x:Name="DgDays"
-                  Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
-                  BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
-                  HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
-                  AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
-                  IsReadOnly="True" SelectionChanged="DgDays_SelectionChanged">
+                <DataGrid x:Name="DgDias"
+                          Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
+                          BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                          AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="46"
+                          IsReadOnly="True" SelectionChanged="DgDias_SelectionChanged">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
                             <Setter Property="Background" Value="Transparent"/>
@@ -171,10 +146,15 @@
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="N°" Binding="{Binding InvoiceNumber}" Width="auto"/>
-                        <DataGridTextColumn Header="FECHA" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="120"/>
-                        <DataGridTextColumn Header="VENTAS" Binding="{Binding CustomerDisplay}" Width="*"/>
-
+                        <DataGridTextColumn Header="FECHA" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" Width="*"/>
+                        <DataGridTextColumn Header="VENTAS" Binding="{Binding InvoiceCount}" Width="80">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="Margin" Value="0,0,15,0"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTextColumn Header="TOTAL" Binding="{Binding TotalAmount, StringFormat={}{0:N2}}" Width="120">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
@@ -189,71 +169,60 @@
                 </DataGrid>
             </Border>
 
-            <!-- PANEL DE DETALLE -->
-            <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="18">
+            <!-- NIVEL 2: FACTURAS DEL DÍA SELECCIONADO -->
+            <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="4">
                 <Border.Effect>
                     <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
                 </Border.Effect>
                 <Grid>
                     <TextBlock x:Name="TxtSinSeleccion"
-               Text="Seleccione el registro del dia para ver el detalle."
-               Foreground="#94A3B8" FontSize="13"
-               HorizontalAlignment="Center" VerticalAlignment="Center"
-               TextWrapping="Wrap" TextAlignment="Center" MaxWidth="200"/>
+                       Text="Seleccione un día para ver sus facturas."
+                       Foreground="#94A3B8" FontSize="13"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
 
-                    <ScrollViewer x:Name="PanelDetalle" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            <TextBlock x:Name="TxtDetInvoiceNumber" FontSize="18" FontWeight="Bold" Foreground="#1E293B"/>
-                            <TextBlock x:Name="TxtDetFecha" Foreground="#64748B" FontSize="12" Margin="0,2,0,12"/>
-
-                            <Border Background="#F8FAFC" CornerRadius="6" Padding="12" Margin="0,0,0,12">
-                                <StackPanel>
-                                    <TextBlock x:Name="TxtDetCliente" FontWeight="SemiBold" Foreground="#334155" FontSize="14"/>
-                                    <TextBlock x:Name="TxtDetTipo" Foreground="#64748B" FontSize="12" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Border>
-
-                            <TextBlock Text="Productos vendidos" FontWeight="SemiBold" Foreground="#334155" FontSize="13" Margin="0,0,0,8"/>
-
-                            <DataGrid x:Name="DgDetalleLineas"
-                              Background="Transparent" RowBackground="Transparent"
-                              BorderThickness="0" Foreground="#1E293B"
-                              GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0"
-                              HeadersVisibility="Column" IsReadOnly="True"
-                              AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="34"
-                              MaxHeight="260" Margin="0,0,0,14">
-                                <DataGrid.ColumnHeaderStyle>
-                                    <Style TargetType="DataGridColumnHeader">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#64748B"/>
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Setter Property="Padding" Value="4,8"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                    <DataGrid x:Name="DgFacturasDelDia" Visibility="Collapsed"
+                              Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
+                              BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                              AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
+                              IsReadOnly="True">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="#64748B"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="12,12"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="N° FACTURA" Binding="{Binding InvoiceNumber}" Width="*"/>
+                            <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerDisplay}" Width="*"/>
+                            <DataGridTextColumn Header="TOTAL" Binding="{Binding TotalAmount, StringFormat={}{0:N2}}" Width="110">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="Foreground" Value="#2563EB"/>
+                                        <Setter Property="Margin" Value="0,0,15,0"/>
                                     </Style>
-                                </DataGrid.ColumnHeaderStyle>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="No. FACTURA" Binding="{Binding ProductName}" Width="*"/>
-                                    <DataGridTextColumn Header="CLIENTE." Binding="{Binding Quantity}" Width="50">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="TOTAL" Binding="{Binding UnitPrice, StringFormat={}{0:N2}}" Width="75">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                </DataGrid.Columns>
-                            </DataGrid>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
 
-                            <Border BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Margin="0,0,0,12"/>
-                        </StackPanel>
-                    </ScrollViewer>
+                            <!-- NIVEL 3: BOTÓN QUE ABRE LA VENTANA MODAL -->
+                            <DataGridTemplateColumn Header="ACCIONES" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Detalles" Width="90" Height="28"
+                                                Background="#EFF6FF" Foreground="#1E40AF" BorderBrush="Transparent"
+                                                FontSize="12" FontWeight="SemiBold" Cursor="Hand"
+                                                Click="BtnDetalles_Click" CommandParameter="{Binding}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </Grid>
             </Border>
         </Grid>

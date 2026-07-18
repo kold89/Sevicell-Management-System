@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
-            <Button x:Name="btnBack" Click="btnBack_Click" Background="Transparent" BorderThickness="0"
+            <Button x:Name="btnBack" Click="btnBack_Click" 
                     Style="{StaticResource btnGoBackStyle}"
                     Cursor="Hand" 
                     Margin="0,0,15,0">

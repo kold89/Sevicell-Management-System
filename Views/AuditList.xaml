@@ -20,8 +20,7 @@
         <DockPanel Grid.Row="0" Margin="0,0,0,20">
             <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" 
                     Style="{StaticResource btnGoBackStyle}"
-                    DockPanel.Dock="Left" 
-             Background="Transparent" BorderThickness="0" Cursor="Hand">
+                    DockPanel.Dock="Left"  Cursor="Hand">
                 <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
             </Button>
 

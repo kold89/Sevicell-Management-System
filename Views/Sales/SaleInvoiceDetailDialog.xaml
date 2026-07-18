@@ -1,0 +1,106 @@
+﻿<Window x:Class="WpfApp1.Views.Sales.SaleInvoiceDetailDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1.Views.Sales"
+        mc:Ignorable="d"
+        
+        Title="SaleInvoiceDetailDialog" Height="560" Width="440"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="#F1F5F9">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="18">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock x:Name="TxtDetInvoiceNumber" FontSize="18" FontWeight="Bold" Foreground="#1E293B"/>
+                    <TextBlock x:Name="TxtDetFecha" Foreground="#64748B" FontSize="12" Margin="0,2,0,12"/>
+
+                    <Border Background="#F8FAFC" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                        <StackPanel>
+                            <TextBlock x:Name="TxtDetCliente" FontWeight="SemiBold" Foreground="#334155" FontSize="14"/>
+                            <TextBlock x:Name="TxtDetTipo" Foreground="#64748B" FontSize="12" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="Productos vendidos" FontWeight="SemiBold" Foreground="#334155" FontSize="13" Margin="0,0,0,8"/>
+
+                    <DataGrid x:Name="DgDetalleLineas"
+                              Background="Transparent" RowBackground="Transparent"
+                              BorderThickness="0" Foreground="#1E293B"
+                              GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0"
+                              HeadersVisibility="Column" IsReadOnly="True"
+                              AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="34"
+                              MaxHeight="220" Margin="0,0,0,14">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="#64748B"/>
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Padding" Value="4,8"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="*"/>
+                            <DataGridTextColumn Header="CANT." Binding="{Binding Quantity}" Width="50">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="PRECIO" Binding="{Binding UnitPrice, StringFormat={}{0:N2}}" Width="75">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn Header="TOTAL" Binding="{Binding TotalItem, StringFormat={}{0:N2}}" Width="85">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <Border BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Margin="0,0,0,12"/>
+
+                    <Grid Margin="0,0,0,6">
+                        <TextBlock Text="Subtotal:" Foreground="#64748B" FontSize="13"/>
+                        <TextBlock x:Name="TxtDetSubtotal" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,6">
+                        <TextBlock Text="Descuento:" Foreground="#64748B" FontSize="13"/>
+                        <TextBlock x:Name="TxtDetDescuento" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,10">
+                        <TextBlock Text="Método de Pago:" Foreground="#64748B" FontSize="13"/>
+                        <TextBlock x:Name="TxtDetMetodoPago" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
+                    </Grid>
+                    <Grid>
+                        <TextBlock Text="TOTAL:" FontWeight="Bold" FontSize="14" Foreground="#1E293B"/>
+                        <TextBlock x:Name="TxtDetTotal" FontWeight="Bold" FontSize="18" Foreground="#2563EB" HorizontalAlignment="Right"/>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Button Grid.Row="1" Content="Cerrar" Width="120" Height="38" HorizontalAlignment="Right" Margin="0,14,0,0"
+                Background="White" Foreground="#64748B" BorderBrush="#CBD5E1" BorderThickness="1"
+                FontSize="13" FontWeight="SemiBold" Cursor="Hand" Click="BtnCerrar_Click"/>
+    </Grid>
+</Window>

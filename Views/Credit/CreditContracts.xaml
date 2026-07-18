@@ -32,24 +32,6 @@
                 <TextBlock Text="Ventas de teléfonos a plazos"
                            Foreground="#777" FontSize="13"/>
             </StackPanel>
-            <Button DockPanel.Dock="Right"
-                    VerticalAlignment="Center"
-                    Background="#2196F3"
-                    BorderThickness="0"
-                    Cursor="Hand"
-                    Padding="15,8">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5"/>
-                    </Style>
-                </Button.Resources>
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Icon="Solid_Plus" Height="14"
-                                    Foreground="White" Margin="0,0,8,0"/>
-                    <TextBlock Text="Nuevo contrato"
-                               Foreground="White" FontWeight="Bold"/>
-                </StackPanel>
-            </Button>
         </DockPanel>
 
         <!-- Métricas -->
@@ -62,7 +44,7 @@
             </Grid.ColumnDefinitions>
 
             <!-- Contratos activos -->
-            <Border Grid.Column="0" Background="White"
+            <Border Grid.Column="0" Background="#f6fff8"
                     BorderBrush="#EEEEEE" BorderThickness="1"
                     CornerRadius="8" Padding="16" Margin="0,0,10,0">
                 <StackPanel>
@@ -83,7 +65,7 @@
             </Border>
 
             <!-- Por cobrar -->
-            <Border Grid.Column="1" Background="White"
+            <Border Grid.Column="1" Background="#f6fff8"
                     BorderBrush="#EEEEEE" BorderThickness="1"
                     CornerRadius="8" Padding="16" Margin="5,0,5,0">
                 <StackPanel>
@@ -104,7 +86,7 @@
             </Border>
 
             <!-- Cuotas vencidas -->
-            <Border Grid.Column="2" Background="White"
+            <Border Grid.Column="2" Background="#f6fff8"
                     BorderBrush="#EEEEEE" BorderThickness="1"
                     CornerRadius="8" Padding="16" Margin="5,0,5,0">
                 <StackPanel>
@@ -125,7 +107,7 @@
             </Border>
 
             <!-- Vencen esta semana -->
-            <Border Grid.Column="3" Background="White"
+            <Border Grid.Column="3" Background="#f6fff8"
                     BorderBrush="#EEEEEE" BorderThickness="1"
                     CornerRadius="8" Padding="16" Margin="10,0,0,0">
                 <StackPanel>
@@ -155,6 +137,27 @@
             <TextBox Grid.Column="0"
                      Style="{StaticResource SearchTextBoxStyle}"
                      x:Name="TxtSearch"/>
+            <Button Grid.Column="1"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    Background="#2196F3"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Padding="15,8"
+                    Width="150">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Icon="Solid_Plus" Height="14"
+                                    Foreground="White" Margin="0,0,8,0"/>
+                    <TextBlock Text="Nuevo contrato"
+                               Foreground="White" FontWeight="Bold"/>
+                </StackPanel>
+            </Button>
+
         </Grid>
 
         <!-- DataGrid -->
