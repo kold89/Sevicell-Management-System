@@ -40,7 +40,7 @@
             </Setter>
         </Style>
         
-        <Style x:Key="CardButtonStyle" TargetType="Button">
+        <!--<Style x:Key="CardButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Height" Value="180"/>
             <Setter Property="Margin" Value="10"/>
@@ -58,8 +58,95 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
+        </Style>-->
+        <Style x:Key="CardButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Height" Value="180"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="CardBorder" Background="{TemplateBinding Background}" CornerRadius="12">
+                            <Border.Effect>
+                                <DropShadowEffect x:Name="CardShadow" BlurRadius="15" ShadowDepth="2" Opacity="0.1"/>
+                            </Border.Effect>
+                            <Grid>
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <!-- capa negra semitransparente para el efecto de "presionado" -->
+                                <Border x:Name="PressOverlay" CornerRadius="12" Background="Black" Opacity="0"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
 
+                            <!-- HOVER: escala y sombra más marcada -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleX)"
+                                                      To="1.04" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleY)"
+                                                      To="1.04" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardShadow" Storyboard.TargetProperty="Opacity"
+                                                      To="0.18" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleX)"
+                                                      To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleY)"
+                                                      To="1" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="CardShadow" Storyboard.TargetProperty="Opacity"
+                                                      To="0.1" Duration="0:0:0.15"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                            <!-- PRESSED: oscurece ligeramente y se "hunde" un poco -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PressOverlay" Storyboard.TargetProperty="Opacity"
+                                                      To="0.08" Duration="0:0:0.08"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleX)"
+                                                      To="0.98" Duration="0:0:0.08"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleY)"
+                                                      To="0.98" Duration="0:0:0.08"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="PressOverlay" Storyboard.TargetProperty="Opacity"
+                                                      To="0" Duration="0:0:0.1"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleX)"
+                                                      To="1.04" Duration="0:0:0.1"/>
+                                            <DoubleAnimation Storyboard.TargetProperty="(Button.RenderTransform).(ScaleTransform.ScaleY)"
+                                                      To="1.04" Duration="0:0:0.1"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <DropShadowEffect x:Key="ShadowEffect" 
                   BlurRadius="12" 
                   ShadowDepth="3" 

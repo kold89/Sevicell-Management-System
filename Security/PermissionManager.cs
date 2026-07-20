@@ -5,9 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfApp1.Data;
+using WpfApp1.Services;
 
 namespace WpfApp1.Security
 {
+    /// <summary>
+    /// Clase encargada de manejar los permisos activos del usuario logueado.
+    /// </summary>
     public class PermissionManager
     {
         private static HashSet<string> _permisos = new();
@@ -24,7 +28,11 @@ namespace WpfApp1.Security
             _permisos = new HashSet<string>(codes);
             PermisosActualizados?.Invoke();
         }
-
+        /// <summary>
+        /// Valida si el usuario tiene asignado dicho permiso.
+        /// </summary>
+        /// <param name="permissionCode"></param>
+        /// <returns></returns>
         public static bool Puede(string permissionCode)
         {
             return _permisos.Contains(permissionCode);
@@ -34,5 +42,23 @@ namespace WpfApp1.Security
         {
             _permisos = new HashSet<string>();
         }
+
+        protected ServicesResult<T>? ValidarPermiso<T>(string permissionCode)
+        {
+            if (!PermissionManager.Puede(permissionCode))
+                return ServicesResult<T>.Fail("No tiene permisos para realizar esta acción.");
+
+            return null; 
+        }
+        /*
+         * FORMA DE USO DE VALIDAR PERMISO.
+         * public async Task<ServicesResult<bool>> SaveInvoiceAsync(...)
+        {
+            var permisoError = ValidarPermiso<bool>("PURCHASES_CREATE");
+            if (permisoError != null) return permisoError;
+
+            using var transaction = await _db.Database.BeginTransactionAsync();
+            // ... tu lógica existente, sin cambios
+        }*/
     }
 }

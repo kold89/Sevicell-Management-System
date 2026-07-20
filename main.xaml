@@ -296,7 +296,8 @@
             </Grid.ColumnDefinitions>
             <Frame Name="MainFrame" 
            NavigationUIVisibility="Hidden" 
-           BorderThickness="0" Grid.ColumnSpan="2"/>
+           BorderThickness="0" Grid.ColumnSpan="2"
+           Navigated="MainFrame_Navigated"/>
         </Grid>
     </Grid>
 </Window>

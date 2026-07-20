@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfApp1.Views.Sales"
         mc:Ignorable="d"
         
-        Title="SaleInvoiceDetailDialog" Height="560" Width="440"
+        Title="SaleInvoiceDetailDialog" Height="560" Width="500"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Background="#F1F5F9">
     
     <Grid Margin="20">

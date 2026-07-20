@@ -45,8 +45,10 @@
 
             <!-- Contratos activos -->
             <Border Grid.Column="0" Background="#f6fff8"
-                    BorderBrush="#EEEEEE" BorderThickness="1"
                     CornerRadius="8" Padding="16" Margin="0,0,10,0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+                </Border.Effect>
                 <StackPanel>
                     <TextBlock Text="Contratos activos"
                                FontSize="12" Foreground="#888"/>

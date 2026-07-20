@@ -22,7 +22,7 @@ namespace WpfApp1
     /// </summary>
     public partial class main : Window
     {
-        public class NotificationItem
+        public record NotificationItem
         {
             public string Title { get; set; }
             public string Message { get; set; }
@@ -177,14 +177,12 @@ namespace WpfApp1
                 MessageBoxImage.Question);
 
             if (resultado == MessageBoxResult.Yes)
-            {
-                
+            {     
                 SessionManager.Logout();
                 PermissionManager.ClearPermission();
 
                 var loginWindow = new MainWindow(); 
                 loginWindow.Show();
-
                 this.Close();
             }
         }
@@ -203,6 +201,11 @@ namespace WpfApp1
             var confiCards = new WpfApp1.Views.Sales.MenuSalesInvoicePages();
 
             MainFrame.Navigate(confiCards);
+        }
+
+        private void MainFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+            System.Windows.Input.Mouse.Synchronize();
         }
 
         private void BtnCredits_Click(object sender, RoutedEventArgs e)

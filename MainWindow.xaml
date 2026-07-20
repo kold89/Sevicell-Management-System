@@ -12,29 +12,74 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2.2*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Panel izquierdo -->
-        <Border Background="#1E3A8A" Grid.Column="0">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="SEVICELL" FontSize="32" Foreground="White" FontWeight="Bold" FontFamily="Segoe UI"  HorizontalAlignment="Center"/>
-                <TextBlock Text="Sistema de Inventario" FontSize="16" Foreground="White" HorizontalAlignment="Center" FontFamily="Segoe UI"  Margin="0,10,0,0"/>
-            </StackPanel>
-        </Border>
+        <Border Grid.Column="0">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#2B4FC4" Offset="0"/>
+                    <GradientStop Color="#1E3A8A" Offset="0.55"/>
+                    <GradientStop Color="#142868" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
 
+            <Grid Margin="26,30">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Logo arriba -->
+                <StackPanel Grid.Row="0" Orientation="Vertical" VerticalAlignment="Top">
+                    <!--<Border Width="28" Height="28" CornerRadius="7" Background="#26FFFFFF">
+                        <TextBlock Text="" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>-->
+                    <TextBlock Text="SEVICELL" FontFamily="Verdana" Foreground="White" HorizontalAlignment="Center" FontSize="28" FontWeight="SemiBold"
+                        Margin="0,40,0,15"/>
+                </StackPanel>
+
+                <!-- Bloque central -->
+                <StackPanel Grid.Row="1" VerticalAlignment="top">
+                    <TextBlock Text="Tu datos, bajo control" Foreground="White" FontSize="22"
+                       FontWeight="Bold" TextWrapping="Wrap" Margin="0,0,0,5"/>
+                    <TextBlock Text="Administra tu información sin complicaciones."
+                       Foreground="#A6B4E0" FontSize="13" TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+                    <StackPanel Orientation="Horizontal" Margin="5,0,0,8">
+                        <TextBlock Text="&#10003;" Foreground="#7DD3A0" FontSize="13" Margin="0,0,8,0"/>
+                        <TextBlock Text="Facturación en segundos" Foreground="#D9DEEF" FontSize="12.5"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5,0,0,8">
+                        <TextBlock Text="&#10003;" Foreground="#7DD3A0" FontSize="13" Margin="0,0,8,0"/>
+                        <TextBlock Text="Control de inventario en tiempo real" Foreground="#D9DEEF" FontSize="12.5"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5,0,0,8">
+                        <TextBlock Text="&#10003;" Foreground="#7DD3A0" FontSize="13" Margin="0,0,8,0"/>
+                        <TextBlock Text="Reportes de ventas diarios" Foreground="#D9DEEF" FontSize="12.5"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Footer -->
+                <TextBlock Grid.Row="2" Text="V 1.0 · Sistema de Gestión Sevicell"
+                   Foreground="#59FFFFFF" FontSize="11" VerticalAlignment="Bottom"/>
+            </Grid>
+        </Border>
         <!-- Panel derecho -->
-        <Grid Grid.Column="1" Background="#F3F4F6">
+        <Grid Grid.Column="1" Background="#f8f9fa">
             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="250">
 
-                <TextBlock Text="Iniciar Sesión" FontSize="22" FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+                <TextBlock Text="Iniciar Sesión" FontFamily="Segoe UI" FontSize="22" FontWeight="Bold" HorizontalAlignment="Left"/>
+                <TextBlock Text="Ingrese sus credenciales para continuar." Foreground="#889696" FontFamily="Segoe UI" Margin="0,0,0,20"  FontSize="14"/>
 
                 <!-- Usuario -->
-                <TextBlock Text="Usuario" FontFamily="Segoe UI"  FontSize="14"/>
+                <TextBlock Text="Usuario" FontFamily="Segoe UI"  FontSize="14" Foreground="#495057"/>
                 <TextBox x:Name="txtUsuario" Height="30" Margin="0,5,0,15" Padding="5"/>
 
                 <!-- Contraseña -->
-                <TextBlock Text="Contraseña" FontFamily="Segoe UI" FontSize="14"/>
+                <TextBlock Text="Contraseña" FontFamily="Segoe UI" FontSize="14" Foreground="#495057"/>
                 <PasswordBox x:Name="txtPassword" Height="30" Margin="0,5,0,20" Padding="5"/>
 
                 <!-- Botón -->
