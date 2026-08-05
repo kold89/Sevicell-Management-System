@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
         xmlns:fa5="http://schemas.fontawesome.com/icons/"
+        Loaded="Window_Loaded"
         mc:Ignorable="d"
         Title="Panel Administrativo-SEVICELL" Height="450" Width="800">
     <Grid>
@@ -33,7 +34,7 @@
         <StackPanel Grid.Row="1" Grid.Column="0" Background="#2D2D30">
 
             <!-- Inicio -->
-            <RadioButton Name="BtnDashboard" Click="BtnDashboard_Click" Style="{StaticResource MenuButtonStyle}" IsChecked="True">
+            <RadioButton Name="BtnDashboard" Checked="BtnDashboard_Checked" Style="{StaticResource MenuButtonStyle}" >
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
                             Icon="Solid_Home"

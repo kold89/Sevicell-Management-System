@@ -19,7 +19,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var context = new DBSevicellContext())
+                using (var context = new SevicellDbContext())
                 {
                     var listBrand = context.Brands.ToList();
                     return ServicesResult<List<Brand>>.Ok(listBrand, "Lista obtenida con exito");
@@ -35,7 +35,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var context = new DBSevicellContext())
+                using (var context = new SevicellDbContext())
                 {
                     var list = context.Categories.ToList();
                     return ServicesResult<List<Category>>.Ok(list, "Lista obtenida con exito");
@@ -53,7 +53,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
 
                     db.Categories.Add(newCategory);
@@ -73,7 +73,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
 
                     db.Brands.Add(newBrand);
@@ -93,7 +93,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     string status = newStatus ? "habilitado" : "deshabilitado";
 
@@ -119,7 +119,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     string status = newStatus ? "habilitado" : "deshabilitado";
 
@@ -145,7 +145,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     db.Brands.Update(brand);
                     await SaveAuditAsync(AuditAction.Update, "Marcas", brand.Id.ToString(), "Se actualizo el usuario " + brand.Name, db);
@@ -164,7 +164,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                             
                     var itemCategory = db.Categories.Where(x => x.Id == id).FirstOrDefault();
@@ -183,7 +183,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
 
                     var itemBrand = db.Brands.Where(x => x.Id == id).FirstOrDefault();
@@ -202,7 +202,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
 
                     db.Brands.Update(brand);
@@ -222,7 +222,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
 
                     db.Categories.Update(category);

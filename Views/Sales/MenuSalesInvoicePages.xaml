@@ -17,8 +17,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="0,0,0,30">
-            <TextBlock Text="Control Logístico e Inventario" FontSize="28" FontWeight="Bold" Foreground="#2D2D30"/>
-            <TextBlock Text="Catálogo maestro de artículos/repuestos, compras y auditoría de stock" Foreground="Gray" FontSize="14"/>
+            <TextBlock Text="Administración de las ventas" FontSize="28" FontWeight="Bold" Foreground="#2D2D30"/>
+            <TextBlock Text="Control y auditoria de las ventas" Foreground="Gray" FontSize="14"/>
         </StackPanel>
 
         <UniformGrid Grid.Row="1" Columns="3" VerticalAlignment="Top">

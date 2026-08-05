@@ -15,7 +15,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var data = await db.PaymentMethods.ToListAsync();
 

@@ -5,11 +5,111 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1.Views"
         xmlns:fa5="http://schemas.fontawesome.com/icons/"
-      xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
       mc:Ignorable="d" 
-      Background="Black"
+      Background="#F5F7FA"
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Dashboard">
+
+    <Page.Resources>
+        <!-- Estilos reutilizables -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#E8ECF0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="#000000" 
+                                      Opacity="0.04" 
+                                      BlurRadius="12" 
+                                      ShadowDepth="1"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="IconCircle" TargetType="Border">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="KpiLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontFamily" Value="Segoe UI Semibold"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <Style x:Key="KpiValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="29"/>
+            <Setter Property="FontWeight" Value="Light"/>
+            <Setter Property="Foreground" Value="#1A1A2E"/>
+            <Setter Property="Margin" Value="0,16,0,8"/>
+        </Style>
+
+        <Style x:Key="TrendUp" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#4CAF50"/>
+            <Setter Property="FontWeight" Value="Light"/>
+        </Style>
+
+        <Style x:Key="TrendDown" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#E74C3C"/>
+            <Setter Property="FontWeight" Value="Light"/>
+        </Style>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Light"/>
+            <Setter Property="Foreground" Value="#1A1A2E"/>
+        </Style>
+
+        <Style x:Key="SectionSubtitle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="Margin" Value="0,4,0,0"/>
+        </Style>
+
+        <Style x:Key="BadgeGreen" TargetType="Border">
+            <Setter Property="Background" Value="#EAF3DE"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="6,14"/>
+        </Style>
+
+        <Style x:Key="BadgeStatusGreen" TargetType="Border">
+            <Setter Property="Background" Value="#EAF3DE"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="8,3"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="BadgeStatusOrange" TargetType="Border">
+            <Setter Property="Background" Value="#FFF3E0"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="8,3"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+        </Style>
+
+        <Style x:Key="AlertBox" TargetType="Border">
+            <Setter Property="Background" Value="#FFFBEB"/>
+            <Setter Property="BorderBrush" Value="#FEF3C7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12,14"/>
+            <Setter Property="Margin" Value="0,16,0,0"/>
+        </Style>
+
+        <Style x:Key="AvatarCircle" TargetType="Border">
+            <Setter Property="Width" Value="44"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Page.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid Margin="30">
@@ -20,34 +120,45 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <!-- Header -->
-            <DockPanel Grid.Row="0" Margin="0,0,0,20">
-                <StackPanel>
+            <!-- ============================================ -->
+            <!-- HEADER                                       -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="0" Margin="0,0,0,24">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
                     <TextBlock x:Name="LblGreeting"
                                Text="Buenos días, Admin"
-                               FontSize="22" FontWeight="Bold"
-                               Foreground="#333"/>
+                               FontSize="26" FontWeight="Bold"
+                               Foreground="#1A1A2E"/>
                     <TextBlock x:Name="LblDate"
-                               Foreground="#777" FontSize="13"/>
+                               Foreground="#6B7280" 
+                               FontSize="14"
+                               Margin="0,4,0,0"/>
                 </StackPanel>
-                <Border DockPanel.Dock="Right"
-                        Background="#EAF3DE"
-                        CornerRadius="12"
-                        Padding="12,6"
+
+                <Border Grid.Column="1" 
+                        Style="{StaticResource BadgeGreen}"
                         VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal">
-                        <fa5:SvgAwesome Icon="Solid_CheckCircle"
-                                        Height="12" Foreground="#27500A"
-                                        Margin="0,0,6,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Sistema operativo"
-                                   Foreground="#27500A" FontSize="12"
-                                   FontWeight="SemiBold"/>
+                        <Ellipse Width="8" Height="8" 
+                                 Fill="#4CAF50" 
+                                 Margin="0,0,8,0"
+                                 VerticalAlignment="Center"/>
+                        <TextBlock Text="Sistema de Administración"
+                                   Foreground="#27500A"
+                                   FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
                 </Border>
-            </DockPanel>
+            </Grid>
 
-            <!-- Métricas -->
-            <Grid Grid.Row="1" Margin="0,0,0,16">
+            <!-- ============================================ -->
+            <!-- KPI CARDS                                    -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="1" Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -56,361 +167,582 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Ventas hoy -->
-                <Border Grid.Column="0" Background="#F8F8F8"
-                        CornerRadius="8" Padding="16" Margin="0,0,10,0">
+                <Border Grid.Column="0" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,15,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <DockPanel Grid.Row="0" Margin="0,0,0,6">
-                            <TextBlock Text="Ventas hoy" FontSize="11"
-                                       Foreground="#888"/>
-                            <fa5:SvgAwesome Icon="Solid_ShoppingCart"
-                                            Height="14" Foreground="#2196F3"
-                                            HorizontalAlignment="Right"/>
+
+                        <DockPanel Grid.Row="0">
+                            <TextBlock Text="Ventas hoy" 
+                                       Style="{StaticResource KpiLabel}"/>
+                            <Border Style="{StaticResource IconCircle}"
+                                    Background="#E3F2FD"
+                                    DockPanel.Dock="Right">
+                                <Path Data="M1,1h4l2.68,13.39a2,2,0,0,0,2,1.61h9.72a2,2,0,0,0,2-1.61L23,6H6"
+                                      Stroke="#2196F3" 
+                                      StrokeThickness="2" 
+                                      Stretch="Uniform"
+                                      Width="18" Height="18"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
                         </DockPanel>
-                        <TextBlock Grid.Row="1" x:Name="LblSalesToday"
+
+                        <TextBlock Grid.Row="1" 
+                                   x:Name="LblSalesToday"
                                    Text="L. 4,820"
-                                   FontSize="24" FontWeight="Bold"
-                                   Foreground="#333"/>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal"
-                                    Margin="0,4,0,0">
-                            <fa5:SvgAwesome Icon="Solid_ArrowUp"
-                                            Height="10" Foreground="#27500A"
-                                            Margin="0,0,4,0" VerticalAlignment="Center"/>
-                            <TextBlock Text="12% vs ayer"
-                                       FontSize="11" Foreground="#27500A"/>
+                                   Style="{StaticResource KpiValue}"/>
+
+                        <StackPanel Grid.Row="2" 
+                                    Orientation="Horizontal">
+                            <Path Data="M23,6 L13.5,15.5 L8.5,10.5 L1,18"
+                                  Stroke="#4CAF50" 
+                                  StrokeThickness="3" 
+                                  Stretch="Uniform"
+                                  Width="12" Height="12"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,4,0"/>
+                            <TextBlock Text="12% vs ayer" 
+                                       Style="{StaticResource TrendUp}"/>
                         </StackPanel>
                     </Grid>
                 </Border>
 
                 <!-- Reparaciones activas -->
-                <Border Grid.Column="1" Background="#F8F8F8"
-                        CornerRadius="8" Padding="16" Margin="5,0,5,0">
+                <Border Grid.Column="1" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,15,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <DockPanel Grid.Row="0" Margin="0,0,0,6">
-                            <TextBlock Text="Reparaciones activas"
-                                       FontSize="11" Foreground="#888"/>
-                            <fa5:SvgAwesome Icon="Solid_Tools"
-                                            Height="14" Foreground="#F39C12"
-                                            HorizontalAlignment="Right"/>
+
+                        <DockPanel Grid.Row="0">
+                            <TextBlock Text="Reparaciones activas" 
+                                       Style="{StaticResource KpiLabel}"/>
+                            <Border Style="{StaticResource IconCircle}"
+                                    Background="#FFF3E0"
+                                    DockPanel.Dock="Right">
+                                <Path Data="M14.7,6.3a1,1,0,0,0,0,1.4l1.6,1.6a1,1,0,0,0,1.4,0l3.77-3.77a6,6,0,0,1-7.94,7.94l-6.91,6.91a2.12,2.12,0,0,1-3-3l6.91-6.91a6,6,0,0,1,7.94-7.94l-3.76,3.76z"
+                                      Stroke="#F39C12" 
+                                      StrokeThickness="2" 
+                                      Stretch="Uniform"
+                                      Width="18" Height="18"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
                         </DockPanel>
-                        <TextBlock Grid.Row="1" x:Name="LblActiveRepairs"
+
+                        <TextBlock Grid.Row="1" 
+                                   x:Name="LblActiveRepairs"
                                    Text="8"
-                                   FontSize="24" FontWeight="Bold"
-                                   Foreground="#333"/>
-                        <TextBlock Grid.Row="2" Text="2 sin movimiento"
-                                   FontSize="11" Foreground="#BA7517"
-                                   Margin="0,4,0,0"/>
+                                   Style="{StaticResource KpiValue}"/>
+
+                        <TextBlock Grid.Row="2" 
+                                   Text="2 sin movimiento"
+                                   FontSize="12" 
+                                   Foreground="#BA7517" 
+                                   FontWeight="Light"/>
                     </Grid>
                 </Border>
 
-                <!-- Contratos -->
-                <Border Grid.Column="2" Background="#F8F8F8"
-                        CornerRadius="8" Padding="16" Margin="5,0,5,0">
+                <!-- Contratos activos -->
+                <Border Grid.Column="2" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,15,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <DockPanel Grid.Row="0" Margin="0,0,0,6">
-                            <TextBlock Text="Contratos activos"
-                                       FontSize="11" Foreground="#888"/>
-                            <fa5:SvgAwesome Icon="Solid_CreditCard"
-                                            Height="14" Foreground="#9B59B6"
-                                            HorizontalAlignment="Right"/>
+
+                        <DockPanel Grid.Row="0">
+                            <TextBlock Text="Contratos activos" 
+                                       Style="{StaticResource KpiLabel}"/>
+                            <Border Style="{StaticResource IconCircle}"
+                                    Background="#F3E5F5"
+                                    DockPanel.Dock="Right">
+                                <Path Data="M1,4 L23,4 L23,20 L1,20 Z M1,10 L23,10"
+                                      Stroke="#9B59B6" 
+                                      StrokeThickness="2" 
+                                      Stretch="Uniform"
+                                      Width="18" Height="18"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
                         </DockPanel>
-                        <TextBlock Grid.Row="1" x:Name="LblActiveContracts"
+
+                        <TextBlock Grid.Row="1" 
+                                   x:Name="LblActiveContracts"
                                    Text="23"
-                                   FontSize="24" FontWeight="Bold"
-                                   Foreground="#333"/>
-                        <TextBlock Grid.Row="2" Text="3 cuotas vencidas"
-                                   FontSize="11" Foreground="#E74C3C"
-                                   Margin="0,4,0,0"/>
+                                   Style="{StaticResource KpiValue}"/>
+
+                        <TextBlock Grid.Row="2" 
+                                   Text="3 cuotas vencidas"
+                                   FontSize="12" 
+                                   Foreground="#E74C3C" 
+                                   FontWeight="Light"/>
                     </Grid>
                 </Border>
 
                 <!-- Stock crítico -->
-                <Border Grid.Column="3" Background="#F8F8F8"
-                        CornerRadius="8" Padding="16" Margin="10,0,0,0">
+                <Border Grid.Column="3" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <DockPanel Grid.Row="0" Margin="0,0,0,6">
-                            <TextBlock Text="Stock crítico"
-                                       FontSize="11" Foreground="#888"/>
-                            <fa5:SvgAwesome Icon="Solid_Box"
-                                            Height="14" Foreground="#E74C3C"
-                                            HorizontalAlignment="Right"/>
+
+                        <DockPanel Grid.Row="0">
+                            <TextBlock Text="Stock crítico" 
+                                       Style="{StaticResource KpiLabel}"/>
+                            <Border Style="{StaticResource IconCircle}"
+                                    Background="#FFEBEE"
+                                    DockPanel.Dock="Right">
+                                <Path Data="M21,16V8a2,2,0,0,0-1-1.73l-7-4a2,2,0,0,0-2,0l-7,4A2,2,0,0,0,3,8v8a2,2,0,0,0,1,1.73l7,4a2,2,0,0,0,2,0l7-4A2,2,0,0,0,21,16z M3.27,6.96 L12,12.01 L20.73,6.96 M12,22.08 L12,12"
+                                      Stroke="#E74C3C" 
+                                      StrokeThickness="2" 
+                                      Stretch="Uniform"
+                                      Width="18" Height="18"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                            </Border>
                         </DockPanel>
-                        <TextBlock Grid.Row="1" x:Name="LblCriticalStock"
+
+                        <TextBlock Grid.Row="1" 
+                                   x:Name="LblCriticalStock"
                                    Text="4"
-                                   FontSize="24" FontWeight="Bold"
+                                   Style="{StaticResource KpiValue}"
                                    Foreground="#E74C3C"/>
-                        <TextBlock Grid.Row="2" Text="productos bajo mínimo"
-                                   FontSize="11" Foreground="#E74C3C"
-                                   Margin="0,4,0,0"/>
+
+                        <TextBlock Grid.Row="2" 
+                                   Text="productos bajo mínimo"
+                                   FontSize="12" 
+                                   Foreground="#E74C3C" 
+                                   FontWeight="Light"/>
                     </Grid>
                 </Border>
             </Grid>
 
-            <!-- Fila 2: Gráficas ventas y reparaciones -->
-            <Grid Grid.Row="2" Margin="0,0,0,16">
+            <!-- ============================================ -->
+            <!-- CHARTS ROW                                   -->
+            <!-- ============================================ -->
+            <Grid Grid.Row="2" Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Ventas 7 días -->
-                <Border Grid.Column="0" Background="White"
-                        BorderBrush="#EEEEEE" BorderThickness="1"
-                        CornerRadius="8" Padding="16" Margin="0,0,10,0">
-                    <StackPanel>
-                        <DockPanel Margin="0,0,0,4">
-                            <StackPanel>
-                                <TextBlock Text="Ventas — últimos 7 días"
-                                           FontSize="13" FontWeight="SemiBold"
-                                           Foreground="#333"/>
-                                <TextBlock Text="Ingresos por ventas de productos"
-                                           FontSize="11" Foreground="#888"/>
+                <Border Grid.Column="0" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,15,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Ventas — últimos 7 días" 
+                                           Style="{StaticResource SectionTitle}"/>
+                                <TextBlock Text="Ingresos por ventas de productos" 
+                                           Style="{StaticResource SectionSubtitle}"/>
                             </StackPanel>
-                            <StackPanel HorizontalAlignment="Right">
-                                <TextBlock Text="L. 30,820"
-                                           FontSize="18" FontWeight="Bold"
-                                           Foreground="#333"
+
+                            <StackPanel Grid.Column="1" 
+                                        HorizontalAlignment="Right">
+                                <TextBlock x:Name="LblSalesWeekTotal"
+                                           Text="L. 30,820"
+                                           FontSize="22" FontWeight="Bold"
+                                           Foreground="#1A1A2E"
                                            HorizontalAlignment="Right"/>
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Right">
-                                    <fa5:SvgAwesome Icon="Solid_ArrowUp"
-                                                    Height="10" Foreground="#27500A"
-                                                    Margin="0,0,3,0"
-                                                    VerticalAlignment="Center"/>
-                                    <TextBlock Text="8% vs semana anterior"
-                                               FontSize="11" Foreground="#27500A"/>
+                                <StackPanel Orientation="Horizontal" 
+                                            HorizontalAlignment="Right"
+                                            Margin="0,4,0,0">
+                                    <Path Data="M23,6 L13.5,15.5 L8.5,10.5 L1,18"
+                                          Stroke="#4CAF50" 
+                                          StrokeThickness="3" 
+                                          Stretch="Uniform"
+                                          Width="10" Height="10"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,4,0"/>
+                                    <TextBlock Text="8% vs semana anterior" 
+                                               Style="{StaticResource TrendUp}"
+                                               FontSize="11"/>
                                 </StackPanel>
                             </StackPanel>
-                        </DockPanel>
-                        <lvc:CartesianChart x:Name="SalesChart"
-                                            Height="160"
-                                            TooltipPosition="Hidden"/>
-                    </StackPanel>
+                        </Grid>
+
+                        <!-- Aquí irá el gráfico de ScottPlot -->
+                        <Border Grid.Row="1" 
+                                x:Name="SalesChartPlaceholder"
+                                Height="180"
+                                Background="#FAFBFC"
+                                CornerRadius="10"
+                                BorderBrush="#E8ECF0"
+                                BorderThickness="1">
+                            <TextBlock Text="[Gráfico de ventas — ScottPlot]"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="#9CA3AF"
+                                       FontSize="14"/>
+                        </Border>
+                    </Grid>
                 </Border>
 
                 <!-- Reparaciones 7 días -->
-                <Border Grid.Column="1" Background="White"
-                        BorderBrush="#EEEEEE" BorderThickness="1"
-                        CornerRadius="8" Padding="16" Margin="10,0,0,0">
-                    <StackPanel>
-                        <DockPanel Margin="0,0,0,4">
-                            <StackPanel>
-                                <TextBlock Text="Reparaciones — últimos 7 días"
-                                           FontSize="13" FontWeight="SemiBold"
-                                           Foreground="#333"/>
-                                <TextBlock Text="Ingresos por servicios de reparación"
-                                           FontSize="11" Foreground="#888"/>
+                <Border Grid.Column="1" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Reparaciones — últimos 7 días" 
+                                           Style="{StaticResource SectionTitle}"/>
+                                <TextBlock Text="Ingresos por servicios de reparación" 
+                                           Style="{StaticResource SectionSubtitle}"/>
                             </StackPanel>
-                            <StackPanel HorizontalAlignment="Right">
-                                <TextBlock Text="L. 12,400"
-                                           FontSize="18" FontWeight="Bold"
-                                           Foreground="#333"
+
+                            <StackPanel Grid.Column="1" 
+                                        HorizontalAlignment="Right">
+                                <TextBlock x:Name="LblRepairsWeekTotal"
+                                           Text="L. 12,400"
+                                           FontSize="22" FontWeight="Bold"
+                                           Foreground="#1A1A2E"
                                            HorizontalAlignment="Right"/>
-                                <StackPanel Orientation="Horizontal"
-                                            HorizontalAlignment="Right">
-                                    <fa5:SvgAwesome Icon="Solid_ArrowDown"
-                                                    Height="10" Foreground="#E74C3C"
-                                                    Margin="0,0,3,0"
-                                                    VerticalAlignment="Center"/>
-                                    <TextBlock Text="3% vs semana anterior"
-                                               FontSize="11" Foreground="#E74C3C"/>
+                                <StackPanel Orientation="Horizontal" 
+                                            HorizontalAlignment="Right"
+                                            Margin="0,4,0,0">
+                                    <Path Data="M23,18 L13.5,8.5 L8.5,13.5 L1,6"
+                                          Stroke="#E74C3C" 
+                                          StrokeThickness="3" 
+                                          Stretch="Uniform"
+                                          Width="10" Height="10"
+                                          VerticalAlignment="Center"
+                                          Margin="0,0,4,0"/>
+                                    <TextBlock Text="3% vs semana anterior" 
+                                               Style="{StaticResource TrendDown}"
+                                               FontSize="11"/>
                                 </StackPanel>
                             </StackPanel>
-                        </DockPanel>
-                        <lvc:CartesianChart x:Name="RepairChart"
-                                            Height="160"
-                                            TooltipPosition="Hidden"/>
-                    </StackPanel>
+                        </Grid>
+
+                        <!-- Aquí irá el gráfico de ScottPlot -->
+                        <Border Grid.Row="1" 
+                                x:Name="RepairsChartPlaceholder"
+                                Height="180"
+                                Background="#FAFBFC"
+                                CornerRadius="10"
+                                BorderBrush="#E8ECF0"
+                                BorderThickness="1">
+                            <TextBlock Text="[Gráfico de reparaciones — ScottPlot]"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="#9CA3AF"
+                                       FontSize="14"/>
+                        </Border>
+                    </Grid>
                 </Border>
             </Grid>
 
-            <!-- Fila 3: Estado reparaciones + Listos para entrega -->
+            <!-- ============================================ -->
+            <!-- BOTTOM ROW                                   -->
+            <!-- ============================================ -->
             <Grid Grid.Row="3">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1.6*"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Estado reparaciones -->
-                <Border Grid.Column="0" Background="White"
-                        BorderBrush="#EEEEEE" BorderThickness="1"
-                        CornerRadius="8" Padding="16" Margin="0,0,10,0">
-                    <StackPanel>
-                        <TextBlock Text="Estado de reparaciones"
-                                   FontSize="13" FontWeight="SemiBold"
-                                   Foreground="#333"/>
-                        <TextBlock Text="Distribución actual"
-                                   FontSize="11" Foreground="#888"
-                                   Margin="0,2,0,12"/>
-                        <lvc:CartesianChart x:Name="RepairStateChart"
-                                            Height="160"
-                                            TooltipPosition="Hidden"/>
-                    </StackPanel>
+                <Border Grid.Column="0" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,15,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" 
+                                   Text="Estado de reparaciones" 
+                                   Style="{StaticResource SectionTitle}"/>
+                        <TextBlock Grid.Row="1" 
+                                   Text="Distribución actual" 
+                                   Style="{StaticResource SectionSubtitle}"
+                                   Margin="0,4,0,20"/>
+
+                        <!-- Donut chart placeholder -->
+                        <Border Grid.Row="2" 
+                                x:Name="StatusChartPlaceholder"
+                                Height="180"
+                                Background="#FAFBFC"
+                                CornerRadius="10"
+                                BorderBrush="#E8ECF0"
+                                BorderThickness="1"
+                                Margin="0,0,0,16">
+                            <TextBlock Text="[Gráfico donut — ScottPlot]"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="#9CA3AF"
+                                       FontSize="14"/>
+                        </Border>
+
+                        <!-- Leyenda -->
+                        <StackPanel Grid.Row="2" 
+                                    Margin="0,200,0,0">
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Grid.Column="0" 
+                                           Width="10" Height="10" 
+                                           Fill="#2196F3" 
+                                           RadiusX="3" RadiusY="3"
+                                           Margin="0,0,8,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="En curso" 
+                                           FontSize="13" 
+                                           Foreground="#374151"/>
+                                <TextBlock Grid.Column="2" 
+                                           x:Name="LblStatusInProgress"
+                                           Text="5" 
+                                           FontSize="13" 
+                                           FontWeight="Light" 
+                                           Foreground="#1A1A2E"/>
+                            </Grid>
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Grid.Column="0" 
+                                           Width="10" Height="10" 
+                                           Fill="#F39C12" 
+                                           RadiusX="3" RadiusY="3"
+                                           Margin="0,0,8,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="Esperando piezas" 
+                                           FontSize="13" 
+                                           Foreground="#374151"/>
+                                <TextBlock Grid.Column="2" 
+                                           x:Name="LblStatusWaiting"
+                                           Text="2" 
+                                           FontSize="13" 
+                                           FontWeight="UltraBlack" 
+                                           Foreground="#1A1A2E"/>
+                            </Grid>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Rectangle Grid.Column="0" 
+                                           Width="10" Height="10" 
+                                           Fill="#4CAF50" 
+                                           RadiusX="3" RadiusY="3"
+                                           Margin="0,0,8,0"
+                                           VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="1" 
+                                           Text="Listos para entrega" 
+                                           FontSize="13" 
+                                           Foreground="#374151"/>
+                                <TextBlock Grid.Column="2" 
+                                           x:Name="LblStatusReady"
+                                           Text="1" 
+                                           FontSize="13" 
+                                           FontWeight="Light"
+                                           Foreground="#1A1A2E"/>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
                 </Border>
 
                 <!-- Listos para entrega -->
-                <Border Grid.Column="1" Background="White"
-                        BorderBrush="#EEEEEE" BorderThickness="1"
-                        CornerRadius="8" Padding="16" Margin="10,0,0,0">
-                    <StackPanel>
-                        <DockPanel Margin="0,0,0,12">
-                            <StackPanel>
-                                <TextBlock Text="Listos para entrega"
-                                           FontSize="13" FontWeight="SemiBold"
-                                           Foreground="#333"/>
-                                <TextBlock Text="Equipos reparados esperando al cliente"
-                                           FontSize="11" Foreground="#888"/>
+                <Border Grid.Column="1" 
+                        Style="{StaticResource CardStyle}"
+                        Margin="0,0,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Listos para entrega" 
+                                           Style="{StaticResource SectionTitle}"/>
+                                <TextBlock Text="Equipos reparados esperando al cliente" 
+                                           Style="{StaticResource SectionSubtitle}"/>
                             </StackPanel>
-                            <Border DockPanel.Dock="Right"
-                                    Background="#EAF3DE"
-                                    CornerRadius="10" Padding="10,3"
+
+                            <Border Grid.Column="1" 
+                                    Style="{StaticResource BadgeGreen}"
                                     VerticalAlignment="Center">
                                 <TextBlock x:Name="LblReadyCount"
                                            Text="2 equipos"
                                            Foreground="#27500A"
-                                           FontSize="11" FontWeight="SemiBold"/>
+                                           FontSize="12" FontWeight="SemiBold"/>
                             </Border>
-                        </DockPanel>
+                        </Grid>
 
-                        <!-- Lista equipos -->
-                        <StackPanel x:Name="ReadyList">
+                        <!-- Lista de equipos -->
+                        <StackPanel Grid.Row="1" x:Name="ReadyList">
+
                             <!-- Item 1 -->
-                            <Border BorderBrush="#F0F0F0" BorderThickness="0,0,0,1"
-                                    Padding="0,10">
-                                <DockPanel>
-                                    <Border Width="36" Height="36"
-                                            CornerRadius="18"
-                                            Background="#EAF3DE"
-                                            Margin="0,0,12,0">
-                                        <TextBlock Text="JP" Foreground="#27500A"
-                                                   FontSize="11" FontWeight="SemiBold"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" 
+                                        Style="{StaticResource AvatarCircle}"
+                                        Background="#E3F2FD"
+                                        Margin="0,0,14,0">
+                                    <TextBlock Text="JP" 
+                                               FontSize="14" FontWeight="Bold"
+                                               Foreground="#2196F3"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" 
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="iPhone 12 — Juan Pérez" 
+                                               FontSize="14" FontWeight="SemiBold"
+                                               Foreground="#1A1A2E"/>
+                                    <TextBlock Text="Pantalla rota · Téc. Carlos · Lista hace 2 horas" 
+                                               FontSize="12" Foreground="#6B7280"
+                                               Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2" 
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="L. 850" 
+                                               FontSize="15" FontWeight="Bold"
+                                               Foreground="#1A1A2E"
+                                               HorizontalAlignment="Right"/>
+                                    <Border Style="{StaticResource BadgeStatusGreen}"
+                                            Margin="0,4,0,0">
+                                        <TextBlock Text="✓ Listo" 
+                                                   Foreground="#27500A"
+                                                   FontSize="11" FontWeight="SemiBold"/>
                                     </Border>
-                                    <StackPanel DockPanel.Dock="Right"
-                                                HorizontalAlignment="Right">
-                                        <TextBlock Text="L. 850"
-                                                   FontSize="13" FontWeight="SemiBold"
-                                                   Foreground="#333"
-                                                   HorizontalAlignment="Right"/>
-                                        <Border Background="#EAF3DE"
-                                                CornerRadius="10" Padding="8,2"
-                                                HorizontalAlignment="Right"
-                                                Margin="0,4,0,0">
-                                            <TextBlock Text="Listo"
-                                                       Foreground="#27500A"
-                                                       FontSize="10" FontWeight="SemiBold"/>
-                                        </Border>
-                                    </StackPanel>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="iPhone 12 — Juan Pérez"
-                                                   FontSize="13" FontWeight="SemiBold"
-                                                   Foreground="#333"/>
-                                        <TextBlock Text="Pantalla rota · Téc. Carlos · Lista hace 2 horas"
-                                                   FontSize="11" Foreground="#888"/>
-                                    </StackPanel>
-                                </DockPanel>
-                            </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <Separator Background="#F3F4F6" 
+                                       Margin="0,16" 
+                                       Height="1"/>
 
                             <!-- Item 2 -->
-                            <Border Padding="0,10">
-                                <DockPanel>
-                                    <Border Width="36" Height="36"
-                                            CornerRadius="18"
-                                            Background="#E6F1FB"
-                                            Margin="0,0,12,0">
-                                        <TextBlock Text="MR" Foreground="#185FA5"
-                                                   FontSize="11" FontWeight="SemiBold"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" 
+                                        Style="{StaticResource AvatarCircle}"
+                                        Background="#FFF3E0"
+                                        Margin="0,0,14,0">
+                                    <TextBlock Text="MR" 
+                                               FontSize="14" FontWeight="Bold"
+                                               Foreground="#F39C12"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+
+                                <StackPanel Grid.Column="1" 
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="Samsung S21 — Mario Reyes" 
+                                               FontSize="14" FontWeight="SemiBold"
+                                               Foreground="#1A1A2E"/>
+                                    <TextBlock Text="Batería · Téc. Luis · Lista desde ayer" 
+                                               FontSize="12" Foreground="#6B7280"
+                                               Margin="0,2,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Column="2" 
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="L. 450" 
+                                               FontSize="15" FontWeight="Bold"
+                                               Foreground="#1A1A2E"
+                                               HorizontalAlignment="Right"/>
+                                    <Border Style="{StaticResource BadgeStatusOrange}"
+                                            Margin="0,4,0,0">
+                                        <TextBlock Text="⏱ 1 día" 
+                                                   Foreground="#BA7517"
+                                                   FontSize="11" FontWeight="SemiBold"/>
                                     </Border>
-                                    <StackPanel DockPanel.Dock="Right"
-                                                HorizontalAlignment="Right">
-                                        <TextBlock Text="L. 450"
-                                                   FontSize="13" FontWeight="SemiBold"
-                                                   Foreground="#333"
-                                                   HorizontalAlignment="Right"/>
-                                        <Border Background="#FAEEDA"
-                                                CornerRadius="10" Padding="8,2"
-                                                HorizontalAlignment="Right"
-                                                Margin="0,4,0,0">
-                                            <TextBlock Text="1 día"
-                                                       Foreground="#854F0B"
-                                                       FontSize="10" FontWeight="SemiBold"/>
-                                        </Border>
-                                    </StackPanel>
-                                    <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="Samsung S21 — Mario Reyes"
-                                                   FontSize="13" FontWeight="SemiBold"
-                                                   Foreground="#333"/>
-                                        <TextBlock Text="Batería · Téc. Luis · Lista desde ayer"
-                                                   FontSize="11" Foreground="#888"/>
-                                    </StackPanel>
-                                </DockPanel>
-                            </Border>
+                                </StackPanel>
+                            </Grid>
 
                             <!-- Alerta -->
-                            <Border Background="#FFF8E1" CornerRadius="6"
-                                    Padding="10" Margin="0,8,0,0">
+                            <Border Style="{StaticResource AlertBox}">
                                 <StackPanel Orientation="Horizontal">
-                                    <fa5:SvgAwesome Icon="Solid_Bell"
-                                                    Height="12" Foreground="#BA7517"
-                                                    Margin="0,0,8,0"
-                                                    VerticalAlignment="Center"/>
-                                    <TextBlock Text="Samsung S21 lleva 1 día esperando — considera contactar al cliente."
-                                               FontSize="11" Foreground="#854F0B"
-                                               TextWrapping="Wrap"/>
+                                    <Path Data="M18,8A6,6,0,0,0,6,8c0,7-3,9-3,9h18s-3-2-3-9 M13.73,21a2,2,0,0,1-3.46,0"
+                                          Stroke="#D97706" 
+                                          StrokeThickness="2" 
+                                          Stretch="Uniform"
+                                          Width="16" Height="16"
+                                          Margin="0,1,10,0"
+                                          VerticalAlignment="Top"/>
+                                    <TextBlock TextWrapping="Wrap">
+                                        <Run FontWeight="Bold" 
+                                             Text="Samsung S21"/>
+                                        <Run Text=" lleva 1 día esperando — considera contactar al cliente."/>
+                                    </TextBlock>
                                 </StackPanel>
                             </Border>
-                        </StackPanel>
 
-                        <!-- Estado vacío -->
-                        <StackPanel x:Name="EmptyState"
-                                    Visibility="Collapsed"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,30,0,30">
-                            <Border Width="52" Height="52"
-                                    CornerRadius="26"
-                                    Background="#F8F8F8"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,0,0,12">
-                                <fa5:SvgAwesome Icon="Solid_CheckCircle"
-                                                Height="26" Foreground="#27500A"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"/>
-                            </Border>
-                            <TextBlock Text="Todo entregado"
-                                       FontSize="13" FontWeight="SemiBold"
-                                       Foreground="#333"
-                                       HorizontalAlignment="Center"/>
-                            <TextBlock Text="No hay equipos esperando entrega en este momento."
-                                       FontSize="12" Foreground="#888"
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"
-                                       TextWrapping="Wrap"
-                                       Margin="0,4,0,0"/>
                         </StackPanel>
-
-                    </StackPanel>
+                    </Grid>
                 </Border>
             </Grid>
 

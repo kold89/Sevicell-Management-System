@@ -21,11 +21,27 @@ public partial class SevicellDbContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<Contract> Contracts { get; set; }
+
+    public virtual DbSet<ContractPayment> ContractPayments { get; set; }
+
+    public virtual DbSet<ContractStatus> ContractStatuses { get; set; }
+
     public virtual DbSet<Customer> Customers { get; set; }
+
+    public virtual DbSet<CustumerStatus> CustumerStatuses { get; set; }
+
+    public virtual DbSet<DebtInstallment> DebtInstallments { get; set; }
+
+    public virtual DbSet<DebtInstallmentStatus> DebtInstallmentStatuses { get; set; }
 
     public virtual DbSet<Device> Devices { get; set; }
 
+    public virtual DbSet<Frequency> Frequencies { get; set; }
+
     public virtual DbSet<InventoryMovement> InventoryMovements { get; set; }
+
+    public virtual DbSet<Notification> Notifications { get; set; }
 
     public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
 
@@ -35,7 +51,11 @@ public partial class SevicellDbContext : DbContext
 
     public virtual DbSet<Permission> Permissions { get; set; }
 
+    public virtual DbSet<PhoneStatus> PhoneStatuses { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
+
+    public virtual DbSet<ProductUnit> ProductUnits { get; set; }
 
     public virtual DbSet<PurchaseDetail> PurchaseDetails { get; set; }
 
@@ -54,6 +74,8 @@ public partial class SevicellDbContext : DbContext
     public virtual DbSet<SalesDetail> SalesDetails { get; set; }
 
     public virtual DbSet<SalesInvoice> SalesInvoices { get; set; }
+
+    public virtual DbSet<Seller> Sellers { get; set; }
 
     public virtual DbSet<Service> Services { get; set; }
 
@@ -113,6 +135,136 @@ public partial class SevicellDbContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(100);
         });
 
+        modelBuilder.Entity<Contract>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__contract__3213E83F97471736");
+
+            entity.ToTable("contract");
+
+            entity.HasIndex(e => e.ClientId, "idx_contract_client");
+
+            entity.HasIndex(e => e.FirstDueDate, "idx_contract_due_date");
+
+            entity.HasIndex(e => e.SellerId, "idx_contract_seller");
+
+            entity.HasIndex(e => e.StatusId, "idx_contract_status");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ClientId).HasColumnName("client_id");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.DownPayment)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("down_payment");
+            entity.Property(e => e.FinancedBalance)
+                .HasComputedColumnSql("([sale_price]-[down_payment])", true)
+                .HasColumnType("decimal(13, 2)")
+                .HasColumnName("financed_balance");
+            entity.Property(e => e.FirstDueDate).HasColumnName("first_due_date");
+            entity.Property(e => e.FrequencyId).HasColumnName("frequency_id");
+            entity.Property(e => e.InstallmentAmount)
+                .HasComputedColumnSql("(case when [installment_count]>(0) then ([sale_price]-[down_payment])/[installment_count] else (0) end)", true)
+                .HasColumnType("decimal(24, 13)")
+                .HasColumnName("installment_amount");
+            entity.Property(e => e.InstallmentCount).HasColumnName("installment_count");
+            entity.Property(e => e.LastDueDate).HasColumnName("last_due_date");
+            entity.Property(e => e.LateInterestRate)
+                .HasDefaultValue(0.0000m)
+                .HasColumnType("decimal(5, 4)")
+                .HasColumnName("late_interest_rate");
+            entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.PendingBalance)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("pending_balance");
+            entity.Property(e => e.ProductUnitId).HasColumnName("product_unit_id");
+            entity.Property(e => e.SalePrice)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("sale_price");
+            entity.Property(e => e.SellerId).HasColumnName("seller_id");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+
+            entity.HasOne(d => d.Client).WithMany(p => p.Contracts)
+                .HasForeignKey(d => d.ClientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_contract_client");
+
+            entity.HasOne(d => d.Frequency).WithMany(p => p.Contracts)
+                .HasForeignKey(d => d.FrequencyId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_contract_frequency");
+
+            entity.HasOne(d => d.ProductUnit).WithMany(p => p.Contracts)
+                .HasForeignKey(d => d.ProductUnitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_contract_product_unit");
+
+            entity.HasOne(d => d.Seller).WithMany(p => p.Contracts)
+                .HasForeignKey(d => d.SellerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_contract_seller");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.Contracts)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_contract_status");
+        });
+
+        modelBuilder.Entity<ContractPayment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__contract__3213E83F5AAD4D53");
+
+            entity.ToTable("contract_payment");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("amount");
+            entity.Property(e => e.ContractId).HasColumnName("contract_id");
+            entity.Property(e => e.InstallmentId).HasColumnName("installment_id");
+            entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.PaymentDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("payment_date");
+            entity.Property(e => e.PaymentMethod)
+                .HasMaxLength(50)
+                .HasColumnName("payment_method");
+            entity.Property(e => e.ReceivedBy).HasColumnName("received_by");
+
+            entity.HasOne(d => d.Contract).WithMany(p => p.ContractPayments)
+                .HasForeignKey(d => d.ContractId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_cp_contract");
+
+            entity.HasOne(d => d.Installment).WithMany(p => p.ContractPayments)
+                .HasForeignKey(d => d.InstallmentId)
+                .HasConstraintName("fk_cp_installment");
+        });
+
+        modelBuilder.Entity<ContractStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__contract__3213E83F7B38F2D2");
+
+            entity.ToTable("contract_status");
+
+            entity.HasIndex(e => e.Code, "UQ__contract__357D4CF9D945CE13").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .HasColumnName("code");
+            entity.Property(e => e.ColorBadge)
+                .HasMaxLength(7)
+                .HasColumnName("color_badge");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("description");
+            entity.Property(e => e.FlowOrder).HasColumnName("flow_order");
+        });
+
         modelBuilder.Entity<Customer>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Customer__3214EC07386889BA");
@@ -120,10 +272,115 @@ public partial class SevicellDbContext : DbContext
             entity.ToTable("Customer");
 
             entity.Property(e => e.Address).HasMaxLength(200);
+            entity.Property(e => e.Dni)
+                .HasMaxLength(15)
+                .IsUnicode(false)
+                .HasColumnName("DNI");
             entity.Property(e => e.Email).HasMaxLength(100);
             entity.Property(e => e.LastName).HasMaxLength(100);
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.Phone).HasMaxLength(20);
+        });
+
+        modelBuilder.Entity<CustumerStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__custumer__3213E83FD95E5C3D");
+
+            entity.ToTable("custumer_status");
+
+            entity.HasIndex(e => e.Code, "UQ__custumer__357D4CF99F83EB9D").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("description");
+            entity.Property(e => e.IsActive)
+                .HasDefaultValue(true)
+                .HasColumnName("is_active");
+        });
+
+        modelBuilder.Entity<DebtInstallment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__debt_ins__3213E83FCED5D0BA");
+
+            entity.ToTable("debt_installment", tb =>
+                {
+                    tb.HasTrigger("trg_installment_delete");
+                    tb.HasTrigger("trg_installment_paid");
+                });
+
+            entity.HasIndex(e => e.ContractId, "idx_installment_contract");
+
+            entity.HasIndex(e => e.DueDate, "idx_installment_due_date");
+
+            entity.HasIndex(e => e.StatusId, "idx_installment_status");
+
+            entity.HasIndex(e => new { e.ContractId, e.InstallmentNumber }, "uq_contract_installment").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ContractId).HasColumnName("contract_id");
+            entity.Property(e => e.DueDate).HasColumnName("due_date");
+            entity.Property(e => e.ExpectedAmount)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("expected_amount");
+            entity.Property(e => e.InstallmentNumber).HasColumnName("installment_number");
+            entity.Property(e => e.LateInterest)
+                .HasDefaultValue(0.00m)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("late_interest");
+            entity.Property(e => e.Notes).HasColumnName("notes");
+            entity.Property(e => e.PaidAmount)
+                .HasDefaultValue(0.00m)
+                .HasColumnType("decimal(12, 2)")
+                .HasColumnName("paid_amount");
+            entity.Property(e => e.PaymentDate).HasColumnName("payment_date");
+            entity.Property(e => e.ReceivedBy).HasColumnName("received_by");
+            entity.Property(e => e.StatusId).HasColumnName("status_id");
+
+            entity.HasOne(d => d.Contract).WithMany(p => p.DebtInstallments)
+                .HasForeignKey(d => d.ContractId)
+                .HasConstraintName("fk_installment_contract");
+
+            entity.HasOne(d => d.ReceivedByNavigation).WithMany(p => p.DebtInstallments)
+                .HasForeignKey(d => d.ReceivedBy)
+                .HasConstraintName("fk_installment_received_by");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.DebtInstallments)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fk_installment_status");
+        });
+
+        modelBuilder.Entity<DebtInstallmentStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__debt_ins__3213E83F171DABD8");
+
+            entity.ToTable("debt_installment_status");
+
+            entity.HasIndex(e => e.Code, "UQ__debt_ins__357D4CF9E4E8B8AD").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("description");
+            entity.Property(e => e.IsExpired)
+                .HasDefaultValue(false)
+                .HasColumnName("is_expired");
+            entity.Property(e => e.IsPaid)
+                .HasDefaultValue(false)
+                .HasColumnName("is_paid");
         });
 
         modelBuilder.Entity<Device>(entity =>
@@ -146,6 +403,27 @@ public partial class SevicellDbContext : DbContext
                 .HasConstraintName("FK__Device__Customer__46E78A0C");
         });
 
+        modelBuilder.Entity<Frequency>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__frequenc__3213E83F5B98DBE4");
+
+            entity.ToTable("frequency");
+
+            entity.HasIndex(e => e.Code, "UQ__frequenc__357D4CF94BCA73B5").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.DaysPeriod).HasColumnName("days_period");
+            entity.Property(e => e.Description)
+                .HasMaxLength(100)
+                .HasColumnName("description");
+        });
+
         modelBuilder.Entity<InventoryMovement>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Inventor__3214EC0704C9144E");
@@ -163,6 +441,22 @@ public partial class SevicellDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.InventoryMovements)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__Inventory__UserI__5812160E");
+        });
+
+        modelBuilder.Entity<Notification>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Notifica__3214EC07E33A2015");
+
+            entity.ToTable("Notification");
+
+            entity.Property(e => e.Body).HasMaxLength(300);
+            entity.Property(e => e.Date)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.NotificationType)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Title).HasMaxLength(100);
         });
 
         modelBuilder.Entity<OrderStatus>(entity =>
@@ -226,6 +520,26 @@ public partial class SevicellDbContext : DbContext
             entity.Property(e => e.Name).HasMaxLength(100);
         });
 
+        modelBuilder.Entity<PhoneStatus>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__phone_st__3213E83F5AB361F2");
+
+            entity.ToTable("phone_status");
+
+            entity.HasIndex(e => e.Code, "UQ__phone_st__357D4CF9556EBA75").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Code)
+                .HasMaxLength(20)
+                .HasColumnName("code");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("description");
+        });
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__Product__3214EC075309AE28");
@@ -250,6 +564,43 @@ public partial class SevicellDbContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .HasConstraintName("FK__Product__Categor__5441852A");
+        });
+
+        modelBuilder.Entity<ProductUnit>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__ProductU__3214EC077FD3C21D");
+
+            entity.ToTable("ProductUnit");
+
+            entity.HasIndex(e => e.Imei, "UQ_ProductUnit_IMEI").IsUnique();
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.Imei)
+                .HasMaxLength(50)
+                .HasColumnName("IMEI");
+            entity.Property(e => e.Imei2)
+                .HasMaxLength(50)
+                .HasColumnName("IMEI2");
+            entity.Property(e => e.SerialNumber).HasMaxLength(50);
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasDefaultValue("Disponible");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ProductUnits)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__ProductUn__Produ__2CF2ADDF");
+
+            entity.HasOne(d => d.PurchaseDetail).WithMany(p => p.ProductUnits)
+                .HasForeignKey(d => d.PurchaseDetailId)
+                .HasConstraintName("FK__ProductUn__Purch__2DE6D218");
+
+            entity.HasOne(d => d.SalesDetail).WithMany(p => p.ProductUnits)
+                .HasForeignKey(d => d.SalesDetailId)
+                .HasConstraintName("FK__ProductUn__Sales__2EDAF651");
         });
 
         modelBuilder.Entity<PurchaseDetail>(entity =>
@@ -420,6 +771,41 @@ public partial class SevicellDbContext : DbContext
             entity.HasOne(d => d.RepairOrder).WithMany(p => p.SalesInvoices)
                 .HasForeignKey(d => d.RepairOrderId)
                 .HasConstraintName("FK__SalesInvo__Repai__73BA3083");
+        });
+
+        modelBuilder.Entity<Seller>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__seller__3213E83FB575EE71");
+
+            entity.ToTable("seller");
+
+            entity.HasIndex(e => e.Dni, "UQ__seller__D87608A7EF42684A").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Address)
+                .HasMaxLength(255)
+                .HasColumnName("address");
+            entity.Property(e => e.Company)
+                .HasMaxLength(150)
+                .HasColumnName("company");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("created_at");
+            entity.Property(e => e.Dni)
+                .HasMaxLength(20)
+                .HasColumnName("dni");
+            entity.Property(e => e.FirstName)
+                .HasMaxLength(100)
+                .HasColumnName("first_name");
+            entity.Property(e => e.LastName)
+                .HasMaxLength(100)
+                .HasColumnName("last_name");
+            entity.Property(e => e.Phone)
+                .HasMaxLength(20)
+                .HasColumnName("phone");
+            entity.Property(e => e.UpdatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnName("updated_at");
         });
 
         modelBuilder.Entity<Service>(entity =>

@@ -25,11 +25,15 @@ public partial class Product
 
     public string? ProductDescription { get; set; }
 
+    public bool IsSerialized { get; set; }
+
     public virtual Brand? Brand { get; set; }
 
     public virtual Category? Category { get; set; }
 
     public virtual ICollection<InventoryMovement> InventoryMovements { get; set; } = new List<InventoryMovement>();
+
+    public virtual ICollection<ProductUnit> ProductUnits { get; set; } = new List<ProductUnit>();
 
     public virtual ICollection<PurchaseDetail> PurchaseDetails { get; set; } = new List<PurchaseDetail>();
 

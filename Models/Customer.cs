@@ -17,6 +17,10 @@ public partial class Customer
 
     public string? Phone { get; set; }
 
+    public string? Dni { get; set; }
+
+    public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
+
     public virtual ICollection<Device> Devices { get; set; } = new List<Device>();
 
     public virtual ICollection<SalesInvoice> SalesInvoices { get; set; } = new List<SalesInvoice>();

@@ -18,7 +18,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var listSupplier = await db.Suppliers.Select(x => new SupplierDto
                     {
@@ -44,7 +44,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var supplier = db.Suppliers.FirstOrDefault(x => x.Id == id);
                     return ServicesResult<Supplier>.Ok(supplier, "Datos obtenidos exitosamente.");
@@ -61,7 +61,7 @@ namespace WpfApp1.Services
         {
             try 
             {
-                using (var db = new  DBSevicellContext())
+                using (var db = new  SevicellDbContext())
                 {
                     var supplier = db.Suppliers.Where(x => x.Id == id).Select(x => new SupplierDto
                     {
@@ -84,7 +84,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext()) 
+                using (var db = new SevicellDbContext()) 
                 {
                     db.Add(supplierToSave);
                     await db.SaveChangesAsync();
@@ -103,7 +103,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     db.Update(supplier);
                     await SaveAuditAsync(AuditAction.Update,

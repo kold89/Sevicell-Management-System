@@ -13,14 +13,14 @@ namespace WpfApp1.Services
     public abstract class BaseService
     {
         // 'protected' para que solo los hijos lo usen.
-        protected readonly DBSevicellContext _db;
+        protected readonly SevicellDbContext _db;
 
         public BaseService()
         {
-            _db = new DBSevicellContext();
+            _db = new SevicellDbContext();
         }
 
-        protected async Task SaveAuditAsync(AuditAction action, string table, string objectId, string details, DBSevicellContext? db = null)
+        protected async Task SaveAuditAsync(AuditAction action, string table, string objectId, string details, SevicellDbContext? db = null)
         {
             string actionName = "";
 

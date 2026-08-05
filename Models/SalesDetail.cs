@@ -21,5 +21,7 @@ public partial class SalesDetail
 
     public virtual Product? Product { get; set; }
 
+    public virtual ICollection<ProductUnit> ProductUnits { get; set; } = new List<ProductUnit>();
+
     public virtual SalesInvoice? SalesInvoice { get; set; }
 }

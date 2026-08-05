@@ -16,9 +16,7 @@ namespace WpfApp1.Services
         public ServicesResult<User?> ValidateUser(string username, string password)
         {
             try {
-                using (var db = new DBSevicellContext())
-                {
-                    var user =  db.Users.FirstOrDefault(x => x.Username == username
+                    var user =  _db.Users.FirstOrDefault(x => x.Username == username
                     && x.Password == password
                     && x.Status == true);
 
@@ -28,8 +26,6 @@ namespace WpfApp1.Services
                     }
 
                     return ServicesResult<User?>.Ok(user, "Usuario validado exitosamente.");
-
-                }
             }
             catch (Exception ex) 
             {
@@ -41,15 +37,11 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
-                {
-                    var item = db.Users.FirstOrDefault(x => x.Id == id);
-
-                    return item;
-                }
+                var item = _db.Users.FirstOrDefault(x => x.Id == id);
+                return item;
             }
-            catch (Exception ex) 
-            { 
+            catch (Exception ex)
+            {
                 return null;
             }
         }
@@ -58,65 +50,58 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
-                {
-                    user.Password = Security.Security.HashPassword(user.Password);
 
-                    db.Users.Add(user);
-                    await SaveAuditAsync(AuditAction.Create, "Users", user.Id.ToString(), "Se creo un nuevo usuario", db);
-                    await db.SaveChangesAsync();
+                user.Password = Security.Security.HashPassword(user.Password);
 
-                   return ServicesResult<User>.Ok(user, "Usuario creado exitosamente.");
-                }
-            }
-            catch (Exception ex)
-            {
-                return ServicesResult<User>.Fail("Error inesperado al registrar al usuario. "+ ex.Message);
-            }
-        }
+                _db.Users.Add(user);
+                await SaveAuditAsync(AuditAction.Create, "Users", user.Id.ToString(), "Se creo un nuevo usuario", _db);
+                await _db.SaveChangesAsync();
 
-        public async Task<ServicesResult<User>> UpdateUserAsync (User user, bool IsPasswordUpdated)
-        {
-            try
-            {
-                using (var db = new DBSevicellContext())
-                {
-                    if (IsPasswordUpdated) user.Password = Security.Security.HashPassword(user.Password);
-                    
-                    db.Users.Update(user);
-                    await SaveAuditAsync(AuditAction.Update, "Users", user.Id.ToString(), "Se actualizo el usuario "+ user.Username, db);
-                    await db.SaveChangesAsync();
-
-                    return ServicesResult<User>.Ok(user, "Usuario creado exitosamente.");
-                }
+                return ServicesResult<User>.Ok(user, "Usuario creado exitosamente.");
             }
             catch (Exception ex)
             {
                 return ServicesResult<User>.Fail("Error inesperado al registrar al usuario. " + ex.Message);
-            } 
+            }
         }
-     
 
-        public async Task<ServicesResult<bool>>  ChangeStatusUserAsync(int id, bool newStatus)
+        public async Task<ServicesResult<User>> UpdateUserAsync(User user, bool IsPasswordUpdated)
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                if (IsPasswordUpdated) user.Password = Security.Security.HashPassword(user.Password);
+
+                _db.Users.Update(user);
+                await SaveAuditAsync(AuditAction.Update, "Users", user.Id.ToString(), "Se actualizo el usuario " + user.Username, _db);
+                await _db.SaveChangesAsync();
+
+                return ServicesResult<User>.Ok(user, "Usuario creado exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<User>.Fail("Error inesperado al registrar al usuario. " + ex.Message);
+            }
+        }
+
+
+        public async Task<ServicesResult<bool>> ChangeStatusUserAsync(int id, bool newStatus)
+        {
+            try
+            {
+                string statusUser = newStatus ? "habilitado" : "deshabilitado";
+
+                var user = await _db.Users.FirstOrDefaultAsync(x => x.Id == id);
+                if (user == null)
                 {
-                    string statusUser = newStatus ? "habilitado" : "deshabilitado";
-                    
-                    var user = await db.Users.FirstOrDefaultAsync(x => x.Id == id);
-                    if (user == null)
-                    {
-                        return ServicesResult<bool>.Fail($"Error el usuario no pudo ser {statusUser}");
-                    }
-
-                    user.Status = newStatus;
-                    user.UpdatedAt = DateTime.Now;
-                    await db.SaveChangesAsync();
-
-                    return ServicesResult<bool>.Ok(true, $"Usuario {user.Name} {statusUser} con exito."); ;
+                    return ServicesResult<bool>.Fail($"Error el usuario no pudo ser {statusUser}");
                 }
+
+                user.Status = newStatus;
+                user.UpdatedAt = DateTime.Now;
+                await _db.SaveChangesAsync();
+
+                return ServicesResult<bool>.Ok(true, $"Usuario {user.Name} {statusUser} con exito."); ;
+
             }
             catch (Exception ex)
             {
@@ -129,29 +114,27 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                var data = await _db.Users.Select(x => new ViewUserDto
                 {
-                    var data = await db.Users.Select(x => new ViewUserDto
-                    {
-                        Id = x.Id,
-                        Name = x.Name,
-                        lastName = x.LastName,
-                        profile = x.Username,
-                        status = (bool)x.Status ? "Activo" : "Deshabilitado",
-                    }).ToListAsync();
+                    Id = x.Id,
+                    Name = x.Name,
+                    lastName = x.LastName,
+                    profile = x.Username,
+                    status = (bool)x.Status ? "Activo" : "Deshabilitado",
+                }).ToListAsync();
 
-                    if(data.Count == 0)
-                    {
-                        return ServicesResult<List<ViewUserDto>>.Ok(data, "No se encontraron datos.");
-                    }
-
-                    return ServicesResult<List<ViewUserDto>>.Ok(data, "Usuarios obtenidos exitosamente.");
+                if (data.Count == 0)
+                {
+                    return ServicesResult<List<ViewUserDto>>.Ok(data, "No se encontraron datos.");
                 }
+
+                return ServicesResult<List<ViewUserDto>>.Ok(data, "Usuarios obtenidos exitosamente.");
+
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return ServicesResult<List<ViewUserDto>>.Fail("Error inesperado " + ex.Message);
-            }     
+            }
         }
     }
 }

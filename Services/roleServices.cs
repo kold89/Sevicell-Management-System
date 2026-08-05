@@ -20,7 +20,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var roles =  db.Roles.Where(x => x.Status == true).ToList();
                     if(roles.Count == 0)  return ServicesResult<List<Role>>.Fail("No se encontro ningun rol.");
@@ -38,7 +38,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var item = db.Roles.FirstOrDefault(x => x.Id == id);
                     if (item == null)
@@ -61,7 +61,7 @@ namespace WpfApp1.Services
             string actionStatus = "";
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var rol = await db.Roles.FirstOrDefaultAsync(x => x.Id == id);
                     if (rol == null) 
@@ -86,7 +86,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     return db.Roles.Select(x => new ViewRoleDto
                     {
@@ -107,7 +107,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     return db.Permissions.ToList();
                 }
@@ -120,7 +120,7 @@ namespace WpfApp1.Services
 
         public async Task<ServicesResult<bool>> RegistrarNuevoRolCompletoAsync(string name, string description, List<int> permisosIds)
         {
-            using (var db = new DBSevicellContext())
+            using (var db = new SevicellDbContext())
             {
                 using (var transaction = await db.Database.BeginTransactionAsync())
                 {
@@ -154,7 +154,7 @@ namespace WpfApp1.Services
         {
             try 
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var listPermissions = db.RolePermissions
                              .Where(rp => rp.RoleId == rolId)
@@ -171,7 +171,7 @@ namespace WpfApp1.Services
 
         public async Task<ServicesResult<bool>> ActualizarRolCompletoAsync(int rolId, string name, string description, List<int> nuevosPermisosIds)
         {
-            using (var db = new DBSevicellContext())
+            using (var db = new SevicellDbContext())
             {
                 using (var transaction = await db.Database.BeginTransactionAsync())
                 {

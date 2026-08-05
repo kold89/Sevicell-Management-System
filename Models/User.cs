@@ -25,6 +25,8 @@ public partial class User
 
     public virtual ICollection<AuditTable> AuditTables { get; set; } = new List<AuditTable>();
 
+    public virtual ICollection<DebtInstallment> DebtInstallments { get; set; } = new List<DebtInstallment>();
+
     public virtual ICollection<InventoryMovement> InventoryMovements { get; set; } = new List<InventoryMovement>();
 
     public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();

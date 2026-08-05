@@ -46,6 +46,12 @@ namespace WpfApp1
             }
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Marca el botón de Inicio (esto disparará BtnDashboard_Checked)
+            BtnDashboard.IsChecked = true;
+        }
+
         private void AppPermissionsMenu()
         {
             var MapsModules = new Dictionary<RadioButton, string>
@@ -65,12 +71,7 @@ namespace WpfApp1
             }
         }
 
-        private void BtnDashboard_Click(object sender, RoutedEventArgs e)
-        {
-            var confiCards = new WpfApp1.Views.Dashboard();
-
-            MainFrame.Navigate(confiCards);
-        }
+       
         private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
         {
             var confiCards = new WpfApp1.Views.ConfigDashboardPage();
@@ -208,9 +209,16 @@ namespace WpfApp1
             System.Windows.Input.Mouse.Synchronize();
         }
 
+        private void BtnDashboard_Checked(object sender, RoutedEventArgs e)
+        {
+            var confiCards = new WpfApp1.Views.Dashboard();
+
+            MainFrame.Navigate(confiCards);
+        }
+      
         private void BtnCredits_Click(object sender, RoutedEventArgs e)
         {
-            var confiCards = new WpfApp1.Views.Credit.CreditContracts();
+            var confiCards = new WpfApp1.Views.Credit.CreditContractsOptionPages();
 
             MainFrame.Navigate(confiCards);
         }

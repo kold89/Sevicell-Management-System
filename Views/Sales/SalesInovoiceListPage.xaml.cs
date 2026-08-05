@@ -156,5 +156,10 @@ namespace WpfApp1.Views.Sales
                 MessageBox.Show("Error al cargar el detalle: " + ex.Message);
             }
         }
+
+        private void CboFilterTypeInvoice_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

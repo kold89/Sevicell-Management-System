@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfApp1.Data;
+using WpfApp1.Models;
 using WpfApp1.Services;
 
 namespace WpfApp1.Security
@@ -18,7 +19,7 @@ namespace WpfApp1.Security
         public static event Action? PermisosActualizados;
         public static async Task LoadPermissionAsync(int roleId)
         {
-            using var db = new DBSevicellContext();
+            using var db = new SevicellDbContext();
 
             var codes = await db.RolePermissions 
                 .Where(rp => rp.RoleId == roleId)

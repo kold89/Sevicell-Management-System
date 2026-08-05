@@ -96,9 +96,9 @@ namespace WpfApp1.Services
             {
                 var data = new List<SalesInvoiceTypeDto>();
 
-                data.Add( new SalesInvoiceTypeDto{ Id = 0, Name = "--Todos--" });
-                data.Add( new SalesInvoiceTypeDto{ Id = 1, Name = "Formal" });
-                data.Add( new SalesInvoiceTypeDto { Id = 2, Name = "Informal" });
+                data.Add(new SalesInvoiceTypeDto { Id = 0, Name = "--Todos--" });
+                data.Add(new SalesInvoiceTypeDto { Id = 1, Name = "Formal" });
+                data.Add(new SalesInvoiceTypeDto { Id = 2, Name = "Informal" });
 
                 return ServicesResult<List<SalesInvoiceTypeDto>>.Ok(data, "Datos obtenidos exitosamente.");
             }
@@ -107,41 +107,6 @@ namespace WpfApp1.Services
                 return ServicesResult<List<SalesInvoiceTypeDto>>.Fail("Error al obtener los datos.");
             }
         }
-        /// <summary>
-        /// Obtiene el listado de las ventas del dia seleccionado.
-        /// </summary>
-        /// <param name="filter"></param>
-        /// <returns></returns>
-        //public async Task<ServicesResult<List<SalesInvoiceListDto>>> GetListSaleInvoiceAsync(SalesInvoiceFilterDto filter)
-        //{
-        //    try
-        //    {
-        //        var nextDayStart = filter.DateTo.Value.AddDays(1).AddTicks(-1);
-        //        var result = await _db.SalesInvoices.Include(x => x.Customer)
-        //            .Where(x => x.CreatedAt >= filter.DateFrom 
-        //        && x.CreatedAt < nextDayStart).
-        //        Select(x => new SalesInvoiceListDto
-        //        {
-        //            Id = x.Id,
-        //            InvoiceNumber = x.InvoiceNumber,
-        //            CustomerDisplay = x.Customer != null ? x.Customer.Name : "Cliente de mostrador",
-        //            CreatedAt =x.CreatedAt,
-        //            TotalAmount = x.TotalAmount,
-        //            IsRegisteredCustomer = x.CustomerId != null,
-        //        }).ToListAsync();
-
-        //        if (result.Count == 0)
-        //        {
-        //            return ServicesResult<List<SalesInvoiceListDto>>.Fail("Error no se encontraron ventas.");
-        //        }
-        //        return ServicesResult<List<SalesInvoiceListDto>>.Ok(result, "Listado obtenido correctamente.");
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ServicesResult<List<SalesInvoiceListDto>>.Fail("Error al obtener las ventas: " + ex.Message);
-        //    }
-        //}
         /// <summary>
         /// Obtiene el listado de ventas, aplicando los filtros recibidos.
         /// </summary>

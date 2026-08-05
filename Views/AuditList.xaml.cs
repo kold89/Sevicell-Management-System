@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp1.Data;
 using Microsoft.EntityFrameworkCore;
+using WpfApp1.Models;
 
 namespace WpfApp1.Views
 {
@@ -36,7 +37,7 @@ namespace WpfApp1.Views
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     // 1. Obtener total para calcular páginas
                     totalRegistros = await db.AuditTables.CountAsync();

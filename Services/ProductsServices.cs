@@ -20,7 +20,7 @@ namespace WpfApp1.Services
     {
         public async Task<ServicesResult<List<ProductsDto>>> listProducForGrid()
         {
-            using (var db = new DBSevicellContext())
+            using (var db = new SevicellDbContext())
             {
                 var data = await db.Products
                     .Join(db.Brands,
@@ -82,7 +82,7 @@ namespace WpfApp1.Services
         }
         public Product GetProductById(int id)
         {
-            using (var db = new DBSevicellContext())
+            using (var db = new SevicellDbContext())
             {
                 return db.Products.Where(x => x.Id == id).FirstOrDefault();
             }
@@ -90,7 +90,7 @@ namespace WpfApp1.Services
 
         public ServicesResult<ProductsDto> SearchProductById(int idProduct)
         {
-            using (var db = new DBSevicellContext())
+            using (var db = new SevicellDbContext())
             {
                 var data = db.Products
                     .Where(x => x.Id == idProduct)
@@ -131,7 +131,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     List<Brand> brands = new List<Brand>();
                     List<Category> categories = new List<Category>();
@@ -154,7 +154,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     db.Products.Add(product);
                     await SaveAuditAsync(AuditAction.Create, "Products", product.Id.ToString(), "Se creo un nuevo producto", db);
@@ -172,7 +172,7 @@ namespace WpfApp1.Services
         public async Task<ServicesResult<bool>> UpdateProductAsync(Product product)
         {
 
-            using (var db = new DBSevicellContext())
+            using (var db = new SevicellDbContext())
             {
                 db.Products.Update(product);
                 await SaveAuditAsync(AuditAction.Update, "Products", product.Id.ToString(), "Se actualizo el producto " , db);

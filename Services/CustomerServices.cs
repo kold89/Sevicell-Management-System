@@ -11,13 +11,13 @@ using WpfApp1.ViewModels;
 
 namespace WpfApp1.Services
 {
-    public class CustomerServices
+    public class CustomerServices : BaseService
     {
         public async Task<ServicesResult<List<custumerDTO>>> ListAllCustomersForGrid()
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     var data = await db.Customers.Select( 
                         x  => new custumerDTO{
@@ -35,6 +35,25 @@ namespace WpfApp1.Services
             {
                 return ServicesResult<List<custumerDTO>>.Fail("Error al obtener los datos.");
 
+            }
+        }
+
+        public async Task<ServicesResult<bool>> RegisterCustomerAsync(Customer customer)
+        {
+            try
+            {
+                using (var db = new SevicellDbContext())
+                {
+                    db.Add(customer);
+                    await db.SaveChangesAsync();
+
+                    await SaveAuditAsync(AuditAction.Create, "Supplier", $"cliente Id {customer.Id}", "Se creo un nuevo cliente.");
+                    return ServicesResult<bool>.Ok(true, "cliente registrado exitosamente.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<bool>.Fail("Error al registrar la información.");
             }
         }
     }
