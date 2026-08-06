@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
+using OpenTK.Audio.OpenAL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,6 +109,33 @@ namespace WpfApp1.Services
                 return ServicesResult<List<viewProductUnit>>.Fail("Error al obtener el listado de Frecuencias.");
             }
         }
+        public ServicesResult<List<creditContractsDTO>> ListCreditContractsDto()
+        {
+            try
+            {
+                var contracts = _db.Contracts
+                    .Select(x => new creditContractsDTO
+                    {
+                        ContractNumber = x.Id,
+                        ProductName = x.ProductUnit.Product.Name,
+                        CustomerName = $"{x.Client.Name} {x.Client.LastName}",
+                        PriceSales = x.SalePrice,
+                        DownPayment = x.DownPayment,
+                        Status = x.Status.Code,
+                        CreatedAt = x.CreatedAt ?? DateTime.Now,
+                        Balance = x.PendingBalance
+                    }).ToList();
+
+                if (contracts.Count == 0)
+                    return ServicesResult<List<creditContractsDTO>>.Ok(contracts, "No hay frecuencias registradas.");
+
+                return ServicesResult<List<creditContractsDTO>>.Ok(contracts, "Datos obtenidos exitosamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<List<creditContractsDTO>>.Fail("Error al obtener el listado de Frecuencias.");
+            }
+        }
         public ServicesResult<bool> ValidateContract(ContractCreateDto dto)
         {
             var errors = new List<string>();
@@ -195,6 +224,37 @@ namespace WpfApp1.Services
                     await transaction.RollbackAsync();
                     return ServicesResult<bool>.Fail("Error al guardar el contrato: " + ex.Message);
                 }
+            }
+        }
+
+        public async Task<ServicesResult<List<InstallmentPreview>>> GetDebtInstalmentAsync(int contractNumber)
+        {
+            try
+            {
+                var query = _db.DebtInstallments
+                    .Include(x => x.Status)
+                    .AsQueryable();
+                
+                if (contractNumber != null && contractNumber > 0)
+                    query = query.Where(x => x.ContractId == contractNumber);
+                var sql = query.ToQueryString();
+                var result = await query
+                    .OrderBy(x => x.DueDate)
+                    .Select(x => new InstallmentPreview
+                    {
+                        InstallmentNumber = x.InstallmentNumber,
+                        ExpectedAmount = x.ExpectedAmount,
+                        DueDate = x.DueDate.ToDateTime(TimeOnly.MinValue),
+                        PaymentDate = x.PaymentDate,
+                        Status = x.Status.Code
+                    })
+                    .ToListAsync();
+
+                return ServicesResult<List<InstallmentPreview>>.Ok(result, "Listado obtenido correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<List<InstallmentPreview>>.Fail("Error al obtener los pagos: " + ex.Message);
             }
         }
     }

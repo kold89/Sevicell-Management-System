@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WpfApp1.Services;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1.Views.Credit
 {
@@ -20,6 +22,8 @@ namespace WpfApp1.Views.Credit
     /// </summary>
     public partial class CreditContractsList : Page
     {
+        private readonly CreditContractsServices ContractsSevices = new CreditContractsServices();
+
         public CreditContractsList()
         {
             InitializeComponent();
@@ -36,53 +40,56 @@ namespace WpfApp1.Views.Credit
             if (this.NavigationService.CanGoBack)
                 this.NavigationService.GoBack();
         }
-        public class ContractViewModel
-        {
-            public string ContractNumber { get; set; }
-            public string ProductName { get; set; }
-            public string CustomerName { get; set; }
-            public string Status { get; set; }
-
-            public DateTime CreatedAt { get; set; }
-            public decimal Balance { get; set; }
-        }
+  
         private void LoadContractsData()
         {
-            // Simulación de datos (sustituir por consulta a base de datos o servicio)
+            var contractsList = ContractsSevices.ListCreditContractsDto();
+          
+            DgContracts.ItemsSource = contractsList.Data;
+        }
 
-            List<ContractViewModel> contractsList = new List<ContractViewModel>
+        private async void DgContracts_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DgContracts.SelectedItem is not creditContractsDTO contractSelection)
+                return;
+            try
             {
-                new ContractViewModel 
-                { 
-                    ContractNumber = "CTR-001", 
-                    ProductName = "Laptop Dell", 
-                    CustomerName = "Juan Pérez", 
-                    Status = "Activo", 
-                    CreatedAt = DateTime.Now.AddDays(30), 
-                    Balance = 1250.50m 
-                },
-                new ContractViewModel 
-                { 
-                    ContractNumber = "CTR-002", 
-                    ProductName = "Smart TV 55\"", 
-                    CustomerName = "María López", 
-                    Status = "Cancelado", 
-                    CreatedAt = DateTime.Now.AddDays(15), 
-                    Balance = 0.00m 
-                },
-                new ContractViewModel 
-                { 
-                    ContractNumber = "CTR-003", 
-                    ProductName = "Consola PS5", 
-                    CustomerName = "Carlos Gómez", 
-                    Status = "Deshabilitado", 
-                    CreatedAt = DateTime.Now.AddDays(5), 
-                    Balance = 450.00m 
+                var result = await ContractsSevices.GetDebtInstalmentAsync(contractSelection.ContractNumber);
+                if (!result.Success)
+                {
+                    MessageBox.Show(result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
-            };
 
-            // Asignación de la lista al DataGrid por su x:Name
-            DgContracts.ItemsSource = contractsList;
+                DgCuotas.ItemsSource = result.Data;
+
+                var pagadas = result.Data.Count(x => x.Status == "PAID" || x.Status == "PAID_LATE");
+                var totalPagado = result.Data.Where(x => x.Status == "PAID" || x.Status == "PAID_LATE").Sum(x => x.ExpectedAmount);
+
+                var details = new ContractDetailViewModel
+                {
+                    ContractNumber =$"Contrato No. {Convert.ToString(contractSelection.ContractNumber)}",
+                    CreatedAtText = contractSelection.CreatedAt.ToString("dd/MM/yyyy"),
+                    ClientName = contractSelection.CustomerName,
+                    ProductName = contractSelection.ProductName,
+                    SalePrice = contractSelection.PriceSales, 
+                    DownPayment = contractSelection.DownPayment,
+                    PendingBalance = contractSelection.Balance,
+                    TotalInstallments = result.Data.Count,
+                    PaidInstallments = pagadas,
+                    PendingInstallmentsCount = result.Data.Count - pagadas,
+                    TotalPaid = totalPagado
+                };
+
+                PanelDetalle.DataContext = details;
+
+                TxtSinSeleccion.Visibility = Visibility.Collapsed;
+                PanelDetalle.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar los pagos: " + ex.Message);
+            }
         }
     }
 }

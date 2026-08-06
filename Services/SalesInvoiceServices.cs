@@ -142,7 +142,7 @@ namespace WpfApp1.Services
                         Id = x.Id,
                         InvoiceNumber = x.InvoiceNumber,
                         CreatedAt = x.CreatedAt,
-                        CustomerDisplay = x.Customer != null ? x.Customer.Name : "Cliente de mostrador", // 👉 ajustar campo de nombre
+                        CustomerDisplay = x.Customer != null ? x.Customer.Name : "Cliente de mostrador", 
                         IsRegisteredCustomer = x.CustomerId != null,
                         TotalAmount = x.TotalAmount
                     })
@@ -165,8 +165,8 @@ namespace WpfApp1.Services
             {
                 var invoice = await _db.SalesInvoices
                     .Include(x => x.Customer)
-                    .Include(x => x.PaymentMethod)     // 👉 ajustar nombre de la propiedad de navegación
-                    .Include(x => x.SalesDetails)           // 👉 ajustar nombre de la colección de detalle
+                    .Include(x => x.PaymentMethod)    
+                    .Include(x => x.SalesDetails)        
                         .ThenInclude(d => d.Product)
                     .FirstOrDefaultAsync(x => x.Id == invoiceId);
 
@@ -187,7 +187,7 @@ namespace WpfApp1.Services
                     TotalAmount = invoice.TotalAmount ?? 0,
                     Lines = invoice.SalesDetails.Select(d => new SalesDetailLineDto
                     {
-                        ProductCode = d.Product.Code,   // 👉 ajustar si en tu entidad Product es "code" en minúscula
+                        ProductCode = d.Product.Code,   
                         ProductName = d.Product.Name,
                         Quantity = d.Quantity ?? 0,
                         UnitPrice = d.UnitPrice ?? 0

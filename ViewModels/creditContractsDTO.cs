@@ -9,7 +9,15 @@ namespace WpfApp1.ViewModels
 {
     public class creditContractsDTO
     {
-  
+        public int ContractNumber { get; set; }
+        public string ProductName { get; set; }
+        public string CustomerName { get; set; }
+        public string Status { get; set; }
+        public decimal PriceSales { get; set; }
+        public decimal DownPayment { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public decimal Balance { get; set; }
+        public List<InstallmentPreview> instalments  { get; set; } = new ();
     }
     public struct Tasa
     {

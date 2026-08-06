@@ -136,7 +136,7 @@
         <!-- LISTADO + DETALLE -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.4*"/>
+                <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition Width="16"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
@@ -151,6 +151,7 @@
                           BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
                           HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
                           AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
+                          SelectionChanged="DgContracts_SelectionChanged"
                           IsReadOnly="True">
                     <DataGrid.ColumnHeaderStyle>
                         <Style TargetType="DataGridColumnHeader">
@@ -163,7 +164,7 @@
                         </Style>
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="N° CONTRATO" Binding="{Binding ContractNumber}" Width="110"/>
+                        <DataGridTextColumn Header="N°" Binding="{Binding ContractNumber}" Width="auto"/>
                         <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="110"/>
                         <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="*"/>
 
@@ -203,9 +204,9 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTextColumn Header="VENCE" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100"/>
+                        <DataGridTextColumn Header="CREADO" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100"/>
 
-                        <DataGridTextColumn Header="SALDO" Binding="{Binding Balance, StringFormat={}{0:N2}}" Width="100">
+                        <!--<DataGridTextColumn Header="SALDO" Binding="{Binding Balance, StringFormat={}{0:N2}}" Width="100">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -214,7 +215,7 @@
                                     <Setter Property="Margin" Value="0,0,15,0"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
+                        </DataGridTextColumn>-->
 
                     </DataGrid.Columns>
                 </DataGrid>
@@ -234,8 +235,7 @@
 
                     <ScrollViewer x:Name="PanelDetalle" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
-                            <TextBlock x:Name="TxtDetContratoNumero" FontSize="18" FontWeight="Bold" Foreground="#1E293B"/>
-                            <TextBlock x:Name="TxtDetFecha" Foreground="#64748B" FontSize="12" Margin="0,2,0,12"/>
+                            <TextBlock x:Name="TxtDetContratoNumero" Text="{Binding ContractNumber}" FontSize="18" FontWeight="Bold" Foreground="#1E293B"/>
 
                             <!-- Info del cliente y producto -->
                             <Border Background="#F8FAFC" CornerRadius="6" Padding="12" Margin="0,0,0,12">
@@ -245,9 +245,8 @@
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock x:Name="TxtDetCliente" FontWeight="SemiBold" Foreground="#334155" FontSize="14"/>
-                                    <TextBlock x:Name="TxtDetProducto" Foreground="#64748B" FontSize="12" Margin="0,4,0,0" Grid.Row="1"/>
-                                    <TextBlock x:Name="TxtDetVendedor" Foreground="#94A3B8" FontSize="11" Margin="0,2,0,0" Grid.Row="2"/>
+                                    <TextBlock x:Name="TxtDetCliente" Text="{Binding ClientName}" FontWeight="SemiBold" Foreground="#334155" FontSize="14"/>
+                                    <TextBlock x:Name="TxtDetProducto"  Text="{Binding ProductName}" Foreground="#64748B" FontSize="12" Margin="0,4,0,0" Grid.Row="1"/>
                                 </Grid>
                             </Border>
 
@@ -260,16 +259,16 @@
                                         <ColumnDefinition Width="*"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Precio" FontSize="10" Foreground="#64748B" TextAlignment="Center"/>
-                                        <TextBlock x:Name="TxtDetPrecio" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B" TextAlignment="Center"/>
+                                        <TextBlock Text="Precio" FontSize="14" FontFamily="Segoe UI" Foreground="#64748B" TextAlignment="Center"/>
+                                        <TextBlock x:Name="TxtDetPrecio"  Text="{Binding SalePrice, StringFormat={}{0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B" TextAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="Prima" FontSize="10" Foreground="#64748B" TextAlignment="Center"/>
-                                        <TextBlock x:Name="TxtDetPrima" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B" TextAlignment="Center"/>
+                                        <TextBlock Text="Prima"  FontSize="14" FontFamily="Segoe UI" Foreground="#64748B" TextAlignment="Center"/>
+                                        <TextBlock x:Name="TxtDetPrima" Text="{Binding DownPayment, StringFormat={}{0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B" TextAlignment="Center"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Saldo" FontSize="10" Foreground="#64748B" TextAlignment="Center"/>
-                                        <TextBlock x:Name="TxtDetSaldo" FontSize="13" FontWeight="SemiBold" Foreground="#DC2626" TextAlignment="Center"/>
+                                        <TextBlock Text="Saldo" FontSize="14" FontFamily="Segoe UI" Foreground="#64748B" TextAlignment="Center"/>
+                                        <TextBlock x:Name="TxtDetSaldo" Text="{Binding PendingBalance, StringFormat={}{0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="#DC2626" TextAlignment="Center"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
@@ -295,7 +294,7 @@
                                     </Style>
                                 </DataGrid.ColumnHeaderStyle>
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="CUOTA" Binding="{Binding Number}" Width="55">
+                                    <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="55">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -303,7 +302,7 @@
                                         </DataGridTextColumn.ElementStyle>
                                     </DataGridTextColumn>
                                     <DataGridTextColumn Header="VENCIMIENTO" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="100"/>
-                                    <DataGridTextColumn Header="MONTO" Binding="{Binding Amount, StringFormat={}{0:N2}}" Width="80">
+                                    <DataGridTextColumn Header="MONTO" Binding="{Binding ExpectedAmount, StringFormat={}{0:N2}}" Width="80">
                                         <DataGridTextColumn.ElementStyle>
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="HorizontalAlignment" Value="Right"/>
@@ -357,23 +356,23 @@
                             <!-- Totales -->
                             <Grid Margin="0,0,0,6">
                                 <TextBlock Text="Total cuotas:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetTotalCuotas" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="TxtDetTotalCuotas" Text="{Binding TotalInstallments}" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
                             </Grid>
                             <Grid Margin="0,0,0,6">
                                 <TextBlock Text="Cuotas pagadas:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetCuotasPagadas" Foreground="#059669" FontSize="13" HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="TxtDetCuotasPagadas" Text="{Binding PaidInstallments}" Foreground="#059669" FontSize="13" HorizontalAlignment="Right"/>
                             </Grid>
                             <Grid Margin="0,0,0,6">
                                 <TextBlock Text="Cuotas pendientes:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetCuotasPendientes" Foreground="#DC2626" FontSize="13" HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="TxtDetCuotasPendientes" Text="{Binding PendingInstallmentsCount}" Foreground="#DC2626" FontSize="13" HorizontalAlignment="Right"/>
                             </Grid>
                             <Grid Margin="0,0,0,10">
                                 <TextBlock Text="Total pagado:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetTotalPagado" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right" FontWeight="SemiBold"/>
+                                <TextBlock x:Name="TxtDetTotalPagado" Text="{Binding TotalPaid, StringFormat={}{0:N2}}" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right" FontWeight="SemiBold"/>
                             </Grid>
                             <Grid>
                                 <TextBlock Text="SALDO PENDIENTE:" FontWeight="Bold" FontSize="14" Foreground="#1E293B"/>
-                                <TextBlock x:Name="TxtDetSaldoPendiente" FontWeight="Bold" FontSize="18" Foreground="#2563EB" HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="TxtDetSaldoPendiente" Text="{Binding PendingBalance, StringFormat={}{0:N2}}" FontWeight="Bold" FontSize="18" Foreground="#2563EB" HorizontalAlignment="Right"/>
                             </Grid>
                         </StackPanel>
                     </ScrollViewer>
