@@ -63,8 +63,8 @@ namespace WpfApp1.Views.Credit
 
                 DgCuotas.ItemsSource = result.Data;
 
-                var pagadas = result.Data.Count(x => x.Status == "PAID" || x.Status == "PAID_LATE");
-                var totalPagado = result.Data.Where(x => x.Status == "PAID" || x.Status == "PAID_LATE").Sum(x => x.ExpectedAmount);
+                var pagadas = result.Data.Count(x => x.Status == "PAGADO" || x.Status == "PAGO_TARDE");
+                var totalPagado = result.Data.Where(x => x.Status == "PAGADO" || x.Status == "PAGO_TARDE").Sum(x => x.ExpectedAmount);
 
                 var details = new ContractDetailViewModel
                 {
@@ -90,6 +90,61 @@ namespace WpfApp1.Views.Credit
             {
                 MessageBox.Show("Error al cargar los pagos: " + ex.Message);
             }
+        }
+
+        private void BtnDownload_Click(object sender, RoutedEventArgs e)
+        {
+            if (DgContracts.SelectedItem is not creditContractsDTO contractSelection)
+            {
+                MessageBox.Show("Selecciona un contrato primero.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+           var cuotas = DgCuotas.ItemsSource as IEnumerable<InstallmentPreview>;
+            if (cuotas == null || !cuotas.Any())
+            {
+                MessageBox.Show("No se encontraron cuotas para este contrato.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var primeraCuota = cuotas.OrderBy(c => c.DueDate).First(); 
+            var ultimaCuota = cuotas.OrderBy(c => c.DueDate).Last();
+
+            var dto = new TemplateContractDto
+            {
+                //vendedor
+                NombreVendedor = contractSelection.SellerName,
+                DniVendedor = contractSelection.DniSeller,
+                empresa = contractSelection.empresa,
+                 //Datos del comprador
+                NombreComprador = contractSelection.CustomerName,
+                DniComprador = contractSelection.DniCustomer,           
+                DomicilioComprador = contractSelection.CustomerAddress,  
+                
+                 //Detalles del producto
+                Articulo = contractSelection.ProductName,
+                Marca = contractSelection.Brand,        
+                Modelo = contractSelection.model,       
+                Color = contractSelection.colour,         
+                Imei = contractSelection.Imei,           
+                Imei2 =  contractSelection.Imei2,
+
+                // Financiero
+                PrecioTotal = contractSelection.PriceSales,
+                Prima = contractSelection.DownPayment,
+                CantidadCuotas = cuotas.Count(),
+                ValorCuota = primeraCuota.ExpectedAmount,   
+                FrecuenciaPago = "Mensual",                  
+
+                 //Fechas
+                FechaInicio = contractSelection.CreatedAt,
+                FechaFin = ultimaCuota.DueDate,
+                FechaFirma = DateTime.Now,
+                Municipio = "Teupasenti",
+                Departamento = "El Paraíso"
+            };
+
+            ContractsSevices.GenerarContratoDocumento(dto);
         }
     }
 }

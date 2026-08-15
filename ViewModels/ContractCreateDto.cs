@@ -18,7 +18,7 @@ namespace WpfApp1.ViewModels
         public int FrequencyId { get; set; }
         public string FrequencyCode { get; set; } = ""; // SEMANAL / QUINCENAL / MENSUAL
         public DateTime FirstDueDate { get; set; }
-        public decimal LateInterestRate { get; set; } // 0.03m, 0.04m, etc.
+        public decimal LateInterestRate { get; set; } // 0.3m, 0.4m, etc.
         public string? Notes { get; set; }
     }
 

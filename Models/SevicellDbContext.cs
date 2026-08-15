@@ -574,6 +574,10 @@ public partial class SevicellDbContext : DbContext
 
             entity.HasIndex(e => e.Imei, "UQ_ProductUnit_IMEI").IsUnique();
 
+            entity.Property(e => e.Colour)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("COLOUR");
             entity.Property(e => e.CreatedAt)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -583,6 +587,10 @@ public partial class SevicellDbContext : DbContext
             entity.Property(e => e.Imei2)
                 .HasMaxLength(50)
                 .HasColumnName("IMEI2");
+            entity.Property(e => e.Model)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("MODEL");
             entity.Property(e => e.SerialNumber).HasMaxLength(50);
             entity.Property(e => e.Status)
                 .HasMaxLength(20)

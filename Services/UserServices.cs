@@ -75,11 +75,11 @@ namespace WpfApp1.Services
                 await SaveAuditAsync(AuditAction.Update, "Users", user.Id.ToString(), "Se actualizo el usuario " + user.Username, _db);
                 await _db.SaveChangesAsync();
 
-                return ServicesResult<User>.Ok(user, "Usuario creado exitosamente.");
+                return ServicesResult<User>.Ok(user, "Usuario editado exitosamente.");
             }
             catch (Exception ex)
             {
-                return ServicesResult<User>.Fail("Error inesperado al registrar al usuario. " + ex.Message);
+                return ServicesResult<User>.Fail("Error inesperado al editar al usuario. " + ex.Message);
             }
         }
 

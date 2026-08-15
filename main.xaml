@@ -4,13 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp1"
+         xmlns:services="clr-namespace:WpfApp1.Services"
         xmlns:fa5="http://schemas.fontawesome.com/icons/"
         Loaded="Window_Loaded"
         mc:Ignorable="d"
         Title="Panel Administrativo-SEVICELL" Height="450" Width="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="220"/>
+            <ColumnDefinition x:Name="MenuColumn" Width="250"/>
             <!-- Menú -->
             <ColumnDefinition Width="*"/>
             <!-- Contenido -->
@@ -23,134 +24,101 @@
             <!-- Contenido -->
         </Grid.RowDefinitions>
 
+        <!-- Barra del LOGO + Botón de menú hamburguesa -->
         <Grid Grid.Column="0" Grid.Row="0" Background="#2D2D30">
-            <TextBlock Text="LOGO" Foreground="White"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"></TextBlock>
+            <DockPanel Margin="10,0">
+                <!-- 2. Botón para encoger/expandir -->
+                <ToggleButton x:Name="BtnToggleMenu" 
+                          Click="BtnToggleMenu_Click"
+                          DockPanel.Dock="Left"
+                          Width="32" Height="32" 
+                          Background="Transparent" BorderThickness="0" 
+                          Cursor="Hand">
+                    <fa5:SvgAwesome Icon="Solid_Bars" Foreground="White" Width="16" Height="16"/>
+                </ToggleButton>
 
+                <!-- El texto del logo (se ocultará automáticamente si no cabe) -->
+                <TextBlock x:Name="TxtLogo" Text="LOGO" Foreground="White"
+                       VerticalAlignment="Center" HorizontalAlignment="Center" 
+                       FontWeight="Bold" Margin="10,0,0,0"/>
+            </DockPanel>
         </Grid>
 
-        <!-- 🔹 Menú lateral -->
-        <StackPanel Grid.Row="1" Grid.Column="0" Background="#2D2D30">
+        <!-- 🔹 Menú lateral (StackPanel) -->
+        <StackPanel  Grid.Row="1" Grid.Column="0" Background="#2D2D30">
 
             <!-- Inicio -->
-            <RadioButton Name="BtnDashboard" Checked="BtnDashboard_Checked" Style="{StaticResource MenuButtonStyle}" >
+            <RadioButton Name="BtnDashboard" ToolTip="Inicio" Checked="BtnDashboard_Checked" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
-                            Icon="Solid_Home"
-                            Height="16"
-                            Margin="0,0,15,0"/>
-
-                    <TextBlock Style="{StaticResource MenuTextStyle}"
-                       Text="Inicio"
-                       VerticalAlignment="Center"
-                       FontSize="14"
-                       FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_Home" Height="16" Margin="0,0,15,0"/>
+                    <!-- 3. Envolvemos el texto en este contenedor con Nombre para ocultarlo -->
+                    <StackPanel x:Name="PanelTextInicio" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Inicio" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
                 </StackPanel>
             </RadioButton>
 
             <!-- Ventas -->
-            <RadioButton x:Name="BtnSales" Click="BtnSales_Click" Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="BtnSales" Click="BtnSales_Click" ToolTip="Ventas" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
-                            Icon="Solid_ShoppingCart"
-                            Height="16"
-                            Margin="0,0,15,0"/>
-
-                    <TextBlock Style="{StaticResource MenuTextStyle}"
-                       Text="Ventas"
-                       VerticalAlignment="Center"
-                       FontSize="14"
-                       FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_ShoppingCart" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextVentas" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Ventas" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
                 </StackPanel>
             </RadioButton>
-            <!-- Contratos -->
-            <RadioButton x:Name="BtnCredits" Click="BtnCredits_Click"  Style="{StaticResource MenuButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
-                Icon="Solid_FileContract"
-                Height="16"
-                Margin="0,0,15,0"/>
 
-                    <TextBlock Style="{StaticResource MenuTextStyle}"
-           Text="Creditos"
-           VerticalAlignment="Center"
-           FontSize="14"
-           FontFamily="Segoe UI Semibold"/>
+            <!-- Créditos -->
+            <RadioButton x:Name="BtnCredits" ToolTip="Créditos" Click="BtnCredits_Click" Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_FileContract" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextCreditos" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Créditos" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
                 </StackPanel>
             </RadioButton>
+
             <!-- Reparaciones -->
-            <RadioButton x:Name="btnRepairs"
-                 Click="btnRepairs_Click"
-                 Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="btnRepairs" ToolTip="Reparaciones" Click="btnRepairs_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
-                            Icon="Solid_Tools"
-                            Height="16"
-                            Margin="0,0,15,0"/>
-
-                    <TextBlock Style="{StaticResource MenuTextStyle}"
-                       Text="Reparaciones"
-                       VerticalAlignment="Center"
-                       FontSize="14"
-                       FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_Tools" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextReparaciones" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Reparaciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
                 </StackPanel>
             </RadioButton>
 
             <!-- Inventario -->
-            <RadioButton x:Name="BtnInventory"
-                 Click="BtnInventory_Click"
-                 Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="BtnInventory" ToolTip="Inventario" Click="BtnInventory_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
-                            Icon="Solid_Box"
-                            Height="16"
-                            Margin="0,0,15,0"/>
-
-                    <TextBlock Style="{StaticResource MenuTextStyle}"
-                       Text="Inventario"
-                       VerticalAlignment="Center"
-                       FontSize="14"
-                       FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_Box" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextInventario" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Inventario" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
                 </StackPanel>
             </RadioButton>
 
             <!-- Reportes -->
-            <RadioButton x:Name="BtnReports" Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="BtnReports" ToolTip="Reportes" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
-                            Icon="Solid_ChartBar"
-                            Height="16"
-                            Margin="0,0,15,0"/>
-
-                    <TextBlock Style="{StaticResource MenuTextStyle}"
-                       Text="Reportes"
-                       VerticalAlignment="Center"
-                       FontSize="14"
-                       FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_ChartBar" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextReportes" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Reportes" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
                 </StackPanel>
             </RadioButton>
 
             <!-- Configuraciones -->
-            <RadioButton x:Name="btnConfiguraciones"
-                 Click="btnConfiguraciones_Click"
-                 Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="btnConfiguraciones" ToolTip="Configuraciones" Click="btnConfiguraciones_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}"
-                            Icon="Solid_Cog"
-                            Height="16"
-                            Margin="0,0,15,0"/>
-
-                    <TextBlock Style="{StaticResource MenuTextStyle}"
-                       Text="Configuraciones"
-                       VerticalAlignment="Center"
-                       FontSize="14"
-                       FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_Cog" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextConfig" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Configuraciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
                 </StackPanel>
             </RadioButton>
 
         </StackPanel>
-
         <!-- 🔹 Barra superior -->
         <Grid Grid.Column="1" Grid.Row="0" Background="#1E1E1E">
             <DockPanel Margin="10">
@@ -300,5 +268,39 @@
            BorderThickness="0" Grid.ColumnSpan="2"
            Navigated="MainFrame_Navigated"/>
         </Grid>
+
+        <ItemsControl ItemsSource="{Binding Source={x:Static services:ToastService.Toasts}}"
+                      Grid.Row="0" Grid.RowSpan="2"
+                      Grid.Column="0" Grid.ColumnSpan="2"
+                      Panel.ZIndex="999"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom"
+                      Margin="0,0,20,20"
+                      IsHitTestVisible="False">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="{Binding BackgroundColor}"
+                            CornerRadius="6"
+                            Padding="14,10"
+                            Margin="0,0,0,8"
+                            MinWidth="280"
+                            IsHitTestVisible="True">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
+                        </Border.Effect>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Icon}" Foreground="White" FontWeight="Bold" Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding Message}" Foreground="White" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
     </Grid>
 </Window>

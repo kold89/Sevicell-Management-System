@@ -96,7 +96,7 @@ namespace WpfApp1.Views
                     if (result.Success)
                     {
                         LoadData();
-                        MessageBox.Show(result.Message);
+                        ToastService.ShowSuccess(result.Message);
                     }
                 }
             }

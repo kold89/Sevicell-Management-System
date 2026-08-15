@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -131,8 +132,8 @@ namespace WpfApp1.Views
 
                 var user = await serviceUser.RegisterUserAsync(newUser);
 
-                if(user.Success)
-                MessageBox.Show("Usuario registrado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (user.Success)
+                    ToastService.ShowSuccess(user.Message);
             }
             else
             {
@@ -148,7 +149,7 @@ namespace WpfApp1.Views
                 var update = await serviceUser.UpdateUserAsync(userExist, isPassDiferent);
 
                 if (update.Success)
-                MessageBox.Show("Usuario Editado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ToastService.ShowSuccess(update.Message);
             }
 
             this.DialogResult = true;

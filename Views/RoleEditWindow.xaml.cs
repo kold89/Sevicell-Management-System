@@ -137,7 +137,7 @@ namespace WpfApp1.Views
 
             if (!ValidateFilds()) return;
 
-            ServicesResult<bool> result;
+            ServicesResult<int> result;
 
             var idsSeleccionados = listForUI
                 .Where(p => p.ItemSelected)
@@ -156,13 +156,14 @@ namespace WpfApp1.Views
             }
             else // MODO EDICIÓN
             {
-                result = await servicesRole.ActualizarRolCompletoAsync(_rolExistente.Id, txtNameRol.Text, txtDescriptionRol.Text, idsSeleccionados);
+              result = await servicesRole.ActualizarRolCompletoAsync(_rolExistente.Id, txtNameRol.Text, txtDescriptionRol.Text, idsSeleccionados);
             }
 
             if (result.Success)
             {
-                MessageBox.Show("Datos guardados correctamente.", "SEVICELL");
-                await PermissionManager.LoadPermissionAsync(_rolExistente.Id);
+                //MessageBox.Show("Datos guardados correctamente.", "SEVICELL");
+                ToastService.ShowSuccess(result.Message);
+                await PermissionManager.LoadPermissionAsync(result.Data);
 
                 this.DialogResult = true;
                 this.Close();

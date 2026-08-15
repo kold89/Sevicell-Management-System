@@ -30,11 +30,11 @@
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnCategories"  Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="btnCategories" Click="btnCategories_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
                     <fa5:SvgAwesome Icon="Solid_MoneyBillAlt" Height="50" Foreground="#3F51B5" Margin="0,0,0,15"/>
-                    <TextBlock Text="Categorías y Marcas" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Administración de marcas y categorías" Foreground="Gray" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Cuotas" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Administración de cuotas vencidas o por vencer" Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
 

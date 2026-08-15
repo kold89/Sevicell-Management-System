@@ -165,8 +165,8 @@
                     </DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="N°" Binding="{Binding ContractNumber}" Width="auto"/>
-                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="110"/>
                         <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="*"/>
+                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="110"/>
 
                         <DataGridTemplateColumn Header="ESTADO" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
@@ -205,18 +205,17 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
                         <DataGridTextColumn Header="CREADO" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100"/>
-
-                        <!--<DataGridTextColumn Header="SALDO" Binding="{Binding Balance, StringFormat={}{0:N2}}" Width="100">
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
-                                    <Setter Property="Foreground" Value="#DC2626"/>
-                                    <Setter Property="Margin" Value="0,0,15,0"/>
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>-->
-
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnDownload" Click="BtnDownload_Click"  Background="Transparent" ToolTip="Descargar word" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                            <fa5:SvgAwesome Icon="Solid_Download" Height="14" Foreground="#55DDB0"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
             </Border>

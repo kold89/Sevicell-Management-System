@@ -80,7 +80,7 @@ namespace WpfApp1.Views.Credit
                     var customer = new Customer();
                     customer.Name = txtFirstName.Text;
                     customer.LastName = txtLastName.Text;
-                    customer.Email = txtEmail.Text;
+                    customer.Email = txtEmail.Text ?? "";
                     customer.Phone = txtPhone.Text;
                     customer.Dni = txtDNI.Text;
                     customer.Address = txtAddres.Text;

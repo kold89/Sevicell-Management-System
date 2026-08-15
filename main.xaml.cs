@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using WpfApp1.Data;
 using WpfApp1.Security;
+using System.Windows.Media.Animation;
 
 namespace WpfApp1
 {
@@ -215,7 +216,45 @@ namespace WpfApp1
 
             MainFrame.Navigate(confiCards);
         }
-      
+
+        private void BtnToggleMenu_Click(object sender, RoutedEventArgs e)
+        {
+            // Si el botón está presionado (Menú Contraído)
+            if (BtnToggleMenu.IsChecked == true)
+            {
+                MenuColumn.Width = new GridLength(60); // Ancho compacto para los iconos
+
+                // Ocultamos el texto del LOGO
+                TxtLogo.Visibility = Visibility.Collapsed;
+
+                // Ocultamos los paneles de texto de los botones
+                CambiarVisibilidadTextos(Visibility.Collapsed);
+            }
+            else // Si se desmarca (Menú Expandido)
+            {
+                MenuColumn.Width = new GridLength(250); // Ancho original
+
+                TxtLogo.Visibility = Visibility.Visible;
+
+                // Mostramos los paneles de texto de los botones
+                CambiarVisibilidadTextos(Visibility.Visible);
+            }
+        }
+
+        // Método auxiliar para no repetir código ocultando texto por texto
+        private void CambiarVisibilidadTextos(Visibility visibilidad)
+        {
+            if (PanelTextInicio == null) return; // Evita errores si se ejecuta antes de cargar componentes
+
+            PanelTextInicio.Visibility = visibilidad;
+            PanelTextVentas.Visibility = visibilidad;
+            PanelTextCreditos.Visibility = visibilidad;
+            PanelTextReparaciones.Visibility = visibilidad;
+            PanelTextInventario.Visibility = visibilidad;
+            PanelTextReportes.Visibility = visibilidad;
+            PanelTextConfig.Visibility = visibilidad;
+        }
+
         private void BtnCredits_Click(object sender, RoutedEventArgs e)
         {
             var confiCards = new WpfApp1.Views.Credit.CreditContractsOptionPages();

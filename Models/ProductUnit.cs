@@ -23,6 +23,10 @@ public partial class ProductUnit
 
     public string Imei2 { get; set; } = null!;
 
+    public string? Colour { get; set; }
+
+    public string? Model { get; set; }
+
     public virtual ICollection<Contract> Contracts { get; set; } = new List<Contract>();
 
     public virtual Product Product { get; set; } = null!;

@@ -96,8 +96,8 @@ namespace WpfApp1.Views.Credit
             var validation = ContractsSevices.ValidateContract(dto);
             if (!validation.Success)
             {
-                //ToastService.ShowError(validation.Message);
-               MessageBox.Show(validation.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+               ToastService.ShowError(validation.Message);
+               //MessageBox.Show(validation.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -106,22 +106,22 @@ namespace WpfApp1.Views.Credit
             var save = await ContractsSevices.SaveContractAsync(dto, calc);
             if (!save.Success)
             {
-                //ToastService.ShowError(save.Message);
-                MessageBox.Show("Error al querer guardar contrato.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ToastService.ShowError(save.Message);
+                //MessageBox.Show("Error al querer guardar contrato.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            MessageBox.Show("Contrato creado exitosamente..", "Exito", MessageBoxButton.OK, MessageBoxImage.Information);
-            //ToastService.ShowSuccess("Contrato creado exitosamente.");
+            //MessageBox.Show("Contrato creado exitosamente..", "Exito", MessageBoxButton.OK, MessageBoxImage.Information);
+            ToastService.ShowSuccess("Contrato creado exitosamente.");
             if (this.NavigationService.CanGoBack)
                 this.NavigationService.GoBack();
         }
 
         private decimal ParseTasa(int tasaId) => tasaId switch
         {
-            1 => 0.03m,
-            2 => 0.04m,
-            3 => 0.05m,
-            4 => 0.06m,
+            1 => 0.30m,
+            2 => 0.40m,
+            3 => 0.50m,
+            4 => 0.60m,
             _ => 0m
         };
 
@@ -171,7 +171,7 @@ namespace WpfApp1.Views.Credit
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error al cargar clientes: " + ex.Message);
+                MessageBox.Show("Error al llenar las listas desplegables.: " + ex.Message);
             }
         }
 
@@ -179,7 +179,6 @@ namespace WpfApp1.Views.Credit
         {
             if (cmbVendedor.SelectedItem is ViewSeller vendedorSeleccionado && vendedorSeleccionado.id != 0)
             {
-                // Ajusta las propiedades de acuerdo a como están nombradas en tu clase ViewSeller
                 txtInfoVendedor.Text = $"DNI/Identidad: {vendedorSeleccionado.dni ?? "—"}\n" +
                                        $"Tel: {vendedorSeleccionado.phone ?? "—"}\n" +
                                        $"Empres: {vendedorSeleccionado.company ?? "-"}";
@@ -226,7 +225,6 @@ namespace WpfApp1.Views.Credit
         {
             try
             {
-                // Si falta algo esencial para calcular, no revientes, solo salí
                 if (!decimal.TryParse(txtPrecioVenta.Text, out decimal precio)) return;
                 if (!decimal.TryParse(txtCuotaInicial.Text, out decimal enganche)) return;
                 if (!int.TryParse(txtNumCuotas.Text, out int cuotas) || cuotas <= 0) return;
@@ -255,7 +253,6 @@ namespace WpfApp1.Views.Credit
             }
             catch
             {
-                // datos incompletos o inválidos mientras el vendedor escribe -- no mostramos nada roto
             }
         }
     }

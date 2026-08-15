@@ -29,5 +29,11 @@ namespace WpfApp1.Views.Credit
         {
             this.NavigationService.Navigate(new CreditContractsList());
         }
+
+        private void btnCategories_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new installmentsduePage());
+
+        }
     }
 }

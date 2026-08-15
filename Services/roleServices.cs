@@ -73,7 +73,7 @@ namespace WpfApp1.Services
 
                     await SaveAuditAsync(AuditAction.Update, "Roles", id.ToString(), $"Rol {rol.Name} se ha cambiado su estado a {rol.Status}.");
 
-                    return ServicesResult<bool>.Ok(true, $"El rol ha sido {actionStatus} correctamente.");
+                    return ServicesResult<bool>.Ok(true, $"El rol <{rol.Name}> ha sido {actionStatus} correctamente.");
                 }
             }
             catch (Exception ex)
@@ -118,7 +118,7 @@ namespace WpfApp1.Services
             }
         }
 
-        public async Task<ServicesResult<bool>> RegistrarNuevoRolCompletoAsync(string name, string description, List<int> permisosIds)
+        public async Task<ServicesResult<int>> RegistrarNuevoRolCompletoAsync(string name, string description, List<int> permisosIds)
         {
             using (var db = new SevicellDbContext())
             {
@@ -139,12 +139,12 @@ namespace WpfApp1.Services
 
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
-                        return ServicesResult<bool>.Ok(true, "Rol y permisos creados con exito");
+                        return ServicesResult<int>.Ok(nuevoRol.Id, "Rol y permisos creados con exito");
                     }
                     catch (Exception ex)
                     {
                         await transaction.RollbackAsync();
-                        return ServicesResult<bool>.Fail("Error al crear el rol y permisos. " + ex.Message);
+                        return ServicesResult<int>.Fail("Error al crear el rol y permisos. " + ex.Message);
                     }
                 }
             }
@@ -169,7 +169,7 @@ namespace WpfApp1.Services
             } 
         }
 
-        public async Task<ServicesResult<bool>> ActualizarRolCompletoAsync(int rolId, string name, string description, List<int> nuevosPermisosIds)
+        public async Task<ServicesResult<int>> ActualizarRolCompletoAsync(int rolId, string name, string description, List<int> nuevosPermisosIds)
         {
             using (var db = new SevicellDbContext())
             {
@@ -180,7 +180,7 @@ namespace WpfApp1.Services
                         // 1. Buscar el rol existente
                         var rolDb = await db.Roles.FindAsync(rolId);
                         if (rolDb == null)
-                            return ServicesResult<bool>.Fail("Error, rol no encontrado");
+                            return ServicesResult<int>.Fail("Error, rol no encontrado");
 
                         rolDb.Name = name;
                         rolDb.Description = description;
@@ -197,12 +197,12 @@ namespace WpfApp1.Services
                         await db.SaveChangesAsync();
                         await transaction.CommitAsync();
 
-                        return ServicesResult<bool>.Ok(true, "Datos actualizados con éxito.");
+                        return ServicesResult<int>.Ok(rolDb.Id, "Datos actualizados con éxito.");
                     }
                     catch (Exception ex)
                     {
                         await transaction.RollbackAsync();
-                        return ServicesResult<bool>.Fail("Error inesperado. " + ex.Message);
+                        return ServicesResult<int>.Fail("Error inesperado. " + ex.Message);
                     }
                 }
             }

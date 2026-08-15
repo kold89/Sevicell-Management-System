@@ -17,7 +17,7 @@ namespace WpfApp1.Services
                 using (var db = new DBSevicellContext()) 
                 {
                     var query = db.RepairOrders
-                        .Include(o => o.Device.Customer) // Incluimos relaciones según tu ERD
+                        .Include(o => o.Device.Customer) 
                         .Include(o => o.Status)
                         .AsQueryable();
 

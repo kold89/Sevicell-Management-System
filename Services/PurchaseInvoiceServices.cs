@@ -91,7 +91,7 @@ namespace WpfApp1.Services
             try
             {
                 var query = _db.PurchaseInvoices
-                    .Include(x => x.Supplier) // 👉 ajustar nombre de la propiedad de navegación si es distinto
+                    .Include(x => x.Supplier) 
                     .AsQueryable();
 
                 if (filter.DateFrom.HasValue)
@@ -136,8 +136,8 @@ namespace WpfApp1.Services
             {
                 var invoice = await _db.PurchaseInvoices
                     .Include(x => x.Supplier)
-                    .Include(x => x.PurchaseDetails) // 👉 ajustar nombre de la propiedad de navegación del detalle
-                        .ThenInclude(d => d.Product) // 👉 para traer el nombre del producto
+                    .Include(x => x.PurchaseDetails) 
+                        .ThenInclude(d => d.Product) 
                     .FirstOrDefaultAsync(x => x.Id == invoiceId);
 
                 if (invoice == null)
