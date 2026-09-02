@@ -366,7 +366,7 @@ namespace WpfApp1.Views.Inventory
                     return;
                 }
 
-                MessageBox.Show(result.Message, "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.ShowSuccess(result.Message);
                 ClearForm();
 
                 if (this.NavigationService.CanGoBack)

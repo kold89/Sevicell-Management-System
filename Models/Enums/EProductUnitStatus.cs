@@ -9,7 +9,7 @@ namespace WpfApp1.Models.Enums
     public enum EProductUnitStatus
     {
         Disponible,
-        Vendido // ⚠ ajustá este texto si querés otra palabra en la BD
+        Vendido 
     }
 
     public static class ProductUnitStatusExtensions

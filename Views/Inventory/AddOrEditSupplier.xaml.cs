@@ -102,10 +102,10 @@ namespace WpfApp1.Views.Inventory
                     var result = await SupplierServices.RegisterSupplierAsync(supplier);
 
                     if (result.Success)
-                        MessageBox.Show("Proveedor registrado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ToastService.ShowSuccess(result.Message);
                     else
                     {
-                        MessageBox.Show("Error al registrar el Proveedor.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        ToastService.ShowError(result.Message);
                     }
                 }
                 else
@@ -131,8 +131,7 @@ namespace WpfApp1.Views.Inventory
             finally
             {
                 BtnSave.IsEnabled = true;
-            }
-
+            } 
         }
     }
 }

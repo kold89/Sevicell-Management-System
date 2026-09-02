@@ -101,7 +101,7 @@
                            VerticalContentAlignment="Center"
                            Width="170"/>
                 </StackPanel>
-                <CheckBox x:Name="CkStatus" Content="¿Está activo?" VerticalAlignment="Center" Margin="0,10,0,0" FontFamily="Segoe UI" Foreground="#4A5568"></CheckBox>
+                <CheckBox x:Name="ckIsSerizable" Checked="ckIsSerizable_Checked" Unchecked="ckIsSerizable_Unchecked"  Content="¿Telefono?" VerticalAlignment="Center" Margin="0,10,0,0" FontFamily="Segoe UI" Foreground="#4A5568"></CheckBox>
             </StackPanel>
 
             <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0,10,0,0">

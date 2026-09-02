@@ -161,9 +161,8 @@ namespace WpfApp1.Views
 
             if (result.Success)
             {
-                //MessageBox.Show("Datos guardados correctamente.", "SEVICELL");
                 ToastService.ShowSuccess(result.Message);
-                await PermissionManager.LoadPermissionAsync(result.Data);
+                await PermissionManager.RefreshIfCurrentUserAsync(result.Data);
 
                 this.DialogResult = true;
                 this.Close();

@@ -23,7 +23,7 @@ namespace WpfApp1.Services
 
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     // LINQ Query: Proyectamos directamente la unión al DTO que tu Grid necesita
                     var historia = await (from m in db.InventoryMovements
@@ -72,7 +72,7 @@ namespace WpfApp1.Services
         {
             try
             {
-                using (var db = new DBSevicellContext())
+                using (var db = new SevicellDbContext())
                 {
                     // 1. Buscar el producto para actualizar su stock
                     var product = await db.Products.FirstOrDefaultAsync( x => x.Id == dto.ProductId);

@@ -48,7 +48,6 @@ namespace WpfApp1.Views
                 passwordOrigin = userExist.Password;
             }
         }
-
         private void LoadRoles()
         {
             try {
@@ -71,7 +70,6 @@ namespace WpfApp1.Views
             }
             
         }
-
         public bool ValidateFields()
         {
             // Validar Nombre
@@ -115,45 +113,51 @@ namespace WpfApp1.Views
         }
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            if (!ValidateFields()) return;
+            try {
+                if (!ValidateFields()) return;
 
-            bool isPassDiferent = false;
+                bool isPassDiferent = false;
 
-            if (userExist == null)
-            {
-                var newUser = new User();
-                newUser.Name = txtNombre.Text;
-                newUser.LastName = txtLasName.Text;
-                newUser.Username = txtLogin.Text;
-                newUser.Password = txtPass.Password;
-                newUser.RoleId = (int)cbRoles.SelectedValue;
-                newUser.CreatedAt = DateTime.Now;
-                newUser.Status = true;
+                if (userExist == null)
+                {
+                    var newUser = new User();
+                    newUser.Name = txtNombre.Text;
+                    newUser.LastName = txtLasName.Text;
+                    newUser.Username = txtLogin.Text;
+                    newUser.Password = txtPass.Password;
+                    newUser.RoleId = (int)cbRoles.SelectedValue;
+                    newUser.CreatedAt = DateTime.Now;
+                    newUser.Status = true;
 
-                var user = await serviceUser.RegisterUserAsync(newUser);
+                    var user = await serviceUser.RegisterUserAsync(newUser);
 
-                if (user.Success)
-                    ToastService.ShowSuccess(user.Message);
+                    if (user.Success)
+                        ToastService.ShowSuccess(user.Message);
+                }
+                else
+                {
+                    isPassDiferent = (txtPass.Password != passwordOrigin);
+                    if (isPassDiferent) userExist.Password = txtPass.Password;
+
+                    userExist.Name = txtNombre.Text;
+                    userExist.LastName = txtLasName.Text;
+                    userExist.Username = txtLogin.Text;
+                    userExist.RoleId = (int)cbRoles.SelectedValue;
+                    userExist.UpdatedAt = DateTime.Now;
+
+                    var update = await serviceUser.UpdateUserAsync(userExist, isPassDiferent);
+
+                    if (update.Success)
+                        ToastService.ShowSuccess(update.Message);
+                }
+
+                this.DialogResult = true;
+                this.Close();
             }
-            else
+            catch (Exception ex)
             {
-                isPassDiferent = (txtPass.Password != passwordOrigin);
-                if (isPassDiferent) userExist.Password = txtPass.Password;
-
-                userExist.Name = txtNombre.Text;
-                userExist.LastName = txtLasName.Text;
-                userExist.Username = txtLogin.Text;
-                userExist.RoleId = (int)cbRoles.SelectedValue;
-                userExist.UpdatedAt = DateTime.Now;
-        
-                var update = await serviceUser.UpdateUserAsync(userExist, isPassDiferent);
-
-                if (update.Success)
-                    ToastService.ShowSuccess(update.Message);
+                ToastService.ShowError("Error inesperado "+ ex.Message);
             }
-
-            this.DialogResult = true;
-            this.Close();
         }
     }
 }

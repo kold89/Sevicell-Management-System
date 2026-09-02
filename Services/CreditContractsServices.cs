@@ -164,6 +164,7 @@ namespace WpfApp1.Services
             if (dto.DownPayment >= dto.SalePrice) errors.Add("El enganche no puede ser mayor o igual al precio de venta.");
             if (dto.InstallmentCount <= 0) errors.Add("El número de cuotas debe ser mayor a cero.");
             if (dto.FirstDueDate < DateTime.Today) errors.Add("La fecha de la primera cuota no puede ser anterior a hoy.");
+            if (dto.FrequencyId <= 0) errors.Add("Debe seleccionar una frecuencia.");
 
             using (var db = new SevicellDbContext())
             {
@@ -274,48 +275,6 @@ namespace WpfApp1.Services
             }
         }
 
-        //public async Task<ServicesResult<bool>> RegisterPaymentAsync(int installmentId, DateTime paymentDate)
-        //{
-        //    using (var db = new SevicellDbContext())
-        //    using (var transaction = await db.Database.BeginTransactionAsync())
-        //    {
-        //        try
-        //        {
-        //            var installment = await db.DebtInstallments.FirstOrDefaultAsync(x => x.Id == installmentId);
-        //            if (installment == null)
-        //            {
-        //                await transaction.RollbackAsync();
-        //                return ServicesResult<bool>.Fail("La cuota no existe.");
-        //            }
-
-        //            if (installment.StatusId == (int)InstallmentStatus.Paid || installment.StatusId == (int)InstallmentStatus.PaidLate)
-        //            {
-        //                await transaction.RollbackAsync();
-        //                return ServicesResult<bool>.Fail("Esta cuota ya fue pagada.");
-        //            }
-
-        //            bool pagoTarde = paymentDate.Date > installment.DueDate.ToDateTime(TimeOnly.MinValue).Date;
-
-        //            installment.PaidAmount = installment.ExpectedAmount;
-        //            installment.PaymentDate = DateOnly.FromDateTime(paymentDate);
-        //            installment.StatusId = pagoTarde ? (int)InstallmentStatus.PaidLate : (int)InstallmentStatus.Paid;
-
-        //            await db.SaveChangesAsync();
-        //            await ActualizarEstadoContratoAsync(installment.ContractId, db);
-
-        //            await SaveAuditAsync(AuditAction.Update, "DebtInstallment", installment.Id.ToString(), "Se registró el pago de la cuota", db);
-        //            await db.SaveChangesAsync();
-        //            await transaction.CommitAsync();
-
-        //            return ServicesResult<bool>.Ok(true, "Pago registrado exitosamente.");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            await transaction.RollbackAsync();
-        //            return ServicesResult<bool>.Fail("Error al registrar el pago: " + ex.Message);
-        //        }
-        //    }
-        //}
         public async Task<ServicesResult<ReciboPagoCuotaDto>> RegisterPaymentAsync(int installmentId, DateTime paymentDate)
         {
             using (var db = new SevicellDbContext())
@@ -348,8 +307,8 @@ namespace WpfApp1.Services
                     // A partir de aquí armamos el recibo, ANTES del commit,
                     // para asegurarnos que todo lo que preguntemos ya refleja el pago recién guardado.
                     var contrato = await db.Contracts
-                        .Include(c => c.Client)      // ajusta el nombre de la propiedad de navegación real
-                        .Include(c => c.ProductUnit)   // ajusta si tu entidad se llama distinto
+                        .Include(c => c.Client)      
+                        .Include(c => c.ProductUnit)   
                             .ThenInclude(pu => pu.Product)
                         .FirstOrDefaultAsync(c => c.Id == installment.ContractId);
 

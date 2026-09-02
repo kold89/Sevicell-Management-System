@@ -35,8 +35,8 @@ namespace WpfApp1.Views.Sales
         }
 
         private readonly ProductsServices _productServices = new ProductsServices();
-        private readonly CustomerServices _customerServices = new CustomerServices();       // 👉 ajustar si el nombre real es distinto
-        private readonly PaymentMethodServices _paymentMethodServices = new PaymentMethodServices(); // 👉 ajustar si el nombre real es distinto
+        private readonly CustomerServices _customerServices = new CustomerServices();       
+        private readonly PaymentMethodServices _paymentMethodServices = new PaymentMethodServices(); 
         private readonly SalesInvoiceServices _salesInvoiceServices = new();
         private bool _guardando = false;
 
@@ -58,7 +58,6 @@ namespace WpfApp1.Views.Sales
             DgSalesDetail.ItemsSource = _detalleVenta;
             LoadProducts();
             _paginaLista = true;
-
         }
 
         private async void LoadProducts()
@@ -124,8 +123,6 @@ namespace WpfApp1.Views.Sales
             }
         }
 
-         //---------- CLIENTE REGISTRADO / MOSTRADOR ----------
-
         private void ChkClienteRegistrado_Checked(object sender, RoutedEventArgs e)
         {
             CboCliente.IsEnabled = true;
@@ -140,8 +137,6 @@ namespace WpfApp1.Views.Sales
             CboCliente.SelectedValue = null;
             TxtClienteMostrador.Visibility = Visibility.Visible;
         }
-
-         //---------- BUSCADOR DE PRODUCTOS ----------
 
         private void TxtBuscarProducto_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -173,7 +168,7 @@ namespace WpfApp1.Views.Sales
                 _productoSeleccionado = producto;
                 TxtBuscarProducto.Text = producto.name;
                 TxtBuscarProducto.CaretIndex = TxtBuscarProducto.Text.Length;
-                TxtPrice.Text = producto.salesPrice.ToString("N2"); // precio automático, pero editable
+                TxtPrice.Text = producto.salesPrice.ToString("N2"); 
                 PopupSugerencias.IsOpen = false;
                 _seleccionandoDesdeLista = false;
 
@@ -181,8 +176,6 @@ namespace WpfApp1.Views.Sales
                 TxtCant.Focus();
             }
         }
-
-         //---------- VALIDACIÓN Y AGREGADO DE LÍNEA ----------
 
         public bool ValidateFields()
         {
@@ -206,8 +199,7 @@ namespace WpfApp1.Views.Sales
                 TxtPrice.Focus();
                 return false;
             }
-            //Validación de stock disponible, antes de agregar la línea
-            if (_productoSeleccionado.stock < cantidad) // 👉 ajustar nombre real del campo en ProductsDto
+            if (_productoSeleccionado.stock < cantidad) 
             {
                 MessageBox.Show($"Stock insuficiente. Disponible: {_productoSeleccionado.stock}", "Validación",
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -225,7 +217,6 @@ namespace WpfApp1.Views.Sales
                 {
                     int cantidad = Convert.ToInt32(TxtCant.Text);
 
-                    //Si el producto ya está en el detalle, sumamos cantidad en vez de duplicar la línea
                    var existente = _detalleVenta.FirstOrDefault(x => x.ProductId == _productoSeleccionado.id);
                     if (existente != null)
                     {
@@ -275,8 +266,6 @@ namespace WpfApp1.Views.Sales
             RecalcularTotales();
         }
 
-         //---------- TOTALES ----------
-
         private void TxtDescuento_TextChanged(object sender, TextChangedEventArgs e)
         {
             RecalcularTotales();
@@ -289,15 +278,13 @@ namespace WpfApp1.Views.Sales
             decimal subtotal = _detalleVenta.Sum(x => x.TotalItem);
             decimal.TryParse(TxtDescuento.Text, out decimal descuento);
 
-            if (descuento > subtotal) descuento = subtotal; // evita total negativo
+            if (descuento > subtotal) descuento = subtotal; 
 
             invoiceTotal = subtotal - descuento;
 
             txSubtotal.Text = subtotal.ToString("N2");
             txTotal.Text = invoiceTotal.ToString("N2");
         }
-
-         //---------- FECHA ----------
 
         private void InicializarFecha()
         {
@@ -320,8 +307,6 @@ namespace WpfApp1.Views.Sales
                 PopupCalendario.IsOpen = false;
             }
         }
-
-         //---------- VALIDACIÓN DE CABECERA ----------
 
         private bool ValidateInvoiceHeader()
         {
@@ -351,8 +336,6 @@ namespace WpfApp1.Views.Sales
 
             return true;
         }
-
-         //---------- GUARDAR ----------
 
         private async void BtnSaveInvoice_Click(object sender, RoutedEventArgs e)
         {
@@ -401,7 +384,8 @@ namespace WpfApp1.Views.Sales
                     return;
                 }
 
-                MessageBox.Show(result.Message, "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show(result.Message, "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.ShowSuccess(result.Message);
                 ClearForm();
 
                 if (this.NavigationService.CanGoBack)
@@ -445,7 +429,6 @@ namespace WpfApp1.Views.Sales
                 "Confirmar cancelación", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (confirmacion != MessageBoxResult.Yes) return;
-
             ClearForm();
         }
 

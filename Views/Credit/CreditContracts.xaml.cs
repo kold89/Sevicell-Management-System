@@ -29,16 +29,20 @@ namespace WpfApp1.Views.Credit
         public readonly List<Tasa> tasas = new List<Tasa> {
                     { new Tasa{ id = 0, description = "--Seleccione--" } },
                     { new Tasa{ id = 1, description = "3%" } },
-                    { new Tasa{ id = 2, description = "4%" } },
-                    { new Tasa{ id = 3, description = "5%" } },
-                    { new Tasa{ id = 4, description = "6%" } }
+                    { new Tasa{ id = 2, description = "3.2%" } },
+                    { new Tasa{ id = 3, description = "3.5%" } },
+                    { new Tasa{ id = 4, description = "4%" } },
+                    { new Tasa{ id = 5, description = "4.2%" } },
+                    { new Tasa{ id = 6, description = "4.5%" } },
+                    { new Tasa{ id = 7, description = "5%" } },
+                    { new Tasa{ id = 8, description = "5.5%" } },
+                    { new Tasa{ id = 9, description = "6%" } }
                 };
         private readonly CreditContractsServices ContractsSevices = new CreditContractsServices();
         public CreditContracts()
         {
             InitializeComponent();
             LoadCBox();
-
 
             txtPrecioVenta.TextChanged += (s, e) => ActualizarResumen();
             txtCuotaInicial.TextChanged += (s, e) => ActualizarResumen();
@@ -47,7 +51,6 @@ namespace WpfApp1.Views.Credit
             cmbTasa.SelectionChanged += (s, e) => ActualizarResumen();
             dpPrimerVencimiento.SelectedDateChanged += (s, e) => ActualizarResumen();
         }
-
         private void btnNuevoCliente_Click(object sender, RoutedEventArgs e)
         {
             AddOrEditCustumer  modalCustomer = new AddOrEditCustumer();
@@ -59,18 +62,15 @@ namespace WpfApp1.Views.Credit
                 LoadCboxCustumer();
             }
         }
-
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
             if (this.NavigationService.CanGoBack)
                 this.NavigationService.GoBack();
         }
-
         private void btnCancelar_Click(object sender, RoutedEventArgs e)
         {
 
         }
-
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
             decimal.TryParse(txtPrecioVenta.Text, out decimal priceSale);
@@ -115,16 +115,19 @@ namespace WpfApp1.Views.Credit
             if (this.NavigationService.CanGoBack)
                 this.NavigationService.GoBack();
         }
-
         private decimal ParseTasa(int tasaId) => tasaId switch
         {
             1 => 0.30m,
-            2 => 0.40m,
-            3 => 0.50m,
-            4 => 0.60m,
+            2 => 0.32m,
+            3 => 0.35m,
+            4 => 0.40m,
+            5 => 0.42m,
+            6 => 0.45m,
+            7 => 0.50m,
+            8 => 0.55m,
+            9 => 0.60m,
             _ => 0m
         };
-
         private  void LoadCboxCustumer()
         {
             //Clientes
@@ -174,7 +177,6 @@ namespace WpfApp1.Views.Credit
                 MessageBox.Show("Error al llenar las listas desplegables.: " + ex.Message);
             }
         }
-
         private void cmbVendedor_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbVendedor.SelectedItem is ViewSeller vendedorSeleccionado && vendedorSeleccionado.id != 0)
@@ -188,7 +190,6 @@ namespace WpfApp1.Views.Credit
                 txtInfoVendedor.Text = "DNI/Identidad: —\nTel: —";
             }
         }
-
         private void cmbCliente_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbCliente.SelectedItem is viewCustumers clienteSeleccionado && clienteSeleccionado.id != 0)
@@ -202,7 +203,6 @@ namespace WpfApp1.Views.Credit
                 txtInfoCliente.Text = "DNI/Identidad: —\nTel: —\nDirección: —";
             }
         }
-
         private void cmbProducto_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (cmbProducto.SelectedItem is viewProductUnit productSeleccionado && productSeleccionado.id != 0)

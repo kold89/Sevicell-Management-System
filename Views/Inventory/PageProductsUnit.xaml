@@ -1,0 +1,247 @@
+﻿<Page x:Class="WpfApp1.Views.Inventory.PageProductsUnit"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp1.Views.Inventory"
+       xmlns:fa5="http://schemas.fontawesome.com/icons/"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Loaded="Page_Loaded"
+      Title="PageProductsUnit">
+
+    <Page.Resources>
+        <Style TargetType="TextBox" x:Key="InputUnidadStyle">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="8,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#CBD5E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+                                      Margin="{TemplateBinding Padding}"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter Property="BorderBrush" Value="#2196F3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="LabelUnidadStyle">
+            <Setter Property="FontSize" Value="11"/>
+            <Setter Property="Foreground" Value="#718096"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="2,0,0,4"/>
+        </Style>
+    </Page.Resources>
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- 0: encabezado -->
+            <RowDefinition Height="Auto"/>
+            <!-- 1: combo + contador -->
+            <RowDefinition Height="Auto"/>
+            <!-- 2: form de nueva unidad -->
+            <RowDefinition Height="*"/>
+            <!-- 3: DataGrid -->
+        </Grid.RowDefinitions>
+
+        <!-- ROW 0: ENCABEZADO PRINCIPAL -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,20">
+            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click"
+                Style="{StaticResource btnGoBackStyle}"
+                Cursor="Hand" 
+                Margin="0,0,15,0">
+                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="20" Foreground="#2196F3"/>
+            </Button>
+            <StackPanel Margin="15,0,0,0" VerticalAlignment="Center">
+                <TextBlock Text="Unidades de Producto" FontSize="24" FontWeight="Bold" Foreground="#2C3E50"/>
+                <TextBlock Text="Registra las unidades (IMEI, color, modelo) de un producto serializado" 
+                       Foreground="#7F8C8D" FontSize="13" Margin="0,2,0,0"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- ROW 1: producto + contador -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <StackPanel Width="300" Margin="0,0,20,0">
+                <TextBlock Text="Producto (teléfono)" FontWeight="Bold"/>
+                <ComboBox x:Name="CboProducto"
+                      DisplayMemberPath="Name"
+                      SelectedValuePath="Id"
+                      SelectionChanged="CboProducto_SelectionChanged"
+                          Height="32" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center" Margin="0,0,0,15"/>
+            </StackPanel>
+            <StackPanel>
+                <TextBlock Text="Disponibles" Foreground="#718096" FontSize="11"/>
+                <TextBlock x:Name="TxtDisponibles" Text="—" FontSize="20" FontWeight="SemiBold"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- ROW 2: form nueva unidad -->
+        <Grid Grid.Row="2" Margin="0,14,0,10" x:Name="PnlForm" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                <TextBlock Text="IMEI" FontSize="11" FontWeight="SemiBold" Foreground="#7F8C8D" Margin="2,0,0,3"/>
+                <TextBox x:Name="TxtImei1"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="4,0">
+                <TextBlock Text="IMEI 2" FontSize="11" FontWeight="SemiBold" Foreground="#7F8C8D" Margin="2,0,0,3"/>
+                <TextBox x:Name="TxtImei2"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Margin="4,0">
+                <TextBlock Text="COLOR" FontSize="11" FontWeight="SemiBold" Foreground="#7F8C8D" Margin="2,0,0,3"/>
+                <TextBox x:Name="TxtColor"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="3" Margin="4,0">
+                <TextBlock Text="MODELO" FontSize="11" FontWeight="SemiBold" Foreground="#7F8C8D" Margin="2,0,0,3"/>
+                <TextBox x:Name="TxtModelo"/>
+            </StackPanel>
+
+            <Button x:Name="BtnAgregar" Grid.Column="4" Content="Agregar" Click="BtnAgregar_Click"
+             VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,12,0,0"/>
+        </Grid>
+        <!-- ROW 3: grid -->
+        <DataGrid Grid.Row="3" 
+          x:Name="DgUnidades"
+          ItemsSource="{Binding Unidades}"
+          Style="{StaticResource ModernDataGrid}"
+          AutoGenerateColumns="False"
+          HeadersVisibility="Column"
+          IsReadOnly="True"
+          GridLinesVisibility="Horizontal"
+          BorderThickness="0"
+          BorderBrush="#DDDDDD"
+          Background="White"
+          RowHeight="44"
+          FontSize="13"
+          CanUserAddRows="False">
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Header="IMEI" Binding="{Binding Imei}" Width="1.6*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="Margin" Value="16,0,0,0"/>
+                            <Setter Property="FontFamily" Value="Consolas"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="IMEI2" Binding="{Binding Imei2}" Width="1.4*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="FontFamily" Value="Consolas"/>
+                            <Setter Property="Foreground" Value="#7F8C8D"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="COLOR" Binding="{Binding Colour}" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="MODELO" Binding="{Binding Model}" Width="1.2*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTemplateColumn Header="ESTADO" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,0,16,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                <Border x:Name="StatusBadge" Style="{StaticResource BadgeBorderStyle}">
+                                    <TextBlock x:Name="StatusText"
+                                       Text="{Binding Status}"
+                                       Style="{StaticResource BadgeTextStyle}"
+                                       FontFamily="Consolas"
+                                       FontWeight="SemiBold"/>
+                                </Border>
+                            </Grid>
+
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="Disponible">
+                                    <Setter TargetName="StatusBadge" Property="Background" Value="#E8F8F5"/>
+                                    <Setter TargetName="StatusText" Property="Foreground" Value="#117A65"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="Vendido">
+                                    <Setter TargetName="StatusBadge" Property="Background" Value="#FDEDEC"/>
+                                    <Setter TargetName="StatusText" Property="Foreground" Value="#C0392B"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="Reservado">
+                                    <Setter TargetName="StatusBadge" Property="Background" Value="#FEF9E7"/>
+                                    <Setter TargetName="StatusText" Property="Foreground" Value="#B7950B"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button x:Name="BtnEdit" Click="BtnEdit_Click" Width="30"
+                        Height="30" Margin="3"
+                        Background="#F5F5F5"
+                        BorderBrush="Transparent"
+                        Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource ActionButtonStyle}">
+                                            <Setter Property="IsEnabled" Value="True"/>
+                                            <Setter Property="Opacity" Value="1"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Status}" Value="Vendido">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                    <Setter Property="Opacity" Value="0.35"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Status}" Value="Reservado">
+                                                    <Setter Property="IsEnabled" Value="False"/>
+                                                    <Setter Property="Opacity" Value="0.35"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                    <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

@@ -17,17 +17,21 @@ namespace WpfApp1.Security
     {
         private static HashSet<string> _permisos = new();
         public static event Action? PermisosActualizados;
+        private static int? _currentRoleId;
+
         public static async Task LoadPermissionAsync(int roleId)
         {
             using var db = new SevicellDbContext();
-
-            var codes = await db.RolePermissions 
+            {
+                var codes = await db.RolePermissions
                 .Where(rp => rp.RoleId == roleId)
-                .Select(rp => rp.Permission.Code) 
+                .Select(rp => rp.Permission.Code)
                 .ToListAsync();
 
-            _permisos = new HashSet<string>(codes);
-            PermisosActualizados?.Invoke();
+                _permisos = new HashSet<string>(codes);
+                _currentRoleId = roleId;
+                PermisosActualizados?.Invoke();
+            }         
         }
         /// <summary>
         /// Valida si el usuario tiene asignado dicho permiso.
@@ -42,8 +46,15 @@ namespace WpfApp1.Security
         public static void ClearPermission()
         {
             _permisos = new HashSet<string>();
+            _currentRoleId = null;
         }
-
+        public static async Task RefreshIfCurrentUserAsync(int editedRoleId)
+        {
+            if (_currentRoleId.HasValue && editedRoleId == _currentRoleId.Value)
+            {
+                await LoadPermissionAsync(editedRoleId);
+            }
+        }
         protected ServicesResult<T>? ValidarPermiso<T>(string permissionCode)
         {
             if (!PermissionManager.Puede(permissionCode))

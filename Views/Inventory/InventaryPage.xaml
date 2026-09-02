@@ -70,6 +70,13 @@
                 </StackPanel>
             </Button>
 
+            <Button x:Name="BtnProductUnit" Click="BtnProductUnit_Click"  Style="{StaticResource CardButtonStyle}">
+                <StackPanel>
+                    <fa5:SvgAwesome Icon="Solid_Toolbox" Height="50" Foreground="#0e9594" Margin="0,0,0,15"/>
+                    <TextBlock Text="Ingreso de Telefonos" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Visualizacion de las Telefonos." Foreground="Gray" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Button>
         </UniformGrid>
     </Grid>
 </Page>

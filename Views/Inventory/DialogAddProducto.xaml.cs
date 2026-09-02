@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -23,6 +24,7 @@ namespace WpfApp1.Views.Inventory
     public partial class DialogAddProducto : Window
     {
         private readonly ProductsServices services = new ProductsServices();
+        private bool _isLoading = false;
         private readonly Product? _product;
         public DialogAddProducto(Product product = null )
         {
@@ -31,11 +33,12 @@ namespace WpfApp1.Views.Inventory
             _product = product;
 
             LoadBrandsAndCategory();
-            CkStatus.IsChecked = true;
+            ckIsSerizable.IsChecked = false;
             this.Loaded += DialogAddProducto_Loaded;
 
             if (_product != null)
             {
+                _isLoading = true;
                 FillEditModal();
                 CboBrand.SelectedValue = _product.BrandId ?? 0;
                 CboCategory.SelectedValue = _product.CategoryId ?? 0;
@@ -43,21 +46,17 @@ namespace WpfApp1.Views.Inventory
         }
         private void DialogAddProducto_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            // Si el técnico ya está escribiendo en el Nombre, Precio o Descripción, 
-            // no queremos que la ventana interfiera con su teclado mecánico.
             if (TxtNombre.IsFocused || txtDescription.IsFocused || TxtPrecioVenta.IsFocused | TxtStockInicial.IsFocused | TxtStockMinimo.IsFocused)
             {
                 return;
             }
 
-            // Si llega el ENTER definitivo que envía el escáner al final
             if (e.Key == Key.Enter)
             {
                 if (!string.IsNullOrWhiteSpace(TxtCodigo.Text))
                 {
-                    // El código ya se llenó con el escáner, mandamos al técnico a escribir el nombre
                     TxtNombre.Focus();
-                    e.Handled = true; // Frenamos el Enter para que no haga ruidos extraños
+                    e.Handled = true; 
                 }
                 return;
             }
@@ -95,7 +94,7 @@ namespace WpfApp1.Views.Inventory
             TxtPrecioVenta.Text = Convert.ToString(_product.SalePrice);
             TxtStockMinimo.Text = Convert.ToString(_product.MinimumStock);
             txtDescription.Text = _product.ProductDescription;
-            CkStatus.IsChecked = _product.Status == true ? true: false;
+            ckIsSerizable.IsChecked = _product.IsSerialized;
             BtnClear.Visibility = Visibility.Collapsed;
         }
 
@@ -143,20 +142,21 @@ namespace WpfApp1.Views.Inventory
                     product.Name = TxtNombre.Text;
                     product.SalePrice = Convert.ToDecimal(TxtPrecioVenta.Text);
                     product.MinimumStock = Convert.ToInt32(TxtStockMinimo.Text);
-                    product.Stock = Convert.ToInt32(TxtStockInicial.Text);
+                    product.Stock = ckIsSerizable.IsChecked == true ? 0 : Convert.ToInt32(TxtStockInicial.Text);
                     product.BrandId = (int)CboBrand.SelectedValue;
                     product.CategoryId = (int)CboCategory.SelectedValue;
                     product.ProductDescription = txtDescription.Text;
                     //product.CreatedAt = DateTime.Now;
                     product.Status = true;
+                    product.IsSerialized = ckIsSerizable.IsChecked == true;
 
                     var result = await services.RegisterProductAsync(product);
 
                     if (result.Success)
-                        MessageBox.Show("Producto registrado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ToastService.ShowSuccess(result.Message);
                     else
                     {
-                        MessageBox.Show("Error al registrar el producto.","Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        ToastService.ShowError(result.Message);
                     }
                 }
                 else
@@ -168,12 +168,12 @@ namespace WpfApp1.Views.Inventory
                     _product.BrandId = (int)CboBrand.SelectedValue;
                     _product.CategoryId = (int)CboCategory.SelectedValue;
                     _product.ProductDescription = txtDescription.Text;
-                    _product.Status = CkStatus.IsChecked;
+                    _product.Status = true;
 
                     var update = await services.UpdateProductAsync(_product);
 
                     if (update.Success)
-                        MessageBox.Show("producto editado con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ToastService.ShowSuccess(update.Message);
                 }
 
                 this.DialogResult = true;
@@ -224,7 +224,13 @@ namespace WpfApp1.Views.Inventory
                 MessageBox.Show("Por favor, ingrese el stock inicial.",
                         "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
-            }  
+            }
+            if (string.IsNullOrWhiteSpace(TxtStockMinimo.Text))
+            {
+                MessageBox.Show("Por favor, ingrese el stock mínimo.",
+                        "Validación", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return false;
+            }
             if (CboCategory.SelectedValue == null || (int)CboCategory.SelectedValue == 0)
             {
                 MessageBox.Show("Por favor, seleccione un Categoria válida.",
@@ -249,19 +255,8 @@ namespace WpfApp1.Views.Inventory
 
         private void btngenerateCode_Click(object sender, RoutedEventArgs e)
         {
-            // Generamos un código único. 
-            // Opción A: Puedes usar la fecha/hora actual en milisegundos para que nunca se repita:
             string codigoProvisional = "INT-" + DateTime.Now.ToString("yyyyMMddHHmmss");
-
-            // Opción B: Si prefieres algo más corto pero aleatorio (un número de 6 dígitos):
-            // Random rand = new Random();
-            // string codigoProvisional = "INT-" + rand.Next(100000, 999999).ToString();
-
-            // Asignamos el código generado al TextBox
             TxtCodigo.Text = codigoProvisional;
-
-            // Pasamos el foco automáticamente al siguiente campo (Nombre de Producto) 
-            // para que el técnico no tenga que usar el mouse
             TxtNombre.Focus();
         }
 
@@ -269,11 +264,9 @@ namespace WpfApp1.Views.Inventory
         {
             if (e.Key == Key.Enter)
             {
-                // Si el técnico escanea algo físico y presiona Enter, 
-                // saltamos de inmediato al campo del Nombre
                 if (!string.IsNullOrWhiteSpace(TxtCodigo.Text))
                 {
-                    TxtNombre.Focus(); // Reemplaza por el x:Name real de tu textbox de Nombre
+                    TxtNombre.Focus(); 
                 }
             }
         }
@@ -288,6 +281,21 @@ namespace WpfApp1.Views.Inventory
             TxtStockMinimo.Text = string.Empty;
             CboBrand.SelectedValue = 0;
             CboCategory.SelectedValue = 0;
+        }
+
+        private void ckIsSerizable_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (_isLoading) return;
+
+            TxtStockInicial.IsEnabled = true;
+        }
+
+        private void ckIsSerizable_Checked(object sender, RoutedEventArgs e)
+        {
+            if (_isLoading) return;
+
+            TxtStockInicial.IsEnabled = false;
+            TxtStockInicial.Text = "0";
         }
     }
 }

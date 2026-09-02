@@ -41,10 +41,8 @@ namespace WpfApp1.Views.Inventory
                 {
                     _tipoDataSeleccionado = value;
 
-                    // Notifica al XAML que la propiedad cambió
                     OnPropertyChanged();
 
-                    // ¡AQUÍ SE DISPARA TU MÉTODO AUTOMÁTICAMENTE!
                     LoadData(_tipoDataSeleccionado);
                 }
             }
@@ -126,7 +124,7 @@ namespace WpfApp1.Views.Inventory
             var result = await brandAndCategoryServices.AddCategory(newCategory);
 
             if (result.Success)
-                MessageBox.Show("Categoría registrada con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.ShowSuccess(result.Message);
 
             txtCategoryName.Text = string.Empty;
             txtCategoryName.Focus();
@@ -171,7 +169,7 @@ namespace WpfApp1.Views.Inventory
             var result = await brandAndCategoryServices.AddBrand(newBrand);
 
             if (result.Success)
-                MessageBox.Show("Marca registrada con éxito.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.ShowSuccess(result.Message);
             txtBrandName.Text = string.Empty;
             txtBrandName.Focus();
             LoadData(TipoDataSeleccionado);
@@ -239,7 +237,7 @@ namespace WpfApp1.Views.Inventory
                     if (result.Success)
                     {
                         LoadData(_tipoDataSeleccionado);
-                        MessageBox.Show(result.Message);
+                        ToastService.ShowSuccess(result.Message);
                     }
                 }
             }

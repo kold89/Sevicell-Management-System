@@ -108,7 +108,8 @@ namespace WpfApp1.Views.Credit
                 return;
             }
 
-            MessageBox.Show("Pago registrado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            //MessageBox.Show("Pago registrado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
+            ToastService.ShowSuccess("Pago registrado exitosamente.");
 
             try
             {

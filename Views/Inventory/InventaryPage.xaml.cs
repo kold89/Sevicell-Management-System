@@ -56,5 +56,10 @@ namespace WpfApp1.Views.Inventory
             this.NavigationService.Navigate(new WpfApp1.Views.Inventory.PurchaseInvoiceListPage());
 
         }
+
+        private void BtnProductUnit_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.PageProductsUnit());
+        }
     }
 }

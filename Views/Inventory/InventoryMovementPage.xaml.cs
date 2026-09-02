@@ -166,7 +166,6 @@ namespace WpfApp1.Views.Inventory
                     _ = LoadData(_tipoDataSeleccionado);
                 }
         }
-
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
             if (this.NavigationService != null && this.NavigationService.CanGoBack)
@@ -174,7 +173,6 @@ namespace WpfApp1.Views.Inventory
                 this.NavigationService.GoBack();
             }
         }
-
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

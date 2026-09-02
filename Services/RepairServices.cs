@@ -14,7 +14,7 @@ namespace WpfApp1.Services
        
             public async Task<List<RepairOrder>> GetReparacionesFiltradasAsync(string filtro)
             {
-                using (var db = new DBSevicellContext()) 
+                using (var db = new SevicellDbContext()) 
                 {
                     var query = db.RepairOrders
                         .Include(o => o.Device.Customer) 

@@ -69,13 +69,13 @@ namespace WpfApp1.Views.Sales
                 }
 
                 // Tipo de venta: métodos de pago existentes (Efectivo, Tarjeta, Crédito, etc.) + "Todos"
-                var paymentResult = await _paymentMethodServices.ListAllPaymentMethods(); // 👉 ajustar nombre real del método
+                var paymentResult = await _paymentMethodServices.ListAllPaymentMethods(); 
                 var tiposVenta = new List<MonthOption> { new MonthOption { Id = 0, Name = "Todos" } };
                 if (paymentResult.Success)
                 {
                     foreach (var pm in paymentResult.Data)
                     {
-                        tiposVenta.Add(new MonthOption { Id = pm.Id, Name = pm.Name }); // 👉 ajustar casing real del DTO (id/name vs Id/Name)
+                        tiposVenta.Add(new MonthOption { Id = pm.Id, Name = pm.Name }); 
                     }
                 }
                 CboTipoVenta.ItemsSource = tiposVenta;

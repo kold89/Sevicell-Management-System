@@ -41,7 +41,6 @@ namespace WpfApp1.Views
             else
             {
                 dgUsers.ItemsSource = null;
-                //MessageBox.Show(users.Message);
                 ToastService.ShowSuccess(users.Message);
             }
         }
