@@ -97,7 +97,6 @@ namespace WpfApp1.Views.Credit
             if (!validation.Success)
             {
                ToastService.ShowError(validation.Message);
-               //MessageBox.Show(validation.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -107,11 +106,10 @@ namespace WpfApp1.Views.Credit
             if (!save.Success)
             {
                 ToastService.ShowError(save.Message);
-                //MessageBox.Show("Error al querer guardar contrato.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            //MessageBox.Show("Contrato creado exitosamente..", "Exito", MessageBoxButton.OK, MessageBoxImage.Information);
             ToastService.ShowSuccess("Contrato creado exitosamente.");
+
             if (this.NavigationService.CanGoBack)
                 this.NavigationService.GoBack();
         }

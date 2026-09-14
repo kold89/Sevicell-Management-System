@@ -35,5 +35,10 @@ namespace WpfApp1.Views.Credit
             this.NavigationService.Navigate(new installmentsduePage());
 
         }
+
+        private void BtnPhones_Click(object sender, RoutedEventArgs e)
+        {
+            this.NavigationService.Navigate(new PhoneDeviceList());
+        }
     }
 }

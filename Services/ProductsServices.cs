@@ -136,8 +136,8 @@ namespace WpfApp1.Services
                     List<Brand> brands = new List<Brand>();
                     List<Category> categories = new List<Category>();
 
-                    brands = db.Brands.Where(x => x.Status == true).ToList();
-                    categories = db.Categories.Where(x => x.Status == true).ToList();
+                    brands = db.Brands.ToList();
+                    categories = db.Categories.ToList();
 
                     var data = (brands, categories);
                     return ServicesResult<(List<Brand>, List<Category>)>.Ok(data, "Categorias y marcas obtenidas exitosamente.");

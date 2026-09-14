@@ -38,11 +38,11 @@
                 </StackPanel>
             </Button>
 
-            <Button x:Name="btnPurchases" Style="{StaticResource CardButtonStyle}">
+            <Button x:Name="BtnPhones" Click="BtnPhones_Click" Style="{StaticResource CardButtonStyle}">
                 <StackPanel>
-                    <fa5:SvgAwesome Icon="Solid_TruckLoading" Height="50" Foreground="#FF9800" Margin="0,0,0,15"/>
-                    <TextBlock Text="Entrada por Compras" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Ingresar facturas de proveedores" Foreground="Gray" HorizontalAlignment="Center"/>
+                    <fa5:SvgAwesome Icon="Solid_PhoneSquare" Height="50" Foreground="#FF9800" Margin="0,0,0,15"/>
+                    <TextBlock Text="Dispositivos" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Listado de dispoositivos." Foreground="Gray" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Button>
         </UniformGrid>
