@@ -39,6 +39,8 @@ public partial class SevicellDbContext : DbContext
 
     public virtual DbSet<Frequency> Frequencies { get; set; }
 
+    public virtual DbSet<InstallmentPayment> InstallmentPayments { get; set; }
+
     public virtual DbSet<InventoryMovement> InventoryMovements { get; set; }
 
     public virtual DbSet<Notification> Notifications { get; set; }
@@ -183,6 +185,9 @@ public partial class SevicellDbContext : DbContext
                 .HasColumnName("sale_price");
             entity.Property(e => e.SellerId).HasColumnName("seller_id");
             entity.Property(e => e.StatusId).HasColumnName("status_id");
+            entity.Property(e => e.TotalDebt)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("total_debt");
 
             entity.HasOne(d => d.Client).WithMany(p => p.Contracts)
                 .HasForeignKey(d => d.ClientId)
@@ -422,6 +427,35 @@ public partial class SevicellDbContext : DbContext
             entity.Property(e => e.Description)
                 .HasMaxLength(100)
                 .HasColumnName("description");
+        });
+
+        modelBuilder.Entity<InstallmentPayment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__installm__3213E83F8077D87B");
+
+            entity.ToTable("installment_payments");
+
+            entity.HasIndex(e => e.InstallmentId, "IX_InstallmentPayments_InstallmentId");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Amount)
+                .HasColumnType("decimal(10, 2)")
+                .HasColumnName("amount");
+            entity.Property(e => e.InstallmentId).HasColumnName("installment_id");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(255)
+                .HasColumnName("notes");
+            entity.Property(e => e.PaymentDate)
+                .HasColumnType("datetime")
+                .HasColumnName("payment_date");
+            entity.Property(e => e.ReceivedBy)
+                .HasMaxLength(100)
+                .HasColumnName("received_by");
+
+            entity.HasOne(d => d.Installment).WithMany(p => p.InstallmentPayments)
+                .HasForeignKey(d => d.InstallmentId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_InstallmentPayments_Installment");
         });
 
         modelBuilder.Entity<InventoryMovement>(entity =>

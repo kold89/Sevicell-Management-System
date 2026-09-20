@@ -12,7 +12,7 @@ namespace WpfApp1.Services
         public ContractCalculationResult Calculate(ContractCreateDto dto)
         {
             decimal financedBalance = dto.SalePrice - dto.DownPayment;
-            decimal interestAmount = financedBalance * dto.LateInterestRate;
+            decimal interestAmount = dto.interes;
             decimal totalToPay = financedBalance + interestAmount;
             decimal baseInstallment = Math.Round(totalToPay / dto.InstallmentCount, 2);
 

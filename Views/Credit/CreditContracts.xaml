@@ -232,13 +232,23 @@
 
                             
                                 <!--Tasa de interes-->
-                                <StackPanel Grid.Column="1" Grid.Row="2" Margin="6,0,0,10">
+                                <!--<StackPanel Grid.Column="1" Grid.Row="2" Margin="6,0,0,10">
                                     <TextBlock Text="Tasa" FontSize="11" Foreground="#64748B" Margin="0,0,0,4"/>
                                     <ComboBox x:Name="cmbTasa"
-           DisplayMemberPath="description"
-           SelectedValuePath="id"
-           Height="34" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="13"
-           VerticalContentAlignment="Center"/>
+                                       DisplayMemberPath="description"
+                                       SelectedValuePath="id"
+                                       Height="34" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="13"
+                                       VerticalContentAlignment="Center"/>
+                                </StackPanel>-->
+                                <!-- Inicial -->
+                                <StackPanel Grid.Column="1" Grid.Row="2" Margin="6,0,0,10">
+                                    <TextBlock Text="Interes" FontSize="11" Foreground="#64748B" Margin="0,0,0,4"/>
+                                    <controles:PriceTexBox x:Name="txtTasa"
+                             
+                                         Height="34" Background="#F8FAFC" BorderBrush="#CBD5E1"
+                                         Foreground="#1E293B" FontSize="13"
+                                         VerticalContentAlignment="Center" HorizontalContentAlignment="Right"
+                                         Text="0.00"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>

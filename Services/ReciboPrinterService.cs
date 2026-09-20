@@ -37,7 +37,6 @@ namespace WpfApp1.Services
             doc.PrintPage += Doc_PrintPagePago;
             doc.Print();
         }
-
         private void Doc_PrintPagePago(object sender, PrintPageEventArgs e)
         {
             var g = e.Graphics;
@@ -48,17 +47,17 @@ namespace WpfApp1.Services
             var fuenteNormal = new Font("Consolas", 9, FontStyle.Regular);
             var fuenteChica = new Font("Consolas", 8, FontStyle.Regular);
 
+            bool esAbonoParcial = _reciboPago.SaldoCuota.HasValue && _reciboPago.SaldoCuota > 0;
+
             // Encabezado
             y += DibujarCentrado(g, "SEVICELL", fuenteTitulo, anchoUtil, y);
-            y += DibujarCentrado(g, "COMPROBANTE DE PAGO", fuenteNormal, anchoUtil, y);
+            y += DibujarCentrado(g, esAbonoParcial ? "COMPROBANTE DE ABONO" : "COMPROBANTE DE PAGO", fuenteNormal, anchoUtil, y);
             y += 10;
             g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
             y += 5;
 
             // Datos del recibo y contrato
-            //y += DibujarLinea(g, $"Recibo No: {_reciboPago.NumeroRecibo}", fuenteNormal, y);
             y += DibujarLinea(g, $"Fecha: {_reciboPago.FechaPago:dd/MM/yyyy HH:mm}", fuenteNormal, y);
-            //y += DibujarLinea(g, $"Contrato No: {_reciboPago.ContractNumber}", fuenteNormal, y);
             y += DibujarLinea(g, $"Cliente: ", fuenteNormal, y);
             y += DibujarLinea(g, $" {_reciboPago.NombreCliente}", fuenteNormal, y);
             y += DibujarLinea(g, $"Artículo: {_reciboPago.NombreProducto}", fuenteChica, y);
@@ -68,13 +67,20 @@ namespace WpfApp1.Services
 
             // Detalle del pago
             y += DibujarLinea(g, $"Cuota {_reciboPago.NumeroCuota} de {_reciboPago.TotalCuotas}", fuenteNormal, y);
-            y += DibujarLinea(g, $"Monto pagado: L. {_reciboPago.MontoPagado:N2}", fuenteNormal, y);
+            y += DibujarLinea(g, $"{(esAbonoParcial ? "Monto abonado" : "Monto pagado")}: L. {_reciboPago.MontoPagado:N2}", fuenteNormal, y);
+
+            // NUEVO: saldo de ESTA cuota, solo si quedó pendiente
+            if (esAbonoParcial)
+            {
+                y += DibujarLinea(g, $"Saldo de esta cuota: L. {_reciboPago.SaldoCuota:N2}", fuenteNormal, y);
+            }
+
             y += 5;
             g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
             y += 5;
 
-            // Saldo y siguiente pago
-            y += DibujarLinea(g, $"Saldo pendiente: ", fuenteTitulo, y);
+            // Saldo y siguiente pago (esto ya era el saldo TOTAL del contrato, se mantiene igual)
+            y += DibujarLinea(g, $"Saldo pendiente del contrato: ", fuenteTitulo, y);
             y += DibujarLinea(g, $" L. {_reciboPago.SaldoPendiente:N2}", fuenteTitulo, y);
             y += 5;
 
@@ -94,5 +100,6 @@ namespace WpfApp1.Services
 
             e.HasMorePages = false;
         }
+
     }
 }

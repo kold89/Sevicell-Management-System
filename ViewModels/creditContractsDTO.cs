@@ -21,6 +21,7 @@ namespace WpfApp1.ViewModels
         public decimal PriceSales { get; set; }
         public decimal DownPayment { get; set; }
         public DateTime CreatedAt { get; set; }
+        public decimal TotalDebt { get; set; }
         public decimal Balance { get; set; }
         //phone
         public string Imei { get; set; }

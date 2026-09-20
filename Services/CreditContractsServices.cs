@@ -15,6 +15,7 @@ using WpfApp1.Models.Enums;
 using WpfApp1.ViewModels;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using WpfApp1.Security;
 
 namespace WpfApp1.Services
 {
@@ -24,20 +25,23 @@ namespace WpfApp1.Services
         {
             try
             {
-                var listSeller = _db.Sellers.
-                  Select(x => new ViewSeller
-                  {
-                      id = x.Id,
-                      name = ($"{x.FirstName} {x.LastName}"),
-                      dni = x.Dni,
-                      company = x.Company,
-                      phone = x.Phone
-                  }).ToList();
+                using (var db = new SevicellDbContext())
+                {
+                    var listSeller = db.Sellers.
+                      Select(x => new ViewSeller
+                      {
+                          id = x.Id,
+                          name = ($"{x.FirstName} {x.LastName}"),
+                          dni = x.Dni,
+                          company = x.Company,
+                          phone = x.Phone
+                      }).ToList();
 
-                if (listSeller.Count == 0)
-                    return ServicesResult<List<ViewSeller>>.Ok(listSeller, "No hay vendedores registrados.");
+                    if (listSeller.Count == 0)
+                        return ServicesResult<List<ViewSeller>>.Ok(listSeller, "No hay vendedores registrados.");
 
-                return ServicesResult<List<ViewSeller>>.Ok(listSeller, "Datos obtenidos exitosamente.");
+                    return ServicesResult<List<ViewSeller>>.Ok(listSeller, "Datos obtenidos exitosamente.");
+                }
             }
             catch (Exception ex)
             {
@@ -48,21 +52,24 @@ namespace WpfApp1.Services
         {
             try
             {
-                var listCustumer = _db.Customers.
-                       Select(x => new viewCustumers
-                       {
-                           id = x.Id,
-                           name = ($"{x.Name} {x.LastName}"),
-                           direction = x.Address,
-                           phone = x.Phone,
-                           dni = x.Dni,
-                           email = x.Email
-                       }).ToList();
+                using (var db = new SevicellDbContext())
+                {
+                    var listCustumer = db.Customers.
+                           Select(x => new viewCustumers
+                           {
+                               id = x.Id,
+                               name = ($"{x.Name} {x.LastName}"),
+                               direction = x.Address,
+                               phone = x.Phone,
+                               dni = x.Dni,
+                               email = x.Email
+                           }).ToList();
 
-                if (listCustumer.Count == 0)
-                    return ServicesResult<List<viewCustumers>>.Ok(listCustumer, "No hay clientes registrados.");
+                    if (listCustumer.Count == 0)
+                        return ServicesResult<List<viewCustumers>>.Ok(listCustumer, "No hay clientes registrados.");
 
-                return ServicesResult<List<viewCustumers>>.Ok(listCustumer, "Datos obtenidos exitosamente.");
+                    return ServicesResult<List<viewCustumers>>.Ok(listCustumer, "Datos obtenidos exitosamente.");
+                }               
             }
             catch (Exception ex)
             {
@@ -73,16 +80,19 @@ namespace WpfApp1.Services
         {
             try
             {
-                var frecuenciesDb = _db.Frequencies.Select(x => new viewFrecuency
+                using (var db = new SevicellDbContext())
                 {
-                    id = x.Id,
-                    name = x.Code
-                }).ToList();
+                    var frecuenciesDb = db.Frequencies.Select(x => new viewFrecuency
+                    {
+                        id = x.Id,
+                        name = x.Code
+                    }).ToList();
 
-                if (frecuenciesDb.Count == 0)
-                    return ServicesResult<List<viewFrecuency>>.Ok(frecuenciesDb, "No hay frecuencias registradas.");
+                    if (frecuenciesDb.Count == 0)
+                        return ServicesResult<List<viewFrecuency>>.Ok(frecuenciesDb, "No hay frecuencias registradas.");
 
-                return ServicesResult<List<viewFrecuency>>.Ok(frecuenciesDb, "Datos obtenidos exitosamente.");
+                    return ServicesResult<List<viewFrecuency>>.Ok(frecuenciesDb, "Datos obtenidos exitosamente.");
+                }
             }
             catch (Exception ex)
             {
@@ -93,43 +103,50 @@ namespace WpfApp1.Services
         {
             try
             {
-                var phonesUnit = _db.ProductUnits.Where(x => x.Status == EProductUnitStatus.Disponible.ToDbValue())
-                    .Select(x => new viewProductUnit
+                using (var db = new SevicellDbContext())
                 {
-                    id = x.Id,
-                    name = $"{x.Product.Name} IMEI {x.Imei}",
-                    IMEI = x.Imei,
-                    IMEI2 = x.Imei2,
-                    priceSales = x.Product.SalePrice ?? 0,
-                    description = x.Product.ProductDescription ?? ""
-                }).ToList();
+                    var phonesUnit = db.ProductUnits.Where(x => x.Status == EProductUnitStatus.Disponible.ToDbValue())
+                        .Select(x => new viewProductUnit
+                        {
+                            id = x.Id,
+                            name = $"{x.Product.Name} IMEI {x.Imei}",
+                            IMEI = x.Imei,
+                            IMEI2 = x.Imei2,
+                            priceSales = x.Product.SalePrice ?? 0,
+                            description = x.Product.ProductDescription ?? ""
+                        }).ToList();
 
-                if (phonesUnit.Count == 0)
-                    return ServicesResult<List<viewProductUnit>>.Ok(phonesUnit, "No hay frecuencias registradas.");
+                    if (phonesUnit.Count == 0)
+                        return ServicesResult<List<viewProductUnit>>.Ok(phonesUnit, "No hay frecuencias registradas.");
 
-                return ServicesResult<List<viewProductUnit>>.Ok(phonesUnit, "Datos obtenidos exitosamente.");
+                    return ServicesResult<List<viewProductUnit>>.Ok(phonesUnit, "Datos obtenidos exitosamente.");
+                }
             }
             catch (Exception ex)
             {
                 return ServicesResult<List<viewProductUnit>>.Fail("Error al obtener el listado de Frecuencias.");
             }
         }
-        public ServicesResult<List<creditContractsDTO>> ListCreditContractsDto()
+
+        public async Task<ServicesResult<List<creditContractsDTO>>> ListCreditContractsDtoAsync()
         {
             try
             {
-                var contracts = _db.Contracts
+                using var db = new SevicellDbContext();
+
+                var contracts = await db.Contracts
                     .Select(x => new creditContractsDTO
                     {
                         ContractNumber = x.Id,
                         ProductName = x.ProductUnit.Product.Name,
                         CustomerName = $"{x.Client.Name} {x.Client.LastName}",
+                        //CustomerPhone = x.Client.Phone,          // NUEVO: para poder filtrar por teléfono
                         PriceSales = x.SalePrice,
                         DownPayment = x.DownPayment,
                         Status = x.Status.Code,
                         CreatedAt = x.CreatedAt ?? DateTime.Now,
                         Balance = x.PendingBalance,
-
+                        TotalDebt = x.TotalDebt ?? 0,
                         SellerName = $"{x.Seller.FirstName} {x.Seller.LastName}",
                         empresa = x.Seller.Company,
                         DniSeller = x.Seller.Dni,
@@ -140,16 +157,15 @@ namespace WpfApp1.Services
                         Imei2 = x.ProductUnit.Imei2,
                         colour = x.ProductUnit.Colour,
                         model = x.ProductUnit.Model
-                    }).ToList();
+                    })
+                    .ToListAsync();
 
-                if (contracts.Count == 0)
-                    return ServicesResult<List<creditContractsDTO>>.Ok(contracts, "No hay frecuencias registradas.");
-
-                return ServicesResult<List<creditContractsDTO>>.Ok(contracts, "Datos obtenidos exitosamente.");
+                return ServicesResult<List<creditContractsDTO>>.Ok(contracts,
+                    contracts.Count == 0 ? "No hay contratos registrados." : "Datos obtenidos exitosamente.");
             }
             catch (Exception ex)
             {
-                return ServicesResult<List<creditContractsDTO>>.Fail("Error al obtener el listado de Frecuencias.");
+                return ServicesResult<List<creditContractsDTO>>.Fail("Error al obtener los contratos: " + ex.Message);
             }
         }
         public ServicesResult<bool> ValidateContract(ContractCreateDto dto)
@@ -160,6 +176,7 @@ namespace WpfApp1.Services
             if (dto.SellerId <= 0) errors.Add("Debe seleccionar un vendedor.");
             if (dto.ProductUnitId <= 0) errors.Add("Debe seleccionar un producto.");
             if (dto.SalePrice <= 0) errors.Add("El precio de venta debe ser mayor a cero.");
+            if (dto.interes <= 0) errors.Add("El interes debe ser mayor a cero.");
             if (dto.DownPayment < 0) errors.Add("El enganche no puede ser negativo.");
             if (dto.DownPayment >= dto.SalePrice) errors.Add("El enganche no puede ser mayor o igual al precio de venta.");
             if (dto.InstallmentCount <= 0) errors.Add("El número de cuotas debe ser mayor a cero.");
@@ -201,7 +218,7 @@ namespace WpfApp1.Services
                         FrequencyId = dto.FrequencyId,
                         FirstDueDate = DateOnly.FromDateTime(calc.Installments.First().DueDate),
                         LastDueDate = DateOnly.FromDateTime(calc.Installments.Last().DueDate),
-                        LateInterestRate = dto.LateInterestRate,
+                        //LateInterestRate = dto.interes,
                         StatusId = (int)EContractStatus.Pending,
                         PendingBalance = calc.TotalToPay,
                         Notes = dto.Notes
@@ -248,26 +265,31 @@ namespace WpfApp1.Services
         {
             try
             {
-                var query = _db.DebtInstallments
-                    .Include(x => x.Status)
-                    .AsQueryable();
-                
-                if (contractNumber != null && contractNumber > 0)
-                    query = query.Where(x => x.ContractId == contractNumber);
-                var sql = query.ToQueryString();
-                var result = await query
-                    .OrderBy(x => x.DueDate)
-                    .Select(x => new InstallmentPreview
-                    {
-                        InstallmentNumber = x.InstallmentNumber,
-                        ExpectedAmount = x.ExpectedAmount,
-                        DueDate = x.DueDate.ToDateTime(TimeOnly.MinValue),
-                        PaymentDate = x.PaymentDate,
-                        Status = x.Status.Code
-                    })
-                    .ToListAsync();
+                using (var db = new SevicellDbContext())
+                {
+                    var query = db.DebtInstallments
+                        .Include(x => x.Status)
+                        .AsQueryable();
 
-                return ServicesResult<List<InstallmentPreview>>.Ok(result, "Listado obtenido correctamente.");
+                    if (contractNumber != null && contractNumber > 0)
+                        query = query.Where(x => x.ContractId == contractNumber);
+
+                    var sql = query.ToQueryString();
+                    var result = await query
+                        .OrderBy(x => x.DueDate)
+                        .Select(x => new InstallmentPreview
+                        {
+                            InstallmentNumber = x.InstallmentNumber,
+                            ExpectedAmount = x.ExpectedAmount,
+                            DueDate = x.DueDate.ToDateTime(TimeOnly.MinValue),
+                            PaidAmount = x.PaidAmount ?? 0,
+                            PaymentDate = x.PaymentDate,
+                            Status = x.Status.Code
+                        })
+                        .ToListAsync();
+
+                    return ServicesResult<List<InstallmentPreview>>.Ok(result, "Listado obtenido correctamente.");
+                }
             }
             catch (Exception ex)
             {
@@ -275,7 +297,7 @@ namespace WpfApp1.Services
             }
         }
 
-        public async Task<ServicesResult<ReciboPagoCuotaDto>> RegisterPaymentAsync(int installmentId, DateTime paymentDate)
+        public async Task<ServicesResult<ReciboPagoCuotaDto>> RegisterPaymentAsync(int installmentId, decimal amount, DateTime paymentDate, string? receivedBy = null, string? notes = null)
         {
             using (var db = new SevicellDbContext())
             using (var transaction = await db.Database.BeginTransactionAsync())
@@ -288,27 +310,52 @@ namespace WpfApp1.Services
                         await transaction.RollbackAsync();
                         return ServicesResult<ReciboPagoCuotaDto>.Fail("La cuota no existe.");
                     }
-                    if (installment.StatusId == (int)InstallmentStatus.Paid || installment.StatusId == (int)InstallmentStatus.PaidLate)
+                    if (installment.StatusId == (int)InstallmentStatus.Paid
+                        || installment.StatusId == (int)InstallmentStatus.PaidLate
+                        || installment.StatusId == (int)InstallmentStatus.Waived)
                     {
                         await transaction.RollbackAsync();
                         return ServicesResult<ReciboPagoCuotaDto>.Fail("Esta cuota ya fue pagada.");
                     }
 
+
+                    var saldoActual = installment.ExpectedAmount - (installment.PaidAmount ?? 0);
+                    if (amount <= 0 || amount > saldoActual)
+                    {
+                        await transaction.RollbackAsync();
+                        return ServicesResult<ReciboPagoCuotaDto>.Fail(
+                            $"Monto inválido. El saldo pendiente de esta cuota es {saldoActual:N2}.");
+                    }
+                    db.InstallmentPayments.Add(new InstallmentPayment
+                    {
+                        InstallmentId = installment.Id,
+                        Amount = amount,
+                        PaymentDate = paymentDate,
+                        ReceivedBy = receivedBy ?? SessionManager.loggedInUser.Name ?? "sistema",
+                        Notes = notes
+                    });
+
+                    var nuevoPaidAmount = (installment.PaidAmount ?? 0) + amount;
+                    var nuevoSaldo = installment.ExpectedAmount - nuevoPaidAmount;
                     bool pagoTarde = paymentDate.Date > installment.DueDate.ToDateTime(TimeOnly.MinValue).Date;
-                    installment.PaidAmount = installment.ExpectedAmount;
+
+                    installment.PaidAmount = nuevoPaidAmount;
                     installment.PaymentDate = DateOnly.FromDateTime(paymentDate);
-                    installment.StatusId = pagoTarde ? (int)InstallmentStatus.PaidLate : (int)InstallmentStatus.Paid;
+                    installment.StatusId = nuevoSaldo <= 0
+                                   ? (int)(pagoTarde ? InstallmentStatus.PaidLate : InstallmentStatus.Paid)
+                                   : (int)InstallmentStatus.Partial;
 
                     await db.SaveChangesAsync();
                     await ActualizarEstadoContratoAsync(installment.ContractId, db);
-                    await SaveAuditAsync(AuditAction.Update, "DebtInstallment", installment.Id.ToString(), "Se registró el pago de la cuota", db);
+                    await SaveAuditAsync(AuditAction.Update, "DebtInstallment", installment.Id.ToString(),
+                        nuevoSaldo <= 0 ? "Se registró el pago de la cuota" : "Se registró un abono parcial a la cuota", db);
                     await db.SaveChangesAsync();
 
                     // A partir de aquí armamos el recibo, ANTES del commit,
                     // para asegurarnos que todo lo que preguntemos ya refleja el pago recién guardado.
                     var contrato = await db.Contracts
-                        .Include(c => c.Client)      
-                        .Include(c => c.ProductUnit)   
+                        .Include(c => c.Client)
+                        .Include(c => c.ProductUnit)
                             .ThenInclude(pu => pu.Product)
                         .FirstOrDefaultAsync(c => c.Id == installment.ContractId);
 
@@ -323,14 +370,18 @@ namespace WpfApp1.Services
                         .OrderBy(x => x.DueDate)
                         .ToListAsync();
 
-                    var saldoPendiente = todasLasCuotas
-                        .Where(x => x.StatusId != (int)InstallmentStatus.Paid && x.StatusId != (int)InstallmentStatus.PaidLate)
-                        .Sum(x => x.ExpectedAmount);
+                    var saldoPendienteContrato = todasLasCuotas
+                       .Where(x => x.StatusId != (int)InstallmentStatus.Paid
+                                && x.StatusId != (int)InstallmentStatus.PaidLate
+                                && x.StatusId != (int)InstallmentStatus.Waived)
+                       .Sum(x => x.ExpectedAmount - (x.PaidAmount ?? 0));
 
                     var proximaCuota = todasLasCuotas
-                        .Where(x => x.StatusId != (int)InstallmentStatus.Paid && x.StatusId != (int)InstallmentStatus.PaidLate)
-                        .OrderBy(x => x.DueDate)
-                        .FirstOrDefault();
+                     .Where(x => x.StatusId != (int)InstallmentStatus.Paid
+                              && x.StatusId != (int)InstallmentStatus.PaidLate
+                              && x.StatusId != (int)InstallmentStatus.Waived)
+                     .OrderBy(x => x.DueDate)
+                     .FirstOrDefault();
 
                     var numeroCuotaPagada = todasLasCuotas.FindIndex(x => x.Id == installment.Id) + 1;
 
@@ -338,19 +389,21 @@ namespace WpfApp1.Services
                     {
                         NumeroRecibo = installment.Id.ToString(),   // o un consecutivo propio si ya manejas uno
                         FechaPago = paymentDate,
-                        ContractNumber = contrato.Id,   // ajusta al nombre real
+                        ContractNumber = contrato.Id,
                         NombreCliente = $"{contrato.Client.Name} {contrato.Client.LastName}",
-                        NombreProducto = contrato.ProductUnit.Product.Name, // ajusta
+                        NombreProducto = contrato.ProductUnit.Product.Name,
                         NumeroCuota = numeroCuotaPagada,
                         TotalCuotas = todasLasCuotas.Count,
-                        MontoPagado = installment.PaidAmount ?? 0,
-                        SaldoPendiente = saldoPendiente,
+                        MontoPagado = amount,
+                        SaldoCuota = nuevoSaldo > 0 ? nuevoSaldo : null,   // null si la cuota quedó saldada
+                        SaldoPendiente = saldoPendienteContrato,
                         ProximaFechaPago = proximaCuota?.DueDate.ToDateTime(TimeOnly.MinValue),
-                        RecibidoPor = Environment.UserName  // o tu usuario de sesión real
+                        RecibidoPor = receivedBy ?? Environment.UserName
                     };
 
                     await transaction.CommitAsync();
-                    return ServicesResult<ReciboPagoCuotaDto>.Ok(recibo, "Pago registrado exitosamente.");
+                    return ServicesResult<ReciboPagoCuotaDto>.Ok(recibo,
+                        nuevoSaldo <= 0 ? "Pago registrado exitosamente." : "Abono registrado exitosamente.");
                 }
                 catch (Exception ex)
                 {
@@ -370,19 +423,22 @@ namespace WpfApp1.Services
 
                     var data = await db.DebtInstallments
                         .Where(x => x.StatusId == (int)InstallmentStatus.Pending
-                                 || x.StatusId == (int)InstallmentStatus.Overdue)
-                        .Where(x => x.DueDate <= limiteSemana) 
+                                 || x.StatusId == (int)InstallmentStatus.Overdue
+                                 || x.StatusId == (int)InstallmentStatus.Partial)
+                        .Where(x => x.DueDate <= limiteSemana)
                         .Select(x => new CobroItemDto
                         {
                             InstallmentId = x.Id,
                             ContractId = x.ContractId,
-                            ContractNumber = x.Contract.Id.ToString(), 
+                            ContractNumber = x.Contract.Id.ToString(),
                             ClientName = x.Contract.Client.Name + " " + x.Contract.Client.LastName,
                             ProductName = x.Contract.ProductUnit.Product.Name,
                             InstallmentNumber = x.InstallmentNumber,
                             ExpectedAmount = x.ExpectedAmount,
+                            PaidAmount = x.PaidAmount ?? 0,          // nuevo, para mostrar cuánto lleva abonado
                             DueDate = x.DueDate.ToDateTime(TimeOnly.MinValue),
-                            DaysOverdue = x.DueDate < hoy ? hoy.DayNumber - x.DueDate.DayNumber : 0
+                            DaysOverdue = x.DueDate < hoy ? hoy.DayNumber - x.DueDate.DayNumber : 0,
+                            IsPartial = x.StatusId == (int)InstallmentStatus.Partial
                         })
                         .ToListAsync();
 
@@ -408,12 +464,21 @@ namespace WpfApp1.Services
             var contract = await db.Contracts.FirstOrDefaultAsync(x => x.Id == contractId);
             if (contract == null) return;
 
-            bool todasPagadas = cuotas.All(x => x.StatusId == (int)InstallmentStatus.Paid || x.StatusId == (int)InstallmentStatus.PaidLate);
-            bool tieneVencidas = cuotas.Any(x => x.StatusId == (int)InstallmentStatus.Overdue
-                                               || (x.StatusId == (int)InstallmentStatus.Pending && x.DueDate.ToDateTime(TimeOnly.MinValue) < DateTime.Today));
+            bool todasPagadas = cuotas.All(x => x.StatusId == (int)InstallmentStatus.Paid
+                                              || x.StatusId == (int)InstallmentStatus.PaidLate
+                                              || x.StatusId == (int)InstallmentStatus.Waived);
 
-            contract.PendingBalance = cuotas.Where(x => x.StatusId != (int)InstallmentStatus.Paid && x.StatusId != (int)InstallmentStatus.PaidLate)
-                                             .Sum(x => x.ExpectedAmount);
+            bool tieneVencidas = cuotas.Any(x =>
+                (x.StatusId == (int)InstallmentStatus.Pending
+                 || x.StatusId == (int)InstallmentStatus.Overdue
+                 || x.StatusId == (int)InstallmentStatus.Partial)
+                && x.DueDate.ToDateTime(TimeOnly.MinValue) < DateTime.Today);
+
+            contract.PendingBalance = cuotas
+                .Where(x => x.StatusId != (int)InstallmentStatus.Paid
+                         && x.StatusId != (int)InstallmentStatus.PaidLate
+                         && x.StatusId != (int)InstallmentStatus.Waived)
+                .Sum(x => x.ExpectedAmount - (x.PaidAmount ?? 0)); // antes sumaba ExpectedAmount completo, ignorando abonos
 
             if (todasPagadas)
                 contract.StatusId = (int)EContractStatus.Completed;
@@ -532,7 +597,7 @@ namespace WpfApp1.Services
                     .OrderBy(x => x.Index)
                     .FirstOrDefault();
 
-                if (coincidencia == null) break; 
+                if (coincidencia == null) break;
 
                 string valorNuevo = valores[coincidencia.Key];
                 int inicio = coincidencia.Index;
@@ -558,7 +623,7 @@ namespace WpfApp1.Services
                     cursor = finRun;
                 }
 
-                if (runInicio == -1 || runFin == -1) break; 
+                if (runInicio == -1 || runFin == -1) break;
 
                 if (runInicio == runFin)
                 {
@@ -570,17 +635,17 @@ namespace WpfApp1.Services
                 {
                     string textoInicio = textoPorRun[runInicio];
                     string antes = textoInicio.Substring(0, offsetInicio);
-                    SetRunText(runs[runInicio], antes + valorNuevo); 
+                    SetRunText(runs[runInicio], antes + valorNuevo);
 
                     for (int i = runInicio + 1; i < runFin; i++)
-                        SetRunText(runs[i], ""); 
+                        SetRunText(runs[i], "");
 
                     string textoFin = textoPorRun[runFin];
                     string despues = textoFin.Substring(offsetFin);
-                    SetRunText(runs[runFin], despues); 
+                    SetRunText(runs[runFin], despues);
                 }
 
-                huboReemplazo = true; 
+                huboReemplazo = true;
             }
         }
 

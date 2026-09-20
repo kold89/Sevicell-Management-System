@@ -80,37 +80,39 @@ namespace WpfApp1.Views.Credit
 
         private async void BtnCobrar_Click(object sender, RoutedEventArgs e)
         {
-            //if (sender is not Button btn || btn.Tag is not int installmentId) return;
-
-            //var confirm = MessageBox.Show("¿Confirmar el pago de esta cuota en efectivo?", "Confirmar pago",
-            //                                MessageBoxButton.YesNo, MessageBoxImage.Question);
-            //if (confirm != MessageBoxResult.Yes) return;
-
-            //var result = await ContractsSevices.RegisterPaymentAsync(installmentId, DateTime.Now);
-            //if (!result.Success)
-            //{
-            //    MessageBox.Show(result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            //    return;
-            //}
-
-            //MessageBox.Show("Pago registrado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-            //await LoadCobrosDataAsync(); // recarga todo -- la cuota pagada desaparece sola de la lista
             if (sender is not Button btn || btn.Tag is not int installmentId) return;
+            await AbrirDialogoDePago(installmentId, esPagoTotal: true);
+        }
 
-            var confirm = MessageBox.Show("¿Confirmar el pago de esta cuota en efectivo?", "Confirmar pago",
-                                            MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (confirm != MessageBoxResult.Yes) return;
+        private void BtnGoBack_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.NavigationService.CanGoBack)
+                this.NavigationService.GoBack();
+        }
 
-            var result = await ContractsSevices.RegisterPaymentAsync(installmentId, DateTime.Now);
+        private async void BtnCobroParcial_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn || btn.Tag is not int installmentId) return;
+            await AbrirDialogoDePago(installmentId, esPagoTotal: false);
+        }
+        private async Task AbrirDialogoDePago(int installmentId, bool esPagoTotal)
+        {
+            var cuota = _todasLasCuotas.FirstOrDefault(x => x.InstallmentId == installmentId);
+            if (cuota == null) return;
+
+            var saldo = cuota.ExpectedAmount - cuota.PaidAmount;
+
+            var dialog = new PagoAbonoDialog(saldo, esPagoTotal) { Owner = Window.GetWindow(this) };
+            if (dialog.ShowDialog() != true) return;
+
+            var result = await ContractsSevices.RegisterPaymentAsync(installmentId, dialog.Monto, DateTime.Now);
             if (!result.Success)
             {
                 MessageBox.Show(result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            //MessageBox.Show("Pago registrado exitosamente.", "Éxito", MessageBoxButton.OK, MessageBoxImage.Information);
-            ToastService.ShowSuccess("Pago registrado exitosamente.");
-
+            ToastService.ShowSuccess(result.Message); // ya viene "Pago registrado" o "Abono registrado" desde el service
             try
             {
                 _printerService.ImprimirReciboPago(result.Data, "POS-58-Series");
@@ -122,14 +124,7 @@ namespace WpfApp1.Views.Credit
                     $"El pago se registró correctamente, pero no se pudo imprimir el recibo.\n\nMotivo: {ex.Message}\n\nPuede usar 'Reimprimir último recibo'.",
                     "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-
             await LoadCobrosDataAsync();
-        }
-
-        private void BtnGoBack_Click(object sender, RoutedEventArgs e)
-        {
-            if (this.NavigationService.CanGoBack)
-                this.NavigationService.GoBack();
         }
     }
 }

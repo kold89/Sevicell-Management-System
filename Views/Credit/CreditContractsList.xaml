@@ -133,41 +133,42 @@
             </Grid>
         </Border>
 
-        <!-- LISTADO + DETALLE -->
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*"/>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-
             <!-- LISTA DE CONTRATOS -->
-            <Border Grid.Column="0" Background="White" CornerRadius="8" Padding="4">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
-                </Border.Effect>
-                <DataGrid x:Name="DgContracts"
-                          Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
-                          BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
-                          HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
-                          AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
-                          SelectionChanged="DgContracts_SelectionChanged"
-                          IsReadOnly="True">
-                    <DataGrid.ColumnHeaderStyle>
-                        <Style TargetType="DataGridColumnHeader">
-                            <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="#64748B"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                            <Setter Property="Padding" Value="12,12"/>
-                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
-                        </Style>
-                    </DataGrid.ColumnHeaderStyle>
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="N°" Binding="{Binding ContractNumber}" Width="auto"/>
-                        <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="*"/>
-                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="110"/>
-
+            <!-- LISTADO (ya no hay split, una sola columna) -->
+            <Grid Grid.Row="2">
+                <Border Background="White" CornerRadius="8" Padding="4">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+                    </Border.Effect>
+                    <DataGrid x:Name="DgContracts"
+                  Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
+                  BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                  HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                  AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
+                  IsReadOnly="True">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="#64748B"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="12,12"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="N°" Binding="{Binding ContractNumber}" Width="auto"/>
+                            <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="200"/>
+                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="*"/>
+                        <DataGridTextColumn Header="DEUDA TOTAL" Binding="{Binding TotalDebt, StringFormat='L. {0:N2}'}" Width="120"/>
+                        <DataGridTextColumn Header="MONTO PENDIENTE" Binding="{Binding Balance, StringFormat='L. {0:N2}'}" Width="150">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Foreground" Value="#DC2626"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
                         <DataGridTemplateColumn Header="ESTADO" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -176,11 +177,20 @@
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="#E8F8F5"/>
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Deshabilitado">
-                                                        <Setter Property="Background" Value="#FDEDEC"/>
+                                                    <DataTrigger Binding="{Binding Status}" Value="PENDIENTE">
+                                                        <Setter Property="Background" Value="#FDC107"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Cancelado">
-                                                        <Setter Property="Background" Value="#FEF3C7"/>
+                                                    <DataTrigger Binding="{Binding Status}" Value="ACTIVO">
+                                                        <Setter Property="Background" Value="#28A745"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="VENCIDO">
+                                                        <Setter Property="Background" Value="#DC3545"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="CANCELADO">
+                                                        <Setter Property="Background" Value="#6C757D"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Status}" Value="COMPLETADO">
+                                                        <Setter Property="Background" Value="#007BFF"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -188,10 +198,10 @@
                                         <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="SemiBold">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
-                                                    <Setter Property="Foreground" Value="#117A65"/>
+                                                    <Setter Property="Foreground" Value="#FFFFFF"/>
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Deshabilitado">
-                                                            <Setter Property="Foreground" Value="#C0392B"/>
+                                                        <DataTrigger Binding="{Binding Status}" Value="PENDIENTE">
+                                                            <Setter Property="Foreground" Value="#B45309"/>
                                                         </DataTrigger>
                                                         <DataTrigger Binding="{Binding Status}" Value="Cancelado">
                                                             <Setter Property="Foreground" Value="#B45309"/>
@@ -204,179 +214,40 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                            
                         <DataGridTextColumn Header="CREADO" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100"/>
-                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Button x:Name="BtnDownload" Click="BtnDownload_Click"  Background="Transparent" ToolTip="Descargar word" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
-                                            <fa5:SvgAwesome Icon="Solid_Download" Height="14" Foreground="#55DDB0"/>
-                                        </Button>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </Border>
 
-            <!-- PANEL DE DETALLE: CUOTAS / PAGOS -->
-            <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="18">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
-                </Border.Effect>
-                <Grid>
-                    <TextBlock x:Name="TxtSinSeleccion"
-                       Text="Seleccione un contrato para ver el detalle de pagos."
-                       Foreground="#94A3B8" FontSize="13"
-                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                       TextWrapping="Wrap" TextAlignment="Center" MaxWidth="200"/>
+                            <DataGridTemplateColumn Header="ACCIONES" Width="180">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button x:Name="BtnDownload" Click="BtnDownload_Click"
+                                        Background="Transparent" ToolTip="Descargar contrato"
+                                        BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
+                                        Tag="{Binding ContractNumber}">
+                                                <fa5:SvgAwesome Icon="Solid_Download" Height="14" Foreground="#55DDB0"/>
+                                            </Button>
 
-                    <ScrollViewer x:Name="PanelDetalle" Visibility="Collapsed" VerticalScrollBarVisibility="Auto">
-                        <StackPanel>
-                            <TextBlock x:Name="TxtDetContratoNumero" Text="{Binding ContractNumber}" FontSize="18" FontWeight="Bold" Foreground="#1E293B"/>
+                                            <Button x:Name="BtnVerCuotas" Click="BtnVerCuotas_Click"
+                                        Background="Transparent" ToolTip="Ver cuotas"
+                                        BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
+                                        Tag="{Binding ContractNumber}">
+                                                <fa5:SvgAwesome Icon="Solid_ListAlt" Height="14" Foreground="#2563EB"/>
+                                            </Button>
 
-                            <!-- Info del cliente y producto -->
-                            <Border Background="#F8FAFC" CornerRadius="6" Padding="12" Margin="0,0,0,12">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock x:Name="TxtDetCliente" Text="{Binding ClientName}" FontWeight="SemiBold" Foreground="#334155" FontSize="14"/>
-                                    <TextBlock x:Name="TxtDetProducto"  Text="{Binding ProductName}" Foreground="#64748B" FontSize="12" Margin="0,4,0,0" Grid.Row="1"/>
-                                </Grid>
-                            </Border>
-
-                            <!-- Resumen financiero -->
-                            <Border Background="#F0FDF4" CornerRadius="6" Padding="12" Margin="0,0,0,12" BorderBrush="#BBF7D0" BorderThickness="1">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Precio" FontSize="14" FontFamily="Segoe UI" Foreground="#64748B" TextAlignment="Center"/>
-                                        <TextBlock x:Name="TxtDetPrecio"  Text="{Binding SalePrice, StringFormat={}{0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B" TextAlignment="Center"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="1">
-                                        <TextBlock Text="Prima"  FontSize="14" FontFamily="Segoe UI" Foreground="#64748B" TextAlignment="Center"/>
-                                        <TextBlock x:Name="TxtDetPrima" Text="{Binding DownPayment, StringFormat={}{0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="#1E293B" TextAlignment="Center"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Saldo" FontSize="14" FontFamily="Segoe UI" Foreground="#64748B" TextAlignment="Center"/>
-                                        <TextBlock x:Name="TxtDetSaldo" Text="{Binding PendingBalance, StringFormat={}{0:N2}}" FontSize="13" FontWeight="SemiBold" Foreground="#DC2626" TextAlignment="Center"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-
-                            <TextBlock Text="Cuotas / Pagos" FontWeight="SemiBold" Foreground="#334155" FontSize="13" Margin="0,0,0,8"/>
-
-                            <!-- DataGrid de cuotas -->
-                            <DataGrid x:Name="DgCuotas"
-                                      Background="Transparent" RowBackground="Transparent"
-                                      BorderThickness="0" Foreground="#1E293B"
-                                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0"
-                                      HeadersVisibility="Column" IsReadOnly="True"
-                                      AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="34"
-                                      MaxHeight="260" Margin="0,0,0,14">
-                                <DataGrid.ColumnHeaderStyle>
-                                    <Style TargetType="DataGridColumnHeader">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#64748B"/>
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Setter Property="Padding" Value="4,8"/>
-                                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
-                                    </Style>
-                                </DataGrid.ColumnHeaderStyle>
-                                <DataGrid.Columns>
-                                    <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="55">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Center"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-                                    <DataGridTextColumn Header="VENCIMIENTO" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="100"/>
-                                    <DataGridTextColumn Header="MONTO" Binding="{Binding ExpectedAmount, StringFormat={}{0:N2}}" Width="80">
-                                        <DataGridTextColumn.ElementStyle>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                            </Style>
-                                        </DataGridTextColumn.ElementStyle>
-                                    </DataGridTextColumn>
-
-                                    <DataGridTemplateColumn Header="ESTADO" Width="90">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Border CornerRadius="4" Padding="6,2" HorizontalAlignment="Center">
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="#FEF3C7"/>
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding Status}" Value="Pagado">
-                                                                    <Setter Property="Background" Value="#E8F8F5"/>
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding Status}" Value="Vencido">
-                                                                    <Setter Property="Background" Value="#FDEDEC"/>
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-                                                    <TextBlock Text="{Binding Status}" FontSize="10" FontWeight="SemiBold">
-                                                        <TextBlock.Style>
-                                                            <Style TargetType="TextBlock">
-                                                                <Setter Property="Foreground" Value="#B45309"/>
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding Status}" Value="Pagado">
-                                                                        <Setter Property="Foreground" Value="#117A65"/>
-                                                                    </DataTrigger>
-                                                                    <DataTrigger Binding="{Binding Status}" Value="Vencido">
-                                                                        <Setter Property="Foreground" Value="#C0392B"/>
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </TextBlock.Style>
-                                                    </TextBlock>
-                                                </Border>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-
-                                    <DataGridTextColumn Header="PAGO" Binding="{Binding PaymentDate, StringFormat=dd/MM/yyyy}" Width="90"/>
-                                </DataGrid.Columns>
-                            </DataGrid>
-
-                            <Border BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Margin="0,0,0,12"/>
-
-                            <!-- Totales -->
-                            <Grid Margin="0,0,0,6">
-                                <TextBlock Text="Total cuotas:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetTotalCuotas" Text="{Binding TotalInstallments}" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right"/>
-                            </Grid>
-                            <Grid Margin="0,0,0,6">
-                                <TextBlock Text="Cuotas pagadas:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetCuotasPagadas" Text="{Binding PaidInstallments}" Foreground="#059669" FontSize="13" HorizontalAlignment="Right"/>
-                            </Grid>
-                            <Grid Margin="0,0,0,6">
-                                <TextBlock Text="Cuotas pendientes:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetCuotasPendientes" Text="{Binding PendingInstallmentsCount}" Foreground="#DC2626" FontSize="13" HorizontalAlignment="Right"/>
-                            </Grid>
-                            <Grid Margin="0,0,0,10">
-                                <TextBlock Text="Total pagado:" Foreground="#64748B" FontSize="13"/>
-                                <TextBlock x:Name="TxtDetTotalPagado" Text="{Binding TotalPaid, StringFormat={}{0:N2}}" Foreground="#1E293B" FontSize="13" HorizontalAlignment="Right" FontWeight="SemiBold"/>
-                            </Grid>
-                            <Grid>
-                                <TextBlock Text="SALDO PENDIENTE:" FontWeight="Bold" FontSize="14" Foreground="#1E293B"/>
-                                <TextBlock x:Name="TxtDetSaldoPendiente" Text="{Binding PendingBalance, StringFormat={}{0:N2}}" FontWeight="Bold" FontSize="18" Foreground="#2563EB" HorizontalAlignment="Right"/>
-                            </Grid>
-                        </StackPanel>
-                    </ScrollViewer>
-                </Grid>
-            </Border>
-        </Grid>
+                                            <Button x:Name="BtnVerHistorial" Click="BtnVerHistorial_Click"
+                                        Background="Transparent" ToolTip="Ver histórico de pagos"
+                                        BorderThickness="0" Cursor="Hand"
+                                        Tag="{Binding ContractNumber}">
+                                                <fa5:SvgAwesome Icon="Solid_History" Height="14" Foreground="#64748B"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </Grid>
     </Grid>
 </Page>

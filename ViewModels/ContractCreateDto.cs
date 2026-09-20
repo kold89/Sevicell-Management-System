@@ -19,6 +19,7 @@ namespace WpfApp1.ViewModels
         public string FrequencyCode { get; set; } = ""; // SEMANAL / QUINCENAL / MENSUAL
         public DateTime FirstDueDate { get; set; }
         public decimal LateInterestRate { get; set; } // 0.3m, 0.4m, etc.
+        public decimal interes {  get; set; }
         public string? Notes { get; set; }
     }
 
@@ -37,7 +38,8 @@ namespace WpfApp1.ViewModels
         public decimal ExpectedAmount { get; set; }
         public DateTime DueDate { get; set; }
         public DateOnly? PaymentDate { get; set; }
-
+        public decimal PaidAmount { get; set; }                      
+        public decimal SaldoPendiente => ExpectedAmount - PaidAmount;
         public string? Status { get; set; }
 
     }

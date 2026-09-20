@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using WpfApp1.Models;
 using WpfApp1.Services;
 
@@ -13,6 +15,7 @@ namespace WpfApp1.Views.Credit
 {
     public partial class PhoneDeviceList : Page
     {
+        // ---------- Modelos de la vista ----------
         public class statusPhone
         {
             public int id { get; set; }
@@ -30,13 +33,30 @@ namespace WpfApp1.Views.Credit
             public string Status { get; set; }
         }
 
+        private enum EstadoLista
+        {
+            Resultados,
+            SinResultados,   // hay filtros aplicados y no coincide nada
+            SinDispositivos, // sin filtros y la tabla está vacía
+            Error
+        }
+
+        // ---------- Constantes y campos ----------
+        private const int MaxResultados = 200;
+
+        private static readonly Brush BrushNormal = new SolidColorBrush(Color.FromRgb(0x47, 0x55, 0x69));
+        private static readonly Brush BrushError = new SolidColorBrush(Color.FromRgb(0xC0, 0x39, 0x2B));
+
+        private bool _isSearching;
+
         public ObservableCollection<UnidadListItem> Unidades { get; set; } = new();
 
+        // ---------- Ciclo de vida ----------
         public PhoneDeviceList()
         {
             InitializeComponent();
             DataContext = this;
-            LoadTypeInovice();
+            LoadStatusFilter();
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -46,61 +66,70 @@ namespace WpfApp1.Views.Credit
 
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
-            if (this.NavigationService.CanGoBack)
-            {
-                this.NavigationService.GoBack();
-            }
+            if (NavigationService?.CanGoBack == true)
+                NavigationService.GoBack();
         }
 
-        private void LoadTypeInovice()
+        private void LoadStatusFilter()
         {
-            try
+            CboFilterStatus.ItemsSource = new List<statusPhone>
             {
-                List<statusPhone> status = new List<statusPhone>
-                {
-                    new statusPhone { id = 0, name = "--Todos--" },
-                    new statusPhone { id = 1, name = "Disponibles" },
-                    new statusPhone { id = 2, name = "Vendidos" }
-                };
-                CboFilteStatus.ItemsSource = status;
-                CboFilteStatus.SelectedValue = 0;
-            }
-            catch (Exception ex)
-            {
-                ToastService.ShowError("Error al cargar tipo de estado: " + ex.Message);
-            }
+                new statusPhone { id = 0, name = "--Todos--" },
+                new statusPhone { id = 1, name = "Disponibles" },
+                new statusPhone { id = 2, name = "Vendidos" },
+                new statusPhone { id = 3, name = "Reservados" }
+            };
+            CboFilterStatus.SelectedValue = 0;
         }
 
+        // ---------- Búsqueda ----------
         private async void BtnBuscar_Click(object sender, RoutedEventArgs e)
         {
             await BuscarUnidades();
         }
 
+        private async void TxtFiltroNumero_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                await BuscarUnidades();
+        }
+
         private async Task BuscarUnidades()
         {
-            using (var db = new SevicellDbContext())
-            {
-                var query = db.ProductUnits
-                    .Include(u => u.Product)
-                    .AsQueryable();
+            // Evita búsquedas solapadas (doble clic, Loaded + clic, Enter + clic)
+            if (_isSearching) return;
+            _isSearching = true;
 
-                if (CboFilteStatus.SelectedValue is int statusId)
+            BtnBuscar.IsEnabled = false;
+            BtnBuscar.Content = "Buscando...";
+            Mouse.OverrideCursor = Cursors.Wait;
+
+            try
+            {
+                int statusId = CboFilterStatus.SelectedValue is int id ? id : 0;
+                string filtro = TxtFiltroNumero.Text?.Trim();
+                bool hayFiltros = statusId != 0 || !string.IsNullOrWhiteSpace(filtro);
+
+                using var db = new SevicellDbContext();
+
+                IQueryable<ProductUnit> query = db.ProductUnits.AsNoTracking();
+
+                switch (statusId)
                 {
-                    if (statusId == 1)
-                        query = query.Where(u => u.Status == "Disponible");
-                    else if (statusId == 2)
-                        query = query.Where(u => u.Status == "Vendido");
+                    case 1: query = query.Where(u => u.Status == "Disponible"); break;
+                    case 2: query = query.Where(u => u.Status == "Vendido"); break;
+                    case 3: query = query.Where(u => u.Status == "Reservado"); break;
                 }
 
-                var filtro = TxtFiltroNumero.Text?.Trim();
                 if (!string.IsNullOrWhiteSpace(filtro))
                 {
                     query = query.Where(u =>
-                        u.Imei.Contains(filtro) ||
-                        u.Imei2.Contains(filtro) ||
+                        (u.Imei != null && u.Imei.Contains(filtro)) ||
+                        (u.Imei2 != null && u.Imei2.Contains(filtro)) ||
                         (u.Model != null && u.Model.Contains(filtro)));
                 }
 
+                // Se pide uno más del máximo para saber si hay más resultados sin hacer un Count aparte
                 var lista = await query
                     .OrderByDescending(u => u.CreatedAt)
                     .Select(u => new UnidadListItem
@@ -113,18 +142,83 @@ namespace WpfApp1.Views.Credit
                         Model = u.Model,
                         Status = u.Status
                     })
+                    .Take(MaxResultados + 1)
                     .ToListAsync();
+
+                bool hayMas = lista.Count > MaxResultados;
+                if (hayMas)
+                    lista.RemoveAt(lista.Count - 1);
 
                 Unidades.Clear();
                 foreach (var item in lista)
                     Unidades.Add(item);
+
+                if (lista.Count > 0)
+                {
+                    MostrarEstado(EstadoLista.Resultados);
+                    TxtResumen.Text = hayMas
+                        ? $"Mostrando los primeros {MaxResultados} dispositivos. Refina la búsqueda para ver otros."
+                        : $"{lista.Count} dispositivo(s) encontrado(s).";
+                }
+                else
+                {
+                    MostrarEstado(hayFiltros ? EstadoLista.SinResultados : EstadoLista.SinDispositivos);
+                }
+            }
+            catch (Exception ex)
+            {
+                Unidades.Clear();
+                MostrarEstado(EstadoLista.Error);
+                ToastService.ShowError("Error al cargar los dispositivos: " + ex.Message);
+            }
+            finally
+            {
+                Mouse.OverrideCursor = null;
+                BtnBuscar.Content = "🔍 Buscar";
+                BtnBuscar.IsEnabled = true;
+                _isSearching = false;
             }
         }
 
+        /// <summary>
+        /// Único punto que decide qué se ve: el DataGrid o el panel de estado vacío/error.
+        /// </summary>
+        private void MostrarEstado(EstadoLista estado)
+        {
+            bool mostrarGrid = estado == EstadoLista.Resultados;
+
+            DgUnidades.Visibility = mostrarGrid ? Visibility.Visible : Visibility.Collapsed;
+            PnlEmptyState.Visibility = mostrarGrid ? Visibility.Collapsed : Visibility.Visible;
+
+            if (mostrarGrid)
+                return;
+
+            TxtResumen.Text = string.Empty;
+            TxtEmptyTitle.Foreground = estado == EstadoLista.Error ? BrushError : BrushNormal;
+
+            switch (estado)
+            {
+                case EstadoLista.SinDispositivos:
+                    TxtEmptyTitle.Text = "Aún no hay dispositivos registrados";
+                    TxtEmptySub.Text = "Cuando registres dispositivos aparecerán aquí.";
+                    break;
+
+                case EstadoLista.SinResultados:
+                    TxtEmptyTitle.Text = "No se encontraron dispositivos";
+                    TxtEmptySub.Text = "Intenta cambiar los filtros de búsqueda o el criterio ingresado.";
+                    break;
+
+                case EstadoLista.Error:
+                    TxtEmptyTitle.Text = "Error al consultar la base de datos";
+                    TxtEmptySub.Text = "Ocurrió un problema de conexión. Intente buscar nuevamente.";
+                    break;
+            }
+        }
+
+        // ---------- Detalle ----------
         private async void BtnDetails_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            if (button?.DataContext is not UnidadListItem unidad)
+            if ((sender as Button)?.DataContext is not UnidadListItem unidad)
                 return;
 
             if (unidad.Status != "Vendido")
@@ -133,9 +227,12 @@ namespace WpfApp1.Views.Credit
                 return;
             }
 
-            using (var db = new SevicellDbContext())
+            try
             {
+                using var db = new SevicellDbContext();
+
                 var contract = await db.Contracts
+                    .AsNoTracking()
                     .Include(c => c.Client)
                     .Include(c => c.ProductUnit)
                         .ThenInclude(pu => pu.Product)
@@ -148,17 +245,33 @@ namespace WpfApp1.Views.Credit
                     return;
                 }
 
+                string cliente = contract.Client != null
+                    ? $"{contract.Client.Name} {contract.Client.LastName}".Trim()
+                    : "Cliente no disponible";
+
+                string detalleCliente = contract.Client != null
+                    ? $"Dirección: {contract.Client.Address}  Tel: {contract.Client.Phone}"
+                    : string.Empty;
+
+                var pu = contract.ProductUnit;
+                string dispositivo = $"{pu?.Product?.Name} ({pu?.Model})";
+
                 var modal = new SaleDetailWindow(
                     numeroContrato: $"CR-{contract.Id:D4}",
-                    clienteNombre: $"{contract.Client.Name} {contract.Client.LastName}",
-                    details: $"Dirección: {contract.Client.Address}  Tel: {contract.Client.Phone}",
+                    clienteNombre: cliente,
+                    details: detalleCliente,
                     fechaInicio: contract.CreatedAt,
-                    dispositivo: $"{contract.ProductUnit.Product.Name} ({contract.ProductUnit.Model})",
-                    imei: contract.ProductUnit.Imei,
-                    estado: contract.Status.Code
+                    dispositivo: dispositivo,
+                    imei: pu?.Imei,
+                    estado: contract.Status?.Code ?? "N/D"
                 );
                 modal.Owner = Window.GetWindow(this);
                 modal.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                // Dentro de un async void una excepción sin capturar cierra la aplicación
+                ToastService.ShowError("Error al cargar el detalle del dispositivo: " + ex.Message);
             }
         }
     }

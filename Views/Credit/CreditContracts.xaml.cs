@@ -26,18 +26,7 @@ namespace WpfApp1.Views.Credit
     /// </summary>
     public partial class CreditContracts : Page
     {
-        public readonly List<Tasa> tasas = new List<Tasa> {
-                    { new Tasa{ id = 0, description = "--Seleccione--" } },
-                    { new Tasa{ id = 1, description = "3%" } },
-                    { new Tasa{ id = 2, description = "3.2%" } },
-                    { new Tasa{ id = 3, description = "3.5%" } },
-                    { new Tasa{ id = 4, description = "4%" } },
-                    { new Tasa{ id = 5, description = "4.2%" } },
-                    { new Tasa{ id = 6, description = "4.5%" } },
-                    { new Tasa{ id = 7, description = "5%" } },
-                    { new Tasa{ id = 8, description = "5.5%" } },
-                    { new Tasa{ id = 9, description = "6%" } }
-                };
+
         private readonly CreditContractsServices ContractsSevices = new CreditContractsServices();
         public CreditContracts()
         {
@@ -48,7 +37,7 @@ namespace WpfApp1.Views.Credit
             txtCuotaInicial.TextChanged += (s, e) => ActualizarResumen();
             txtNumCuotas.TextChanged += (s, e) => ActualizarResumen();
             cmbFrecuencia.SelectionChanged += (s, e) => ActualizarResumen();
-            cmbTasa.SelectionChanged += (s, e) => ActualizarResumen();
+            txtTasa.TextChanged += (s, e) => ActualizarResumen();
             dpPrimerVencimiento.SelectedDateChanged += (s, e) => ActualizarResumen();
         }
         private void btnNuevoCliente_Click(object sender, RoutedEventArgs e)
@@ -73,59 +62,58 @@ namespace WpfApp1.Views.Credit
         }
         private async void btnGuardar_Click(object sender, RoutedEventArgs e)
         {
-            decimal.TryParse(txtPrecioVenta.Text, out decimal priceSale);
-            decimal.TryParse(txtCuotaInicial.Text, out decimal enganche);
-
-            var dto = new ContractCreateDto
+            btnGuardar.IsEnabled = false;
+            try
             {
-                ClientId = (int)cmbCliente.SelectedValue,
-                SellerId = (int)cmbVendedor.SelectedValue,
-                ProductUnitId = (int)cmbProducto.SelectedValue,
-                FrequencyId = (int)cmbFrecuencia.SelectedValue,
-                FrequencyCode = ((viewFrecuency)cmbFrecuencia.SelectedItem).name,
-                SalePrice = priceSale,
-                //SalePrice = decimal.Parse(txtPrecioVenta.Text),
-                //DownPayment = decimal.Parse(txtCuotaInicial.Text),
-                DownPayment = enganche,
-                InstallmentCount = int.Parse(txtNumCuotas.Text),
-                FirstDueDate = dpPrimerVencimiento.SelectedDate ?? DateTime.Today,
-                LateInterestRate = ParseTasa((int)cmbTasa.SelectedValue),
-                //Notes = txtNotas.Text
-            };
+                decimal.TryParse(txtPrecioVenta.Text, out decimal priceSale);
+                decimal.TryParse(txtCuotaInicial.Text, out decimal enganche);
+                decimal.TryParse(txtTasa.Text, out decimal tasa);
 
-            var validation = ContractsSevices.ValidateContract(dto);
-            if (!validation.Success)
-            {
-               ToastService.ShowError(validation.Message);
-                return;
+                var dto = new ContractCreateDto
+                {
+                    ClientId = (int)cmbCliente.SelectedValue,
+                    SellerId = (int)cmbVendedor.SelectedValue,
+                    ProductUnitId = (int)cmbProducto.SelectedValue,
+                    FrequencyId = (int)cmbFrecuencia.SelectedValue,
+                    FrequencyCode = ((viewFrecuency)cmbFrecuencia.SelectedItem).name,
+                    SalePrice = priceSale,
+                    DownPayment = enganche,
+                    InstallmentCount = int.Parse(txtNumCuotas.Text),
+                    FirstDueDate = dpPrimerVencimiento.SelectedDate ?? DateTime.Today,
+                    interes = Convert.ToInt32(tasa)
+                    //Notes = txtNotas.Text
+                };
+
+                var validation = ContractsSevices.ValidateContract(dto);
+                if (!validation.Success)
+                {
+                    ToastService.ShowError(validation.Message);
+                    return;
+                }
+
+                var calc = new ContractCalculationService().Calculate(dto);
+
+                var save = await ContractsSevices.SaveContractAsync(dto, calc);
+                if (!save.Success)
+                {
+                    ToastService.ShowError(save.Message);
+                    return;
+                }
+                ToastService.ShowSuccess("Contrato creado exitosamente.");
+
+                if (this.NavigationService.CanGoBack)
+                    this.NavigationService.GoBack();
             }
-
-            var calc = new ContractCalculationService().Calculate(dto);
-
-            var save = await ContractsSevices.SaveContractAsync(dto, calc);
-            if (!save.Success)
+            catch (Exception ex)
             {
-                ToastService.ShowError(save.Message);
-                return;
+                MessageBox.Show("Error al procesar los datos.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            ToastService.ShowSuccess("Contrato creado exitosamente.");
-
-            if (this.NavigationService.CanGoBack)
-                this.NavigationService.GoBack();
+            finally
+            {
+                btnGuardar.IsEnabled = true;
+            }
         }
-        private decimal ParseTasa(int tasaId) => tasaId switch
-        {
-            1 => 0.30m,
-            2 => 0.32m,
-            3 => 0.35m,
-            4 => 0.40m,
-            5 => 0.42m,
-            6 => 0.45m,
-            7 => 0.50m,
-            8 => 0.55m,
-            9 => 0.60m,
-            _ => 0m
-        };
+
         private  void LoadCboxCustumer()
         {
             //Clientes
@@ -140,10 +128,6 @@ namespace WpfApp1.Views.Credit
         {
             try
             {
-                //Carga de tasas
-                cmbTasa.ItemsSource = tasas;
-                cmbTasa.SelectedValue = 0;
-
                 //Vendedores
                 var seller = new List<ViewSeller> { new ViewSeller { id = 0, name = "--Seleccione--" } };
                 var listSellers = ContractsSevices.ListSellers();
@@ -228,8 +212,8 @@ namespace WpfApp1.Views.Credit
                 if (!int.TryParse(txtNumCuotas.Text, out int cuotas) || cuotas <= 0) return;
                 if (cmbFrecuencia.SelectedValue == null || (int)cmbFrecuencia.SelectedValue == 0) return;
                 if (dpPrimerVencimiento.SelectedDate == null) return;
-                if (cmbTasa.SelectedValue == null || (int)cmbTasa.SelectedValue == 0) return;
-
+                if (!decimal.TryParse(txtTasa.Text, out decimal montoInteres)) return;
+                
                 var dto = new ContractCreateDto
                 {
                     SalePrice = precio,
@@ -237,7 +221,7 @@ namespace WpfApp1.Views.Credit
                     InstallmentCount = cuotas,
                     FrequencyCode = ((viewFrecuency)cmbFrecuencia.SelectedItem).name,
                     FirstDueDate = dpPrimerVencimiento.SelectedDate.Value,
-                    LateInterestRate = ParseTasa((int)cmbTasa.SelectedValue)
+                    interes = montoInteres
                 };
 
                 var calc = new ContractCalculationService().Calculate(dto);

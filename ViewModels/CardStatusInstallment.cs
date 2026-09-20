@@ -26,6 +26,9 @@ namespace WpfApp1.ViewModels
         public DateTime DueDate { get; set; }
         public int DaysOverdue { get; set; } // negativo o 0 si no está vencida
         public string UrgencyGroup { get; set; } // OVERDUE, TODAY, WEEK, MONTH
+        public decimal PaidAmount { get; set; }
+        public bool IsPartial { get; set; }
+        public decimal SaldoPendiente => ExpectedAmount - PaidAmount;
     }
 
 }

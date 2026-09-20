@@ -8,7 +8,10 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="installmentsduePage">
-
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Page.Resources>
+    
     <Grid Background="#F1F5F9" Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -77,24 +80,44 @@
                 </DataGrid.ColumnHeaderStyle>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="CLIENTE" Binding="{Binding ClientName}" Width="*"/>
-                    <DataGridTextColumn Header="CONTRATO" Binding="{Binding ContractNumber}" Width="90"/>
-                    <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="60"/>
-                    <DataGridTextColumn Header="MONTO" Binding="{Binding ExpectedAmount, StringFormat={}{0:N2}}" Width="90">
-                        <DataGridTextColumn.ElementStyle>
-                            <Style TargetType="TextBlock">
-                                <Setter Property="HorizontalAlignment" Value="Right"/>
-                                <Setter Property="FontWeight" Value="SemiBold"/>
-                            </Style>
-                        </DataGridTextColumn.ElementStyle>
-                    </DataGridTextColumn>
-                    <DataGridTextColumn Header="VENCE" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="100"/>
-
-                    <DataGridTemplateColumn Header="ACCIÓN" Width="110">
+                    <DataGridTemplateColumn Header="" Width="14">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Cobrar" Click="BtnCobrar_Click" Tag="{Binding InstallmentId}"
+                                <Border Width="8" Height="8" CornerRadius="4" Background="#D97706"
+                    Visibility="{Binding IsPartial, Converter={StaticResource BoolToVis}}"
+                    ToolTip="Pago parcial"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="CONTRATO" Binding="{Binding ContractNumber}" Width="90"/>
+                    <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="60"/>
+                    <DataGridTemplateColumn Header="MONTO" Width="90">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Right">
+                                    <TextBlock Text="{Binding ExpectedAmount, StringFormat={}{0:N2}}" FontWeight="SemiBold"/>
+                                    <TextBlock Text="{Binding SaldoPendiente, StringFormat=Faltan {0:N2}}"
+                           FontSize="10" Foreground="#D97706"
+                           Visibility="{Binding IsPartial, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="VENCE" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="100"/>
+
+                    <DataGridTemplateColumn Header="ACCIÓN" Width="220">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Cobrar" Click="BtnCobrar_Click" Tag="{Binding InstallmentId}"
+                                        Background="#2563EB" Foreground="White" BorderThickness="0"
+                                        Padding="12,6" FontSize="12" FontWeight="SemiBold" Cursor="Hand"/> 
+
+                                    <Button Content="Pago parcial" Click="BtnCobroParcial_Click" Tag="{Binding InstallmentId}"
+                                        Margin="4,0,0,0"
                                         Background="#2563EB" Foreground="White" BorderThickness="0"
                                         Padding="12,6" FontSize="12" FontWeight="SemiBold" Cursor="Hand"/>
+                                </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

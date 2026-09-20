@@ -77,8 +77,11 @@
                     <TextBlock x:Name="TxtImei" Grid.Column="1" HorizontalAlignment="Right"
                                FontFamily="Consolas" Foreground="#334155" FontSize="13"/>
                 </Grid>
-            </StackPanel>
 
+                <Separator Grid.Row="2" Margin="0,0,0,16" Background="#DDDDDD"/>
+
+            </StackPanel>
+            
             <Button Grid.Row="4" Content="Cerrar" Click="BtnCerrar_Click" Height="40"
                     Background="#2563EB" Foreground="White" BorderThickness="0"
                     FontWeight="SemiBold" Cursor="Hand" Margin="0,8,0,0"/>

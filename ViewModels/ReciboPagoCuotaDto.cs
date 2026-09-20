@@ -19,6 +19,7 @@ namespace WpfApp1.ViewModels
         public int TotalCuotas { get; set; }
 
         public decimal MontoPagado { get; set; }
+        public decimal? SaldoCuota { get; set; }
         public decimal SaldoPendiente { get; set; }   // lo que queda del contrato después de este pago
         public DateTime? ProximaFechaPago { get; set; } // null si esta era la última cuota
 

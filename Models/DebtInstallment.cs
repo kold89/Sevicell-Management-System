@@ -31,6 +31,8 @@ public partial class DebtInstallment
 
     public virtual ICollection<ContractPayment> ContractPayments { get; set; } = new List<ContractPayment>();
 
+    public virtual ICollection<InstallmentPayment> InstallmentPayments { get; set; } = new List<InstallmentPayment>();
+
     public virtual User? ReceivedByNavigation { get; set; }
 
     public virtual DebtInstallmentStatus Status { get; set; } = null!;

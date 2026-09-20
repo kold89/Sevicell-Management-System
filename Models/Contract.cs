@@ -39,6 +39,8 @@ public partial class Contract
 
     public string? Notes { get; set; }
 
+    public decimal? TotalDebt { get; set; }
+
     public virtual Customer Client { get; set; } = null!;
 
     public virtual ICollection<ContractPayment> ContractPayments { get; set; } = new List<ContractPayment>();
