@@ -1,20 +1,7 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
-using OpenTK.Audio.OpenAL;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using Microsoft.EntityFrameworkCore;
 using WpfApp1.Models;
 using WpfApp1.Models.Enums;
 using WpfApp1.ViewModels;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
 using WpfApp1.Security;
 
 namespace WpfApp1.Services
@@ -69,7 +56,7 @@ namespace WpfApp1.Services
                         return ServicesResult<List<viewCustumers>>.Ok(listCustumer, "No hay clientes registrados.");
 
                     return ServicesResult<List<viewCustumers>>.Ok(listCustumer, "Datos obtenidos exitosamente.");
-                }               
+                }
             }
             catch (Exception ex)
             {
@@ -127,6 +114,7 @@ namespace WpfApp1.Services
                 return ServicesResult<List<viewProductUnit>>.Fail("Error al obtener el listado de Frecuencias.");
             }
         }
+
 
         public async Task<ServicesResult<List<creditContractsDTO>>> ListCreditContractsDtoAsync()
         {
@@ -216,6 +204,7 @@ namespace WpfApp1.Services
                         InstallmentCount = dto.InstallmentCount,
                         InstallmentAmount = calc.InstallmentAmount,
                         FrequencyId = dto.FrequencyId,
+                        TotalDebt = calc.TotalToPay,
                         FirstDueDate = DateOnly.FromDateTime(calc.Installments.First().DueDate),
                         LastDueDate = DateOnly.FromDateTime(calc.Installments.Last().DueDate),
                         //LateInterestRate = dto.interes,
@@ -263,40 +252,34 @@ namespace WpfApp1.Services
 
         public async Task<ServicesResult<List<InstallmentPreview>>> GetDebtInstalmentAsync(int contractNumber)
         {
+            if (contractNumber <= 0)
+                return ServicesResult<List<InstallmentPreview>>.Fail("Número de contrato inválido.");
+
             try
             {
-                using (var db = new SevicellDbContext())
-                {
-                    var query = db.DebtInstallments
-                        .Include(x => x.Status)
-                        .AsQueryable();
+                using var db = new SevicellDbContext();
 
-                    if (contractNumber != null && contractNumber > 0)
-                        query = query.Where(x => x.ContractId == contractNumber);
+                var result = await db.DebtInstallments
+                    .Where(x => x.ContractId == contractNumber)
+                    .OrderBy(x => x.DueDate)
+                    .Select(x => new InstallmentPreview
+                    {
+                        InstallmentNumber = x.InstallmentNumber,
+                        ExpectedAmount = x.ExpectedAmount,
+                        DueDate = x.DueDate.ToDateTime(TimeOnly.MinValue),
+                        PaidAmount = x.PaidAmount ?? 0,
+                        PaymentDate = x.PaymentDate,
+                        Status = x.Status.Code
+                    })
+                    .ToListAsync();
 
-                    var sql = query.ToQueryString();
-                    var result = await query
-                        .OrderBy(x => x.DueDate)
-                        .Select(x => new InstallmentPreview
-                        {
-                            InstallmentNumber = x.InstallmentNumber,
-                            ExpectedAmount = x.ExpectedAmount,
-                            DueDate = x.DueDate.ToDateTime(TimeOnly.MinValue),
-                            PaidAmount = x.PaidAmount ?? 0,
-                            PaymentDate = x.PaymentDate,
-                            Status = x.Status.Code
-                        })
-                        .ToListAsync();
-
-                    return ServicesResult<List<InstallmentPreview>>.Ok(result, "Listado obtenido correctamente.");
-                }
+                return ServicesResult<List<InstallmentPreview>>.Ok(result, "Listado obtenido correctamente.");
             }
             catch (Exception ex)
             {
                 return ServicesResult<List<InstallmentPreview>>.Fail("Error al obtener los pagos: " + ex.Message);
             }
         }
-
         public async Task<ServicesResult<ReciboPagoCuotaDto>> RegisterPaymentAsync(int installmentId, decimal amount, DateTime paymentDate, string? receivedBy = null, string? notes = null)
         {
             using (var db = new SevicellDbContext())
@@ -486,174 +469,139 @@ namespace WpfApp1.Services
                 contract.StatusId = (int)EContractStatus.Overdue;
             else
                 contract.StatusId = (int)EContractStatus.Active;
-        }
-
-        public void GenerarContratoDocumento(TemplateContractDto datos)
+        }        
+        public async Task ActualizarVencimientosAsync()
         {
-            if (datos == null) return;
+            using var db = new SevicellDbContext();
+            var hoy = DateOnly.FromDateTime(DateTime.Today);
 
-            string rutaPlantilla = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Plantillas", "Contrato.docx");
-            string carpetaDestino = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ContratosGenerados");
+            var contractIds = await db.DebtInstallments
+                .Where(x => x.DueDate < hoy
+                         && (x.StatusId == (int)InstallmentStatus.Pending
+                          || x.StatusId == (int)InstallmentStatus.Partial))
+                .Select(x => x.ContractId)
+                .Distinct()
+                .ToListAsync();
 
-            if (!File.Exists(rutaPlantilla))
-            {
-                MessageBox.Show($"No se encontró la plantilla del contrato en la ruta:\n{rutaPlantilla}",
-                                "Error de Configuración", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+            foreach (var id in contractIds)
+                await ActualizarEstadoContratoAsync(id, db);
 
-            try
-            {
-                if (!Directory.Exists(carpetaDestino))
-                    Directory.CreateDirectory(carpetaDestino);
-
-                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-                string clienteSeguro = string.Concat((datos.NombreComprador ?? "Cliente").Split(Path.GetInvalidFileNameChars()));
-                string rutaArchivoFinal = Path.Combine(carpetaDestino, $"Contrato_{clienteSeguro}_{timestamp}.docx");
-
-                File.Copy(rutaPlantilla, rutaArchivoFinal, overwrite: true);
-
-                var valores = new Dictionary<string, string>
-                {
-                    ["{NombreVendedor}"] = datos.NombreVendedor ?? "",
-                    ["{Identidad}"] = datos.DniVendedor ?? "",
-                    ["{Empresa}"] = datos.empresa ?? "",
-                    ["{NombreComprador}"] = datos.NombreComprador ?? "",
-                    ["{DniComprador}"] = datos.DniComprador ?? "",
-                    ["{Residencia}"] = datos.DomicilioComprador ?? "",
-                    ["{Producto}"] = datos.Articulo ?? "",
-                    ["{Marca}"] = datos.Marca ?? "",
-                    ["{Modelo}"] = datos.Modelo ?? "",
-                    ["{color}"] = datos.Color ?? "",
-                    ["{IMEI}"] = datos.Imei ?? "",
-                    ["{IMEI2}"] = datos.Imei2 ?? "",
-                    ["{PrecioTotal}"] = datos.PrecioTotal.ToString("N2"),
-                    ["{Enganche}"] = datos.Prima.ToString("N2"),
-                    ["{SaldoFinanciado}"] = datos.SaldoFinanciado.ToString("N2"),
-                    ["{CantidadCuotas}"] = datos.CantidadCuotas.ToString(),
-                    ["{montoCuotas}"] = datos.ValorCuota.ToString("N2"),
-                    ["{FrecuenciaPago}"] = datos.FrecuenciaPago ?? "",
-                    ["{diaPago}"] = datos.FechaInicio.Day.ToString("00"),
-                    ["{primerPago}"] = datos.FechaInicio.ToString("dd 'de' MMMM 'del' yyyy"),
-                    ["{ultimoPago}"] = datos.FechaFin.ToString("dd 'de' MMMM 'del' yyyy"),
-                    ["{Municipio}"] = datos.Municipio ?? "",
-                    ["{Departamento}"] = datos.Departamento ?? "",
-                    ["{Anio}"] = datos.FechaFirma.ToString("dd 'días del mes de' MMMM 'del año' yyyy"),
-                };
-
-                using (WordprocessingDocument documento = WordprocessingDocument.Open(rutaArchivoFinal, true))
-                {
-                    ReemplazarPlaceholders(documento, valores);
-                    documento.MainDocumentPart.Document.Save();
-                }
-
-                MessageBoxResult abrir = MessageBox.Show($"Contrato generado para {datos.NombreComprador}.\n\n¿Desea abrir el archivo ahora?",
-                                                         "Operación Exitosa", MessageBoxButton.YesNo, MessageBoxImage.Information);
-
-                if (abrir == MessageBoxResult.Yes)
-                {
-                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(rutaArchivoFinal) { UseShellExecute = true });
-                }
-            }
-            catch (IOException)
-            {
-                MessageBox.Show("El archivo destino está abierto en Microsoft Word. Por favor ciérralo e intenta de nuevo.",
-                                "Archivo Bloqueado", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error general al procesar el documento:\n{ex.Message}",
-                                "Error Crítico", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            await db.SaveChangesAsync();
         }
-
-        private static void ReemplazarPlaceholders(WordprocessingDocument documento, Dictionary<string, string> valores)
+        public async Task<ServicesResult<ReciboAdelantoDto>> RegisterAdvancePaymentAsync(
+        int contractId, decimal amount, DateTime paymentDate, string? receivedBy = null, string? notes = null)
         {
-            var body = documento.MainDocumentPart.Document.Body;
-
-            foreach (var paragraph in body.Descendants<Paragraph>())
+            using (var db = new SevicellDbContext())
+            using (var transaction = await db.Database.BeginTransactionAsync())
             {
-                ReemplazarEnParrafo(paragraph, valores);
-            }
-        }
-
-        private static void ReemplazarEnParrafo(Paragraph paragraph, Dictionary<string, string> valores)
-        {
-            bool huboReemplazo = true;
-
-            while (huboReemplazo)
-            {
-                huboReemplazo = false;
-
-                var runs = paragraph.Descendants<Run>().ToList();
-                if (runs.Count == 0) break;
-
-                var textoPorRun = runs.Select(r => string.Concat(r.Elements<Text>().Select(t => t.Text))).ToList();
-                string textoCompleto = string.Concat(textoPorRun);
-
-                var coincidencia = valores.Keys
-                    .Select(k => new { Key = k, Index = textoCompleto.IndexOf(k, StringComparison.Ordinal) })
-                    .Where(x => x.Index >= 0)
-                    .OrderBy(x => x.Index)
-                    .FirstOrDefault();
-
-                if (coincidencia == null) break;
-
-                string valorNuevo = valores[coincidencia.Key];
-                int inicio = coincidencia.Index;
-                int fin = inicio + coincidencia.Key.Length;
-
-                int cursor = 0, runInicio = -1, runFin = -1, offsetInicio = 0, offsetFin = 0;
-                for (int i = 0; i < textoPorRun.Count; i++)
+                try
                 {
-                    int largo = textoPorRun[i].Length;
-                    int finRun = cursor + largo;
+                    var cuotasPendientes = await db.DebtInstallments
+                        .Where(x => x.ContractId == contractId
+                                 && x.StatusId != (int)InstallmentStatus.Paid
+                                 && x.StatusId != (int)InstallmentStatus.PaidLate
+                                 && x.StatusId != (int)InstallmentStatus.Waived)
+                        .OrderBy(x => x.DueDate)
+                        .ToListAsync();
 
-                    if (runInicio == -1 && inicio < finRun)
+                    if (cuotasPendientes.Count == 0)
                     {
-                        runInicio = i;
-                        offsetInicio = inicio - cursor;
+                        await transaction.RollbackAsync();
+                        return ServicesResult<ReciboAdelantoDto>.Fail("Este contrato no tiene cuotas pendientes.");
                     }
-                    if (fin <= finRun)
+
+                    var saldoTotalContrato = cuotasPendientes.Sum(x => x.ExpectedAmount - (x.PaidAmount ?? 0));
+                    if (amount <= 0 || amount > saldoTotalContrato)
                     {
-                        runFin = i;
-                        offsetFin = fin - cursor;
-                        break;
+                        await transaction.RollbackAsync();
+                        return ServicesResult<ReciboAdelantoDto>.Fail(
+                            $"Monto inválido. El saldo total pendiente del contrato es {saldoTotalContrato:N2}.");
                     }
-                    cursor = finRun;
+
+                    var montoRestante = amount;
+                    var detalleAplicado = new List<DetalleCuotaPagadaDto>();
+                    var usuario = receivedBy ?? SessionManager.loggedInUser?.Name ?? "sistema";
+
+                    foreach (var cuota in cuotasPendientes)
+                    {
+                        if (montoRestante <= 0) break;
+
+                        var saldoCuota = cuota.ExpectedAmount - (cuota.PaidAmount ?? 0);
+                        var aplicado = Math.Min(montoRestante, saldoCuota);
+
+                        db.InstallmentPayments.Add(new InstallmentPayment
+                        {
+                            InstallmentId = cuota.Id,
+                            Amount = aplicado,
+                            PaymentDate = paymentDate,
+                            ReceivedBy = usuario,
+                            Notes = notes
+                        });
+
+                        var nuevoPaidAmount = (cuota.PaidAmount ?? 0) + aplicado;
+                        var nuevoSaldoCuota = cuota.ExpectedAmount - nuevoPaidAmount;
+                        bool pagoTarde = paymentDate.Date > cuota.DueDate.ToDateTime(TimeOnly.MinValue).Date;
+
+                        cuota.PaidAmount = nuevoPaidAmount;
+                        cuota.PaymentDate = DateOnly.FromDateTime(paymentDate);
+                        cuota.StatusId = nuevoSaldoCuota <= 0
+                            ? (int)(pagoTarde ? InstallmentStatus.PaidLate : InstallmentStatus.Paid)
+                            : (int)InstallmentStatus.Partial;
+
+                        detalleAplicado.Add(new DetalleCuotaPagadaDto
+                        {
+                            InstallmentNumber = cuota.InstallmentNumber,
+                            MontoAplicado = aplicado,
+                            QuedoSaldada = nuevoSaldoCuota <= 0
+                        });
+
+                        montoRestante -= aplicado;
+                    }
+
+                    await db.SaveChangesAsync();
+                    await ActualizarEstadoContratoAsync(contractId, db);
+                    await SaveAuditAsync(AuditAction.Update, "Contract", contractId.ToString(),
+                        $"Se registró un adelanto de pago de {amount:N2}, aplicado a {detalleAplicado.Count} cuota(s)", db);
+                    await db.SaveChangesAsync();
+
+                    var contrato = await db.Contracts
+                        .Include(c => c.Client)
+                        .Include(c => c.ProductUnit).ThenInclude(pu => pu.Product)
+                        .FirstOrDefaultAsync(c => c.Id == contractId);
+
+                    var todasLasCuotas = await db.DebtInstallments
+                        .Where(x => x.ContractId == contractId)
+                        .ToListAsync();
+
+                    var saldoPendienteContrato = todasLasCuotas
+                        .Where(x => x.StatusId != (int)InstallmentStatus.Paid
+                                 && x.StatusId != (int)InstallmentStatus.PaidLate
+                                 && x.StatusId != (int)InstallmentStatus.Waived)
+                        .Sum(x => x.ExpectedAmount - (x.PaidAmount ?? 0));
+
+                    var recibo = new ReciboAdelantoDto
+                    {
+                        FechaPago = paymentDate,
+                        ContractNumber = contrato.Id,
+                        NombreCliente = $"{contrato.Client.Name} {contrato.Client.LastName}",
+                        NombreProducto = contrato.ProductUnit.Product.Name,
+                        MontoTotalAbonado = amount,
+                        CuotasAplicadas = detalleAplicado,
+                        SaldoPendienteContrato = saldoPendienteContrato,
+                        RecibidoPor = usuario
+                    };
+
+                    await transaction.CommitAsync();
+                    return ServicesResult<ReciboAdelantoDto>.Ok(recibo,
+                        $"Adelanto registrado, aplicado a {detalleAplicado.Count} cuota(s).");
                 }
-
-                if (runInicio == -1 || runFin == -1) break;
-
-                if (runInicio == runFin)
+                catch (Exception ex)
                 {
-                    string texto = textoPorRun[runInicio];
-                    string nuevo = texto.Substring(0, offsetInicio) + valorNuevo + texto.Substring(offsetFin);
-                    SetRunText(runs[runInicio], nuevo);
+                    await transaction.RollbackAsync();
+                    return ServicesResult<ReciboAdelantoDto>.Fail("Error al registrar el adelanto: " + ex.Message);
                 }
-                else
-                {
-                    string textoInicio = textoPorRun[runInicio];
-                    string antes = textoInicio.Substring(0, offsetInicio);
-                    SetRunText(runs[runInicio], antes + valorNuevo);
-
-                    for (int i = runInicio + 1; i < runFin; i++)
-                        SetRunText(runs[i], "");
-
-                    string textoFin = textoPorRun[runFin];
-                    string despues = textoFin.Substring(offsetFin);
-                    SetRunText(runs[runFin], despues);
-                }
-
-                huboReemplazo = true;
             }
         }
 
-        private static void SetRunText(Run run, string nuevoTexto)
-        {
-            run.RemoveAllChildren<Text>();
-            run.AppendChild(new Text(nuevoTexto) { Space = DocumentFormat.OpenXml.SpaceProcessingModeValues.Preserve });
-        }
     }
 }
-

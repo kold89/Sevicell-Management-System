@@ -5,44 +5,48 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WpfApp1.Views.Credit"
       xmlns:fa5="http://schemas.fontawesome.com/icons/"
-
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
+      Loaded="Page_Loaded"
       Title="CreditContractsList">
 
+    <Page.Resources>
+        <!-- Centra verticalmente el texto de las celdas (RowHeight es mayor que el texto) -->
+        <Style x:Key="CellCenter" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Page.Resources>
 
     <Grid Background="#F1F5F9" Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- HEADER -->
         <DockPanel Grid.Row="0" Margin="0,0,0,20" LastChildFill="False">
 
-            <!-- 1. BOTÓN REGRESAR (IZQUIERDA) -->
             <Button x:Name="BtnGoBack"
-            Click="BtnGoBack_Click"
-            DockPanel.Dock="Left"
-            Style="{StaticResource btnGoBackStyle}"
-            Cursor="Hand">
+                    Click="BtnGoBack_Click"
+                    DockPanel.Dock="Left"
+                    Style="{StaticResource btnGoBackStyle}"
+                    Cursor="Hand">
                 <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18"/>
             </Button>
 
-            <!-- 2. TÍTULO Y SUBTÍTULO (IZQUIERDA) -->
             <StackPanel Margin="15,0,0,0" DockPanel.Dock="Left">
                 <TextBlock Text="Contratos de Crédito" FontSize="22" FontWeight="Bold" Foreground="#333"/>
                 <TextBlock Text="Consulta de contratos de ventas a plazos registrados." Foreground="#777" FontSize="13"/>
             </StackPanel>
 
-            <!-- 3. BOTÓN NUEVO CONTRATO (DERECHA) -->
             <Button x:Name="BtnAddContract"
-            Click="BtnAddContract_Click"
-            DockPanel.Dock="Right"
-            HorizontalAlignment="Right"
-            Background="#2563EB" BorderThickness="0" Cursor="Hand"
-            Padding="16,10" VerticalAlignment="Center">
+                    Click="BtnAddContract_Click"
+                    DockPanel.Dock="Right"
+                    HorizontalAlignment="Right"
+                    Background="#2563EB" BorderThickness="0" Cursor="Hand"
+                    Padding="16,10" VerticalAlignment="Center">
                 <Button.Resources>
                     <Style TargetType="Border">
                         <Setter Property="CornerRadius" Value="6"/>
@@ -54,7 +58,7 @@
                 </StackPanel>
             </Button>
         </DockPanel>
-        
+
         <!-- FILTROS -->
         <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="18" Margin="0,0,0,16">
             <Border.Effect>
@@ -67,19 +71,24 @@
                     <ColumnDefinition Width="1.2*"/>
                     <ColumnDefinition Width="1.4*"/>
                     <ColumnDefinition Width="1.4*"/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
+                <!-- FECHA DESDE -->
                 <StackPanel Grid.Column="0" Margin="0,0,12,0">
                     <TextBlock Text="Fecha Desde" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <Border x:Name="BorderFechaDesde" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand">
+                    <Border x:Name="BorderFechaDesde" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" 
+                            CornerRadius="4" Cursor="Hand" MouseLeftButtonUp="BorderFechaDesde_Click">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="TxtFechaDesdeSeleccionada" Grid.Column="0" Text="Todas" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                            <fa5:SvgAwesome Grid.Column="1" Icon="Solid_CalendarAlt" Height="14" Foreground="#64748B" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnClearDesde" Grid.Column="1" Content="✕" Click="BtnClearDesde_Click" Visibility="Collapsed"
+                                    Background="Transparent" BorderThickness="0" Foreground="#94A3B8" Padding="6,0" Cursor="Hand" ToolTip="Quitar fecha"/>
+                            <fa5:SvgAwesome Grid.Column="2" Icon="Solid_CalendarAlt" Height="14" Foreground="#64748B" Margin="4,0,10,0" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
                     <Popup x:Name="PopupCalendarioDesde" PlacementTarget="{Binding ElementName=BorderFechaDesde}" Placement="Bottom" StaysOpen="False" IsOpen="False">
@@ -87,21 +96,28 @@
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
                             </Border.Effect>
-                            <Calendar x:Name="CalFechaDesde" />
+                            <Calendar x:Name="CalFechaDesde" 
+                                      SelectedDatesChanged="CalFechaDesde_SelectedDatesChanged"
+                                      PreviewMouseUp="Calendar_PreviewMouseUp"/>
                         </Border>
                     </Popup>
                 </StackPanel>
 
+                <!-- FECHA HASTA -->
                 <StackPanel Grid.Column="1" Margin="0,0,12,0">
                     <TextBlock Text="Fecha Hasta" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <Border x:Name="BorderFechaHasta" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="4" Cursor="Hand" >
+                    <Border x:Name="BorderFechaHasta" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" BorderThickness="1" 
+                            CornerRadius="4" Cursor="Hand" MouseLeftButtonUp="BorderFechaHasta_Click">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="TxtFechaHastaSeleccionada" Grid.Column="0" Text="Todas" Foreground="#94A3B8" FontSize="14" VerticalAlignment="Center" Margin="10,0,0,0"/>
-                            <fa5:SvgAwesome Grid.Column="1" Icon="Solid_CalendarAlt" Height="14" Foreground="#64748B" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                            <Button x:Name="BtnClearHasta" Grid.Column="1" Content="✕" Click="BtnClearHasta_Click" Visibility="Collapsed"
+                                    Background="Transparent" BorderThickness="0" Foreground="#94A3B8" Padding="6,0" Cursor="Hand" ToolTip="Quitar fecha"/>
+                            <fa5:SvgAwesome Grid.Column="2" Icon="Solid_CalendarAlt" Height="14" Foreground="#64748B" Margin="4,0,10,0" VerticalAlignment="Center"/>
                         </Grid>
                     </Border>
                     <Popup x:Name="PopupCalendarioHasta" PlacementTarget="{Binding ElementName=BorderFechaHasta}" Placement="Bottom" StaysOpen="False" IsOpen="False">
@@ -109,11 +125,14 @@
                             <Border.Effect>
                                 <DropShadowEffect BlurRadius="10" Opacity="0.15" ShadowDepth="2"/>
                             </Border.Effect>
-                            <Calendar x:Name="CalFechaHasta"/>
+                            <Calendar x:Name="CalFechaHasta" 
+                                      SelectedDatesChanged="CalFechaHasta_SelectedDatesChanged"
+                                      PreviewMouseUp="Calendar_PreviewMouseUp"/>
                         </Border>
                     </Popup>
                 </StackPanel>
 
+                <!-- ESTADO -->
                 <StackPanel Grid.Column="2" Margin="0,0,12,0">
                     <TextBlock Text="Estado" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
                     <ComboBox x:Name="CboFilterStatus"
@@ -122,57 +141,70 @@
                               Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" FontSize="14" VerticalContentAlignment="Center"/>
                 </StackPanel>
 
+                <!-- CLIENTE / TELÉFONO / DNI / N° -->
                 <StackPanel Grid.Column="3" Margin="0,0,12,0">
-                    <TextBlock Text="Cliente / Teléfono" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                    <TextBox x:Name="TxtFiltroBusqueda" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" Foreground="#1E293B" FontSize="14" VerticalContentAlignment="Center" Padding="8,0"/>
+                    <TextBlock Text="Cliente / No. Contrato" Foreground="#334155" FontSize="12" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <TextBox x:Name="TxtFiltroBusqueda" Height="38" Background="#F8FAFC" BorderBrush="#CBD5E1" Foreground="#1E293B" 
+                             FontSize="14" VerticalContentAlignment="Center" Padding="8,0"
+                             KeyDown="TxtFiltroBusqueda_KeyDown"/>
                 </StackPanel>
 
-                <Button Name="BtnBuscar" Grid.Column="4" Content="🔍 Buscar" Width="120" Height="38" VerticalAlignment="Bottom"
-                        Background="#2563EB" Foreground="White" FontSize="13" FontWeight="SemiBold"
-                        BorderThickness="0" Cursor="Hand" Margin="0,0,0,5" />
+                <!-- BOTONES -->
+                <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="0,0,0,5">
+                    <Button x:Name="BtnBuscar" Content="🔍 Buscar" Width="120" Height="38"
+                            Background="#2563EB" Foreground="White" FontSize="13" FontWeight="SemiBold"
+                            BorderThickness="0" Cursor="Hand" Click="BtnBuscar_Click"/>
+                    <Button x:Name="BtnLimpiar" Content="Limpiar" Width="80" Height="38" Margin="8,0,0,0"
+                            Background="#E2E8F0" Foreground="#334155" FontSize="13" FontWeight="SemiBold"
+                            BorderThickness="0" Cursor="Hand" Click="BtnLimpiar_Click"/>
+                </StackPanel>
             </Grid>
         </Border>
 
-            <!-- LISTA DE CONTRATOS -->
-            <!-- LISTADO (ya no hay split, una sola columna) -->
-            <Grid Grid.Row="2">
-                <Border Background="White" CornerRadius="8" Padding="4">
-                    <Border.Effect>
-                        <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
-                    </Border.Effect>
-                    <DataGrid x:Name="DgContracts"
-                  Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
-                  BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
-                  HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
-                  AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
-                  IsReadOnly="True">
-                        <DataGrid.ColumnHeaderStyle>
-                            <Style TargetType="DataGridColumnHeader">
-                                <Setter Property="Background" Value="Transparent"/>
-                                <Setter Property="Foreground" Value="#64748B"/>
-                                <Setter Property="FontWeight" Value="SemiBold"/>
-                                <Setter Property="Padding" Value="12,12"/>
-                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
-                                <Setter Property="BorderBrush" Value="#E2E8F0"/>
-                            </Style>
-                        </DataGrid.ColumnHeaderStyle>
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="N°" Binding="{Binding ContractNumber}" Width="auto"/>
-                            <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="200"/>
-                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="*"/>
-                        <DataGridTextColumn Header="DEUDA TOTAL" Binding="{Binding TotalDebt, StringFormat='L. {0:N2}'}" Width="120"/>
+        <!-- LISTADO DE CONTRATOS -->
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="4">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
+
+            <Grid>
+                <!-- La visibilidad del DataGrid y del panel la controla MostrarEstado en el code-behind -->
+                <DataGrid x:Name="DgContracts"
+                          Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
+                          BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                          AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
+                          IsReadOnly="True">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#64748B"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Padding" Value="12,12"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="N°" Binding="{Binding ContractNumber}" Width="Auto" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="200" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="*" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="DEUDA TOTAL" Binding="{Binding TotalDebt, StringFormat='L. {0:N2}'}" Width="120" ElementStyle="{StaticResource CellCenter}"/>
+
                         <DataGridTextColumn Header="MONTO PENDIENTE" Binding="{Binding Balance, StringFormat='L. {0:N2}'}" Width="150">
                             <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
+                                <Style TargetType="TextBlock" BasedOn="{StaticResource CellCenter}">
                                     <Setter Property="Foreground" Value="#DC2626"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+
                         <DataGridTemplateColumn Header="ESTADO" Width="110">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Border CornerRadius="4" Padding="8,3" HorizontalAlignment="Left">
+                                    <Border CornerRadius="4" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Center">
                                         <Border.Style>
                                             <Style TargetType="Border">
                                                 <Setter Property="Background" Value="#E8F8F5"/>
@@ -203,9 +235,6 @@
                                                         <DataTrigger Binding="{Binding Status}" Value="PENDIENTE">
                                                             <Setter Property="Foreground" Value="#B45309"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Status}" Value="Cancelado">
-                                                            <Setter Property="Foreground" Value="#B45309"/>
-                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </TextBlock.Style>
@@ -214,40 +243,58 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                            
-                        <DataGridTextColumn Header="CREADO" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100"/>
 
-                            <DataGridTemplateColumn Header="ACCIONES" Width="180">
-                                <DataGridTemplateColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel Orientation="Horizontal">
-                                            <Button x:Name="BtnDownload" Click="BtnDownload_Click"
-                                        Background="Transparent" ToolTip="Descargar contrato"
-                                        BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
-                                        Tag="{Binding ContractNumber}">
-                                                <fa5:SvgAwesome Icon="Solid_Download" Height="14" Foreground="#55DDB0"/>
-                                            </Button>
+                        <DataGridTextColumn Header="CREADO" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100" ElementStyle="{StaticResource CellCenter}"/>
 
-                                            <Button x:Name="BtnVerCuotas" Click="BtnVerCuotas_Click"
-                                        Background="Transparent" ToolTip="Ver cuotas"
-                                        BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
-                                        Tag="{Binding ContractNumber}">
-                                                <fa5:SvgAwesome Icon="Solid_ListAlt" Height="14" Foreground="#2563EB"/>
-                                            </Button>
+                        <DataGridTemplateColumn Header="ACCIONES" Width="180">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Button x:Name="BtnDownload" Click="BtnDownload_Click"
+                                                Background="Transparent" ToolTip="Descargar contrato"
+                                                BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
+                                                Tag="{Binding ContractNumber}">
+                                            <fa5:SvgAwesome Icon="Solid_Download" Height="14" Foreground="#55DDB0"/>
+                                        </Button>
 
-                                            <Button x:Name="BtnVerHistorial" Click="BtnVerHistorial_Click"
-                                        Background="Transparent" ToolTip="Ver histórico de pagos"
-                                        BorderThickness="0" Cursor="Hand"
-                                        Tag="{Binding ContractNumber}">
-                                                <fa5:SvgAwesome Icon="Solid_History" Height="14" Foreground="#64748B"/>
-                                            </Button>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </DataGridTemplateColumn.CellTemplate>
-                            </DataGridTemplateColumn>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Border>
+                                        <Button x:Name="BtnVerCuotas" Click="BtnVerCuotas_Click"
+                                                Background="Transparent" ToolTip="Ver cuotas"
+                                                BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
+                                                Tag="{Binding ContractNumber}">
+                                            <fa5:SvgAwesome Icon="Solid_ListAlt" Height="14" Foreground="#2563EB"/>
+                                        </Button>
+
+                                        <Button x:Name="BtnVerHistorial" Click="BtnVerHistorial_Click"
+                                                Background="Transparent" ToolTip="Ver histórico de pagos"
+                                                BorderThickness="0" Cursor="Hand"
+                                                Tag="{Binding ContractNumber}">
+                                            <fa5:SvgAwesome Icon="Solid_History" Height="14" Foreground="#64748B"/>
+                                        </Button>
+                                        <Button x:Name="BtnAdelanto" Click="BtnAdelanto_Click"
+                                                Background="Transparent" ToolTip="Adelanto de pago"
+                                                BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
+                                                Tag="{Binding ContractNumber}">
+                                            <fa5:SvgAwesome Icon="Solid_FastForward" Height="14" Foreground="#059669"/>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <!-- PANEL DE ESTADO VACÍO / ERROR -->
+                <StackPanel x:Name="PnlEmptyState" Visibility="Collapsed"
+                            VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,40">
+                    <TextBlock x:Name="TxtEmptyTitle" FontSize="16" FontWeight="SemiBold" Foreground="#475569" 
+                               HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="TxtEmptySub" FontSize="13" Foreground="#94A3B8" 
+                               HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                </StackPanel>
             </Grid>
+        </Border>
+
+        <!-- FOOTER: resumen -->
+        <TextBlock x:Name="TxtResumen" Grid.Row="3" Margin="4,10,0,0" FontSize="12" Foreground="#64748B"/>
     </Grid>
 </Page>
