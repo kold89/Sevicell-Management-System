@@ -122,7 +122,7 @@
         <!-- 🔹 Barra superior -->
         <Grid Grid.Column="1" Grid.Row="0" Background="#1E1E1E">
             <DockPanel Margin="10">
-                <TextBlock Text="SEVICELL PRO" FontSize="16" Foreground="White" 
+                <TextBlock Text="SEVICELL" FontSize="16" Foreground="White" 
                    FontWeight="Bold" VerticalAlignment="Center" DockPanel.Dock="Left"/>
 
                 <!-- Controles derechos -->
@@ -130,12 +130,26 @@
                     VerticalAlignment="Center" DockPanel.Dock="Right">
 
                     <!-- Bienvenido -->
-                    <TextBlock Text="Bienvenido," FontSize="15" Foreground="Gray" 
-                       Margin="0,0,7,0" VerticalAlignment="Center"/>
-                    <TextBlock Name="LblUserName" FontSize="15" Text="Usuario" 
-                       Foreground="SkyBlue" FontWeight="SemiBold" 
-                       VerticalAlignment="Center" Margin="0,0,20,0"/>
+                    <!--<TextBlock Text="Bienvenido:" FontSize="18" Foreground="Gray" 
+                       Margin="0,0,15,0" VerticalAlignment="Center"/>-->
+                    
+                    <StackPanel VerticalAlignment="Center"
+                        Margin="0,0,22,0">
 
+                       <TextBlock x:Name="LblUserName"
+                           Text="Kelvin López"
+                           FontSize="16"
+                           Foreground="#FFFFFF"
+                           FontWeight="SemiBold"/>
+
+                                    <TextBlock x:Name="LblUserRole"
+                           Text="Administrador"
+                           FontSize="10"
+                           Foreground="#6EC6FF"
+                           FontWeight="SemiBold"
+                           Margin="0,1,0,0"/>
+
+                    </StackPanel>
                     <!-- 🔔 Botón Campana -->
                     <Grid VerticalAlignment="Center" Margin="0,0,15,0">
                         <Button x:Name="BtnNotifications"
@@ -144,7 +158,7 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Cursor="Hand"
-                        ToolTip="Notificaciones">
+                        ToolTip="Notificaciones" VerticalAlignment="Top">
                             <fa5:SvgAwesome Icon="Solid_Bell" 
                                     Foreground="White" 
                                     Width="18" Height="18"/>

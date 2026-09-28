@@ -40,10 +40,24 @@ namespace WpfApp1
             PermissionManager.PermisosActualizados += AppPermissionsMenu;
             this.WindowState = WindowState.Maximized;
 
-            // 1. Mostrar el nombre del usuario logueado
-            if (SessionManager.loggedInUser != null)
+            SessionManager.UserSessionChanged += UpdateUserSession;
+            UpdateUserSession();
+        }
+        private void UpdateUserSession()
+        {
+            var user = SessionManager.loggedInUser;
+
+            if (user != null)
             {
-                LblUserName.Text = SessionManager.loggedInUser.Name;
+                string nombre = user.Name ?? "";
+                string inicialApellido = !string.IsNullOrWhiteSpace(user.LastName)
+                    ? $" {user.LastName.Trim()[0]}."
+                    : "";
+
+                LblUserName.Text = $"{nombre}{inicialApellido}";
+
+                int? idRole = user.RoleId;
+                LblUserRole.Text = SessionManager.GetProfile(idRole) ?? "";
             }
         }
 
@@ -72,7 +86,7 @@ namespace WpfApp1
             }
         }
 
-       
+
         private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
         {
             var confiCards = new WpfApp1.Views.ConfigDashboardPage();
@@ -94,7 +108,7 @@ namespace WpfApp1
             MainFrame.Navigate(confiCards);
         }
 
- 
+
 
         private ObservableCollection<NotificationItem> _notifications;
 
@@ -179,11 +193,11 @@ namespace WpfApp1
                 MessageBoxImage.Question);
 
             if (resultado == MessageBoxResult.Yes)
-            {     
+            {
                 SessionManager.Logout();
                 PermissionManager.ClearPermission();
 
-                var loginWindow = new MainWindow(); 
+                var loginWindow = new MainWindow();
                 loginWindow.Show();
                 this.Close();
             }

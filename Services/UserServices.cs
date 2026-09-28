@@ -132,9 +132,9 @@ namespace WpfApp1.Services
                     var data = await db.Users.Select(x => new ViewUserDto
                     {
                         Id = x.Id,
-                        Name = x.Name,
-                        lastName = x.LastName,
-                        profile = x.Username,
+                        Name = x.Name + " " + x.LastName,
+                        Username = x.Username,
+                        profile = x.Role.Name ?? "",
                         status = (bool)x.Status ? "Activo" : "Deshabilitado",
                     }).ToListAsync();
 

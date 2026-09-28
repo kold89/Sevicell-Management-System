@@ -51,22 +51,36 @@
             </Button>
         </Grid>
 
-        <DataGrid x:Name="dgUsers" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
-               CanUserAddRows="False" HeadersVisibility="Column"
-               GridLinesVisibility="Horizontal"
-               IsReadOnly="True"
-               BorderThickness="0"
-               BorderBrush="#DDDDDD"
-               Background="White" RowHeight="44" FontSize="13">
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="4">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
+            <DataGrid x:Name="dgUsers" 
+                      Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
+                      BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                      AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="42"
+                      IsReadOnly="True">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="#64748B"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="12,12"/>
+                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                    <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
 
                 <DataGridTextColumn Header="NOMBRE" Binding="{Binding Name}" Width="*"/>
-
-                <DataGridTextColumn Header="APELLIDO" Binding="{Binding lastName}" Width="*"/>
                 
-                <DataGridTextColumn Header="USUARIO" Binding="{Binding profile}" Width="150"/>
+                <DataGridTextColumn Header="USUARIO" Binding="{Binding Username}" Width="150"/>
+
+                
+                <DataGridTextColumn Header="PERFIL" Binding="{Binding profile}" Width="150"/>
 
                 <DataGridTemplateColumn Header="ESTADO"  Width="150">
                     <DataGridTemplateColumn.CellTemplate>
@@ -127,5 +141,6 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
+        </Border>
     </Grid>
 </Page>

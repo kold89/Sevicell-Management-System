@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfApp1.Models;
+using WpfApp1.Security;
 using WpfApp1.Services;
 
 namespace WpfApp1.Views
@@ -42,6 +43,7 @@ namespace WpfApp1.Views
                 txtPass.Password = userExist.Password;
                 cbRoles.SelectedValue = userExist.RoleId;
 
+                SubTitle.Text = "Actualizar Usuario";
                 this.Title = "Actualizar Usuario";
                 btnGuardar.Content = "Actualizar";
 
@@ -148,7 +150,10 @@ namespace WpfApp1.Views
                     var update = await serviceUser.UpdateUserAsync(userExist, isPassDiferent);
 
                     if (update.Success)
+                    {
                         ToastService.ShowSuccess(update.Message);
+                        await SessionManager.RefreshIfUserChangedAsync(update.Data.Id);
+                    }
                 }
 
                 this.DialogResult = true;
