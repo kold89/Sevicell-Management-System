@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using WpfApp1.Models;
+using WpfApp1.Models.Enums;
 using WpfApp1.Services;
 
 namespace WpfApp1.Views.Credit
@@ -42,8 +43,9 @@ namespace WpfApp1.Views.Credit
         }
 
         // ---------- Constantes y campos ----------
-        private const int MaxResultados = 200;
-
+        // Filtros de la última búsqueda: el paginador usa ESTOS, no lo que haya en pantalla
+        private int _statusAplicado;
+        private string _filtroAplicado;
         private static readonly Brush BrushNormal = new SolidColorBrush(Color.FromRgb(0x47, 0x55, 0x69));
         private static readonly Brush BrushError = new SolidColorBrush(Color.FromRgb(0xC0, 0x39, 0x2B));
 
@@ -94,7 +96,7 @@ namespace WpfApp1.Views.Credit
                 await BuscarUnidades();
         }
 
-        private async Task BuscarUnidades()
+        private async Task BuscarUnidades(bool nuevaBusqueda = true)
         {
             // Evita búsquedas solapadas (doble clic, Loaded + clic, Enter + clic)
             if (_isSearching) return;
@@ -102,25 +104,35 @@ namespace WpfApp1.Views.Credit
 
             BtnBuscar.IsEnabled = false;
             BtnBuscar.Content = "Buscando...";
+            Paginador.IsEnabled = false;   // evita clics en las flechas mientras carga
             Mouse.OverrideCursor = Cursors.Wait;
 
             try
             {
-                int statusId = CboFilterStatus.SelectedValue is int id ? id : 0;
-                string filtro = TxtFiltroNumero.Text?.Trim();
+                // Solo una búsqueda nueva lee los filtros de pantalla; un cambio de página reutiliza los anteriores
+                if (nuevaBusqueda)
+                {
+                    _statusAplicado = CboFilterStatus.SelectedValue is int id ? id : 0;
+                    _filtroAplicado = TxtFiltroNumero.Text?.Trim();
+                }
+
+                int statusId = _statusAplicado;
+                string filtro = _filtroAplicado;
                 bool hayFiltros = statusId != 0 || !string.IsNullOrWhiteSpace(filtro);
 
                 using var db = new SevicellDbContext();
 
                 IQueryable<ProductUnit> query = db.ProductUnits.AsNoTracking();
 
+                var disponible = EProductUnitStatus.Disponible.ToDbValue();
+                var vendido = EProductUnitStatus.Vendido.ToDbValue();
+
                 switch (statusId)
                 {
-                    case 1: query = query.Where(u => u.Status == "Disponible"); break;
-                    case 2: query = query.Where(u => u.Status == "Vendido"); break;
+                    case 1: query = query.Where(u => u.Status == disponible); break;
+                    case 2: query = query.Where(u => u.Status == vendido); break;
                     case 3: query = query.Where(u => u.Status == "Reservado"); break;
                 }
-
                 if (!string.IsNullOrWhiteSpace(filtro))
                 {
                     query = query.Where(u =>
@@ -129,9 +141,18 @@ namespace WpfApp1.Views.Credit
                         (u.Model != null && u.Model.Contains(filtro)));
                 }
 
-                // Se pide uno más del máximo para saber si hay más resultados sin hacer un Count aparte
+                int total = await query.CountAsync();
+
+                Paginador.Configurar(total, nuevaBusqueda ? 1 : Paginador.PaginaActual);
+
+                int tam = Paginador.RegistrosPorPagina;
+                int salto = (Paginador.PaginaActual - 1) * tam;
+
                 var lista = await query
                     .OrderByDescending(u => u.CreatedAt)
+                    .ThenByDescending(u => u.Id)   // orden estable para Skip/Take
+                    .Skip(salto)
+                    .Take(tam)
                     .Select(u => new UnidadListItem
                     {
                         ProductUnitId = u.Id,
@@ -142,23 +163,16 @@ namespace WpfApp1.Views.Credit
                         Model = u.Model,
                         Status = u.Status
                     })
-                    .Take(MaxResultados + 1)
                     .ToListAsync();
-
-                bool hayMas = lista.Count > MaxResultados;
-                if (hayMas)
-                    lista.RemoveAt(lista.Count - 1);
 
                 Unidades.Clear();
                 foreach (var item in lista)
                     Unidades.Add(item);
 
-                if (lista.Count > 0)
+                if (total > 0)
                 {
                     MostrarEstado(EstadoLista.Resultados);
-                    TxtResumen.Text = hayMas
-                        ? $"Mostrando los primeros {MaxResultados} dispositivos. Refina la búsqueda para ver otros."
-                        : $"{lista.Count} dispositivo(s) encontrado(s).";
+                    TxtResumen.Text = $"Mostrando {salto + 1}–{salto + lista.Count} de {total} dispositivo(s).";
                 }
                 else
                 {
@@ -176,17 +190,22 @@ namespace WpfApp1.Views.Credit
                 Mouse.OverrideCursor = null;
                 BtnBuscar.Content = "🔍 Buscar";
                 BtnBuscar.IsEnabled = true;
+                Paginador.IsEnabled = true;
                 _isSearching = false;
             }
         }
 
+        private async void Paginador_PaginaCambiada(object sender, EventArgs e)
+        {
+            await BuscarUnidades(nuevaBusqueda: false);
+        }
         /// <summary>
         /// Único punto que decide qué se ve: el DataGrid o el panel de estado vacío/error.
         /// </summary>
         private void MostrarEstado(EstadoLista estado)
         {
             bool mostrarGrid = estado == EstadoLista.Resultados;
-
+            Paginador.Visibility = mostrarGrid ? Visibility.Visible : Visibility.Collapsed;
             DgUnidades.Visibility = mostrarGrid ? Visibility.Visible : Visibility.Collapsed;
             PnlEmptyState.Visibility = mostrarGrid ? Visibility.Collapsed : Visibility.Visible;
 

@@ -25,6 +25,7 @@ namespace WpfApp1.Views.Credit
         private readonly CreditContractsServices ContractsSevices = new CreditContractsServices();
         private List<CobroItemDto> _todasLasCuotas = new();
         private string _filtroActivo = null;
+        private List<CobroItemDto> _filtradas = new();
 
         private readonly ReciboPrinterService _printerService = new ReciboPrinterService();
         private ReciboPagoCuotaDto _ultimoReciboImpreso;
@@ -34,7 +35,7 @@ namespace WpfApp1.Views.Credit
             _ = LoadCobrosDataAsync();
         }
 
-        private async Task LoadCobrosDataAsync()
+        private async Task LoadCobrosDataAsync(bool reiniciarPagina = true)
         {
             var result = await ContractsSevices.GetCobrosDashboardAsync();
             if (!result.Success)
@@ -45,9 +46,45 @@ namespace WpfApp1.Views.Credit
 
             _todasLasCuotas = result.Data;
             RenderTarjetas();
-            RenderTabla();
+            RenderTabla(reiniciarPagina);
+        }
+        private void RenderTabla(bool reiniciarPagina = true)
+        {
+            var query = _filtroActivo == null
+                ? _todasLasCuotas
+                : _todasLasCuotas.Where(x => x.UrgencyGroup == _filtroActivo).ToList();
+
+            // ThenBy: orden estable para que Skip/Take no repita ni salte filas
+            _filtradas = query
+                .OrderBy(x => x.DueDate)
+                .ThenBy(x => x.InstallmentId)
+                .ToList();
+
+            Paginador.Configurar(_filtradas.Count, reiniciarPagina ? 1 : Paginador.PaginaActual);
+            MostrarPagina();
         }
 
+        private void MostrarPagina()
+        {
+            if (_filtradas.Count == 0)
+            {
+                DgCobros.ItemsSource = null;
+                TxtResumen.Text = "No hay cuotas para mostrar.";
+                Paginador.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            Paginador.Visibility = Visibility.Visible;
+
+            int tam = Paginador.RegistrosPorPagina;
+            int salto = (Paginador.PaginaActual - 1) * tam;
+            var pagina = _filtradas.Skip(salto).Take(tam).ToList();
+
+            DgCobros.ItemsSource = pagina;
+            TxtResumen.Text = $"Mostrando {salto + 1}–{salto + pagina.Count} de {_filtradas.Count} cuota(s).";
+        }
+
+        private void Paginador_PaginaCambiada(object sender, EventArgs e) => MostrarPagina();
         private void RenderTarjetas()
         {
             var tarjetas = new List<CardStatusInstallment>
@@ -60,15 +97,6 @@ namespace WpfApp1.Views.Credit
                         Count = _todasLasCuotas.Count(x => x.UrgencyGroup == "WEEK") }
             };
             IcTarjetas.ItemsSource = tarjetas;
-        }
-
-        private void RenderTabla()
-        {
-            var lista = _filtroActivo == null
-                ? _todasLasCuotas
-                : _todasLasCuotas.Where(x => x.UrgencyGroup == _filtroActivo).ToList();
-
-            DgCobros.ItemsSource = lista.OrderBy(x => x.DueDate).ToList();
         }
 
         private void TarjetaEstado_Click(object sender, MouseButtonEventArgs e)
@@ -124,7 +152,7 @@ namespace WpfApp1.Views.Credit
                     $"El pago se registró correctamente, pero no se pudo imprimir el recibo.\n\nMotivo: {ex.Message}\n\nPuede usar 'Reimprimir último recibo'.",
                     "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
-            await LoadCobrosDataAsync();
+            await LoadCobrosDataAsync(reiniciarPagina: false);
         }
     }
 }
