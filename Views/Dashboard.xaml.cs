@@ -1,168 +1,164 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using WpfApp1.Security;
+using WpfApp1.Services;
+using WpfApp1.ViewModels;
 
 namespace WpfApp1.Views
 {
-    /// <summary>
-    /// Lógica de interacción para Dashboard.xaml
-    /// </summary>
     public partial class Dashboard : Page
     {
-        // Timer para actualizar la hora
-        private DispatcherTimer _clockTimer;     
-        private string name = SessionManager.loggedInUser.Name ?? "";
+        private static readonly CultureInfo Cultura = new("es-HN");
+        private static readonly Brush BrushInfo = new SolidColorBrush(Color.FromRgb(0x6B, 0x72, 0x80));
+        private static readonly Brush BrushError = new SolidColorBrush(Color.FromRgb(0xC0, 0x39, 0x2B));
+
+        private static readonly Brush BrushAlerta = new SolidColorBrush(Color.FromRgb(0xE7, 0x4C, 0x3C));
+        private static readonly Brush BrushOk = new SolidColorBrush(Color.FromRgb(0x4C, 0xAF, 0x50));
+        private static readonly Brush BrushValor = new SolidColorBrush(Color.FromRgb(0x1A, 0x1A, 0x2E));
+
+        private readonly DashboardService _dashboardService = new();
+        private readonly string _name = SessionManager.loggedInUser?.Name ?? "";
+        private DispatcherTimer _clockTimer;
+        private bool _cargando;
+
         public Dashboard()
         {
             InitializeComponent();
             Loaded += Dashboard_Loaded;
+            Unloaded += Dashboard_Unloaded;
         }
 
-        private void Dashboard_Loaded(object sender, RoutedEventArgs e)
+        // ---------- Ciclo de vida ----------
+        private async void Dashboard_Loaded(object sender, RoutedEventArgs e)
         {
-            // Configurar fecha y saludo
             ActualizarSaludoYFecha();
 
-            // Iniciar reloj en tiempo real
-            _clockTimer = new DispatcherTimer
+            if (_clockTimer == null)
             {
-                Interval = TimeSpan.FromSeconds(30)
-            };
-            _clockTimer.Tick += (s, args) => ActualizarSaludoYFecha();
+                _clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+                _clockTimer.Tick += (s, args) => ActualizarSaludoYFecha();
+            }
             _clockTimer.Start();
 
-            // ============================================
-            // DATOS EN DURO (hardcoded) — reemplazar luego
-            // ============================================
+            await CargarAsync();
+        }
 
-            // KPI Cards
-            LblSalesToday.Text = "L. 4,820";
-            LblActiveRepairs.Text = "8";
-            LblActiveContracts.Text = "23";
-            LblCriticalStock.Text = "4";
+        private void Dashboard_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _clockTimer?.Stop();
+        }
 
-            // Totales semanales
-            LblSalesWeekTotal.Text = "L. 30,820";
-            LblRepairsWeekTotal.Text = "L. 12,400";
+        private async void BtnReintentar_Click(object sender, RoutedEventArgs e)
+        {
+            await CargarAsync();
+        }
 
-            // Estado de reparaciones
-            LblStatusInProgress.Text = "5";
-            LblStatusWaiting.Text = "2";
-            LblStatusReady.Text = "1";
+        // ---------- Carga de datos ----------
+        private async Task CargarAsync()
+        {
+            if (_cargando) return;   // evita cargas solapadas (Loaded + Reintentar)
+            _cargando = true;
 
-            // Contador listos para entrega
-            LblReadyCount.Text = "2 equipos";
+            MostrarCarga("Actualizando datos...");
 
-            // TODO: Aquí conectarás ScottPlot más adelante
-            // Ejemplo:
-            // ConfigurarGraficoVentas();
-            // ConfigurarGraficoReparaciones();
-            // ConfigurarGraficoEstado();
+            try
+            {
+                var result = await _dashboardService.ObtenerResumenAsync();
+
+                if (!result.Success || result.Data == null)
+                {
+                    MostrarError(result.Message);
+                    return;
+                }
+
+                AplicarDatos(result.Data);
+                PnlEstadoCarga.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                MostrarError("Error al cargar el dashboard: " + ex.Message);
+            }
+            finally
+            {
+                _cargando = false;
+            }
         }
 
         /// <summary>
-        /// Actualiza el saludo según la hora del día y la fecha actual
+        /// Único punto que pinta los datos en pantalla. Cada paso agrega aquí su sección.
         /// </summary>
+        private void AplicarDatos(DashboardDto datos)
+        {
+            // Paso 3: contratos
+            LblActiveContracts.Text = datos.ContratosActivos.ToString("N0", Cultura);
+
+            if (datos.CuotasVencidas > 0)
+            {
+                LblOverdueInstallments.Text = datos.CuotasVencidas == 1
+                    ? "1 cuota vencida"
+                    : $"{datos.CuotasVencidas:N0} cuotas vencidas";
+                LblOverdueInstallments.Foreground = BrushAlerta;
+            }
+            else
+            {
+                LblOverdueInstallments.Text = "Sin cuotas vencidas";
+                LblOverdueInstallments.Foreground = BrushOk;
+            }
+
+            // Paso 4: ventas
+            // Paso 5: reparaciones
+            // Paso 6: stock
+            // Paso 6: stock
+            bool hayCritico = datos.StockCritico > 0;
+
+            LblCriticalStock.Text = datos.StockCritico.ToString("N0", Cultura);
+            LblCriticalStock.Foreground = hayCritico ? BrushAlerta : BrushValor;
+
+            LblCriticalStockSub.Text = !hayCritico
+                ? "Inventario en orden"
+                : datos.StockCritico == 1 ? "producto bajo mínimo" : "productos bajo mínimo";
+            LblCriticalStockSub.Foreground = hayCritico ? BrushAlerta : BrushOk;
+            // Paso 7: listos para entrega
+        }
+
+        // ---------- Estado visual de la carga ----------
+        private void MostrarCarga(string texto)
+        {
+            TxtEstadoCarga.Text = texto;
+            TxtEstadoCarga.Foreground = BrushInfo;
+            BtnReintentar.Visibility = Visibility.Collapsed;
+            PnlEstadoCarga.Visibility = Visibility.Visible;
+        }
+
+        private void MostrarError(string mensaje)
+        {
+            TxtEstadoCarga.Text = mensaje;
+            TxtEstadoCarga.Foreground = BrushError;
+            BtnReintentar.Visibility = Visibility.Visible;
+            PnlEstadoCarga.Visibility = Visibility.Visible;
+        }
+
+        // ---------- Saludo y fecha ----------
         private void ActualizarSaludoYFecha()
         {
             var ahora = DateTime.Now;
-            var hora = ahora.Hour;
 
-            string saludo = hora switch
+            string saludo = ahora.Hour switch
             {
                 >= 5 and < 12 => "Buenos días",
                 >= 12 and < 18 => "Buenas tardes",
                 _ => "Buenas noches"
             };
 
-            LblGreeting.Text = $"{saludo}, {name} ";
-            LblDate.Text = ahora.ToString("dddd, d 'de' MMMM 'de' yyyy",
-                new System.Globalization.CultureInfo("es-HN"));
-        }
+            LblGreeting.Text = string.IsNullOrWhiteSpace(_name) ? saludo : $"{saludo}, {_name}";
 
-        // ============================================
-        // MÉTODOS PARA SCOTTPLOT (descomentar cuando instales el paquete)
-        // ============================================
-        /*
-        private void ConfigurarGraficoVentas()
-        {
-            // Requiere: dotnet add package ScottPlot.WPF
-            // Reemplazar SalesChartPlaceholder con <ScottPlot:WpfPlot x:Name="SalesChart"/>
-            
-            string[] dias = { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
-            double[] ventas = { 3200, 4100, 5800, 4900, 7200, 8500, 6800 };
-            
-            var plot = SalesChart.Plot;
-            var linea = plot.Add.Scatter(dias, ventas);
-            linea.LineWidth = 2.5;
-            linea.Color = new ScottPlot.Color(33, 150, 243);
-            linea.MarkerSize = 6;
-            
-            // Relleno degradado
-            plot.Add.FillY(dias, ventas, 
-                System.Linq.Enumerable.Repeat(0.0, 7).ToArray(),
-                new ScottPlot.Color(33, 150, 243, 40));
-            
-            plot.Title("");
-            plot.Axes.Left.Label.Text = "";
-            plot.Axes.Bottom.Label.Text = "";
-            plot.Grid.MajorLineColor = new ScottPlot.Color(232, 236, 240);
-            
-            SalesChart.Refresh();
+            string fecha = ahora.ToString("dddd, d 'de' MMMM 'de' yyyy", Cultura);
+            LblDate.Text = char.ToUpper(fecha[0], Cultura) + fecha.Substring(1);
         }
-
-        private void ConfigurarGraficoReparaciones()
-        {
-            string[] dias = { "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom" };
-            double[] reparaciones = { 2100, 1800, 1500, 1900, 2400, 2200, 2000 };
-            
-            var plot = RepairsChart.Plot;
-            var linea = plot.Add.Scatter(dias, reparaciones);
-            linea.LineWidth = 2.5;
-            linea.Color = new ScottPlot.Color(243, 156, 18);
-            linea.MarkerSize = 6;
-            
-            plot.Add.FillY(dias, reparaciones,
-                System.Linq.Enumerable.Repeat(0.0, 7).ToArray(),
-                new ScottPlot.Color(243, 156, 18, 40));
-            
-            plot.Grid.MajorLineColor = new ScottPlot.Color(232, 236, 240);
-            RepairsChart.Refresh();
-        }
-
-        private void ConfigurarGraficoEstado()
-        {
-            double[] valores = { 5, 2, 1 };
-            string[] etiquetas = { "En curso", "Esperando", "Listos" };
-            
-            var plot = StatusChart.Plot;
-            var pie = plot.Add.Pie(valores);
-            pie.SliceFillColors = new ScottPlot.Color[]
-            {
-                new(33, 150, 243),
-                new(243, 156, 18),
-                new(76, 175, 80)
-            };
-            pie.ExplodeFraction = 0.05;
-            pie.DonutFraction = 0.6;
-            
-            plot.HideAxesAndGrid();
-            StatusChart.Refresh();
-        }
-        */
     }
 }
-

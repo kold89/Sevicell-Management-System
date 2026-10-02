@@ -84,7 +84,12 @@ namespace WpfApp1.ControlsUI
             BtnPrevious.IsEnabled = paginaActual > 1;
             BtnNext.IsEnabled = paginaActual < totalPaginas;
         }
-
+        public void Configurar(int totalRegistros, int pagina = 1)
+        {
+            totalPaginas = Math.Max(1, (int)Math.Ceiling(totalRegistros / (double)registrosPorPagina));
+            paginaActual = Math.Min(Math.Max(1, pagina), totalPaginas);
+            ActualizarEtiqueta();
+        }
         private void BtnPrevious_Click(object sender, RoutedEventArgs e)
         {
             if (paginaActual > 1)

@@ -138,6 +138,14 @@
                                Foreground="#6B7280" 
                                FontSize="14"
                                Margin="0,4,0,0"/>
+                    <StackPanel x:Name="PnlEstadoCarga" Orientation="Horizontal"
+                        Margin="0,8,0,0" Visibility="Collapsed">
+                                    <TextBlock x:Name="TxtEstadoCarga" FontSize="12" VerticalAlignment="Center"/>
+                                    <Button x:Name="BtnReintentar" Content="Reintentar" Click="BtnReintentar_Click"
+                        Visibility="Collapsed" Margin="10,0,0,0" Padding="10,2"
+                        Background="#E2E8F0" Foreground="#334155"
+                        BorderThickness="0" Cursor="Hand"/>
+                    </StackPanel>
                 </StackPanel>
 
                 <Border Grid.Column="1" 
@@ -148,7 +156,7 @@
                                  Fill="#4CAF50" 
                                  Margin="0,0,8,0"
                                  VerticalAlignment="Center"/>
-                        <TextBlock Text="Sistema de Administración"
+                        <TextBlock Text="Admnistración."
                                    Foreground="#27500A"
                                    FontSize="12" FontWeight="SemiBold"/>
                     </StackPanel>
@@ -281,15 +289,15 @@
                         </DockPanel>
 
                         <TextBlock Grid.Row="1" 
-                                   x:Name="LblActiveContracts"
-                                   Text="23"
-                                   Style="{StaticResource KpiValue}"/>
+                           x:Name="LblActiveContracts"
+                           Text="—"
+                           Style="{StaticResource KpiValue}"/>
 
-                        <TextBlock Grid.Row="2" 
-                                   Text="3 cuotas vencidas"
-                                   FontSize="12" 
-                                   Foreground="#E74C3C" 
-                                   FontWeight="Light"/>
+                                        <TextBlock Grid.Row="2" 
+                           x:Name="LblOverdueInstallments"
+                           FontSize="12" 
+                           Foreground="#6B7280" 
+                           FontWeight="Light"/>
                     </Grid>
                 </Border>
 
@@ -321,16 +329,15 @@
                         </DockPanel>
 
                         <TextBlock Grid.Row="1" 
-                                   x:Name="LblCriticalStock"
-                                   Text="4"
-                                   Style="{StaticResource KpiValue}"
-                                   Foreground="#E74C3C"/>
+                           x:Name="LblCriticalStock"
+                           Text="—"
+                           Style="{StaticResource KpiValue}"/>
 
-                        <TextBlock Grid.Row="2" 
-                                   Text="productos bajo mínimo"
-                                   FontSize="12" 
-                                   Foreground="#E74C3C" 
-                                   FontWeight="Light"/>
+                                        <TextBlock Grid.Row="2" 
+                           x:Name="LblCriticalStockSub"
+                           FontSize="12" 
+                           Foreground="#6B7280" 
+                           FontWeight="Light"/>
                     </Grid>
                 </Border>
             </Grid>
@@ -491,6 +498,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" 
@@ -518,8 +526,7 @@
                         </Border>
 
                         <!-- Leyenda -->
-                        <StackPanel Grid.Row="2" 
-                                    Margin="0,200,0,0">
+                        <StackPanel Grid.Row="3">
                             <Grid Margin="0,0,0,8">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>

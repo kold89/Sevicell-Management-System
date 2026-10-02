@@ -39,6 +39,7 @@ namespace WpfApp1.Views.Credit
         private readonly CreditContractsServices ContractsSevices = new CreditContractsServices();
         private readonly ContractsDocumentGenerator documentGenerator = new ContractsDocumentGenerator();
         private List<creditContractsDTO> _allContracts = new();
+        private List<creditContractsDTO> _filtrados = new();
         private DateTime? _fechaDesde;
         private DateTime? _fechaHasta;
         private bool _isSearching;
@@ -156,16 +157,14 @@ namespace WpfApp1.Views.Credit
         }
 
         // ---------- Búsqueda ----------
-        private async Task BuscarContratos(bool actualizarVencimientos = false)
+        private async Task BuscarContratos(bool actualizarVencimientos = false, bool reiniciarPagina = true)
         {
-            // Validación antes de bloquear nada
             if (_fechaDesde.HasValue && _fechaHasta.HasValue && _fechaDesde.Value.Date > _fechaHasta.Value.Date)
             {
                 ToastService.ShowInfo("La fecha \"Desde\" no puede ser mayor que la fecha \"Hasta\".");
                 return;
             }
 
-            // Evita búsquedas solapadas (Loaded + clic, doble clic, Enter + clic)
             if (_isSearching) return;
             _isSearching = true;
 
@@ -175,7 +174,6 @@ namespace WpfApp1.Views.Credit
 
             try
             {
-                // Capturamos los filtros antes de cualquier await para que no cambien a mitad de la búsqueda
                 DateTime? desde = _fechaDesde?.Date;
                 DateTime? hasta = _fechaHasta?.Date;
                 string estado = CboFilterStatus.SelectedValue as string;
@@ -185,8 +183,6 @@ namespace WpfApp1.Views.Credit
                                   || !string.IsNullOrEmpty(estado)
                                   || !string.IsNullOrWhiteSpace(texto);
 
-                // Marca como VENCIDOS los contratos con cuotas atrasadas.
-                // Si falla, no debe impedir que se muestre el listado.
                 if (actualizarVencimientos)
                 {
                     try
@@ -206,7 +202,6 @@ namespace WpfApp1.Views.Credit
 
                 _allContracts = result.Data;
 
-                // Filtros en memoria sobre la lista cargada
                 IEnumerable<creditContractsDTO> query = _allContracts;
 
                 if (!string.IsNullOrEmpty(estado))
@@ -229,27 +224,28 @@ namespace WpfApp1.Views.Credit
                 if (!string.IsNullOrWhiteSpace(texto))
                     query = query.Where(c =>
                         Contiene(c.CustomerName, texto) ||
-                        //Contiene(c.DniCustomer?.ToString(), texto) ||
                         c.ContractNumber.ToString().Contains(texto));
 
-                var lista = query
+                _filtrados = query
                     .OrderByDescending(c => (DateTime?)c.CreatedAt)
                     .ToList();
 
-                DgContracts.ItemsSource = lista;
-
-                if (lista.Count > 0)
+                if (_filtrados.Count > 0)
                 {
                     MostrarEstado(EstadoLista.Resultados);
-                    TxtResumen.Text = $"{lista.Count} contrato(s) encontrado(s).";
+                    Paginador.Configurar(_filtrados.Count, reiniciarPagina ? 1 : Paginador.PaginaActual);
+                    MostrarPagina();
                 }
                 else
                 {
+                    Paginador.Configurar(0, 1);
+                    DgContracts.ItemsSource = null;
                     MostrarEstado(hayFiltros ? EstadoLista.SinResultados : EstadoLista.SinContratos);
                 }
             }
             catch (Exception ex)
             {
+                _filtrados = new();
                 DgContracts.ItemsSource = null;
                 MostrarEstado(EstadoLista.Error);
                 ToastService.ShowError("Error al cargar los contratos: " + ex.Message);
@@ -262,7 +258,6 @@ namespace WpfApp1.Views.Credit
                 _isSearching = false;
             }
         }
-
         private static bool Contiene(string valor, string texto)
         {
             return !string.IsNullOrEmpty(valor) && valor.Contains(texto, StringComparison.OrdinalIgnoreCase);
@@ -275,6 +270,7 @@ namespace WpfApp1.Views.Credit
         {
             bool mostrarGrid = estado == EstadoLista.Resultados;
 
+            Paginador.Visibility = mostrarGrid ? Visibility.Visible : Visibility.Collapsed;
             DgContracts.Visibility = mostrarGrid ? Visibility.Visible : Visibility.Collapsed;
             PnlEmptyState.Visibility = mostrarGrid ? Visibility.Collapsed : Visibility.Visible;
 
@@ -373,8 +369,7 @@ namespace WpfApp1.Views.Credit
         {
             if (sender is not Button btn || btn.Tag is not int contractId) return;
 
-            var contractSelection = (DgContracts.ItemsSource as IEnumerable<creditContractsDTO>)
-                ?.FirstOrDefault(c => c.ContractNumber == contractId);
+            var contractSelection = _allContracts.FirstOrDefault(c => c.ContractNumber == contractId);
             if (contractSelection == null) return;
 
             var cuotasResult = await ContractsSevices.GetDebtInstalmentAsync(contractId);
@@ -418,9 +413,9 @@ namespace WpfApp1.Views.Credit
                         "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             }
-            BuscarContratos();
-        }
 
+            await BuscarContratos(reiniciarPagina: false);
+        }
         private bool ImpresoraExiste(string nombreImpresora)
         {
             foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
@@ -430,5 +425,16 @@ namespace WpfApp1.Views.Credit
             }
             return false;
         }
+        private void MostrarPagina()
+        {
+            int tam = Paginador.RegistrosPorPagina;
+            int salto = (Paginador.PaginaActual - 1) * tam;
+            var pagina = _filtrados.Skip(salto).Take(tam).ToList();
+
+            DgContracts.ItemsSource = pagina;
+            TxtResumen.Text = $"Mostrando {salto + 1}–{salto + pagina.Count} de {_filtrados.Count} contrato(s).";
+        }
+
+        private void Paginador_PaginaCambiada(object sender, EventArgs e) => MostrarPagina();
     }
 }
