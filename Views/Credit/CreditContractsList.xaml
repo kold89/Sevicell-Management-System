@@ -247,7 +247,7 @@
 
                         <DataGridTextColumn Header="CREADO" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100" ElementStyle="{StaticResource CellCenter}"/>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="180">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="230">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -258,6 +258,12 @@
                                             <fa5:SvgAwesome Icon="Solid_Download" Height="14" Foreground="#55DDB0"/>
                                         </Button>
 
+                                        <Button x:Name="BtnVerFicha" Click="BtnVerFicha_Click"
+                                                Background="Transparent" ToolTip="Ver contrato"
+                                                BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
+                                                Tag="{Binding ContractNumber}">
+                                            <fa5:SvgAwesome Icon="Solid_Eye" Height="14" Foreground="#1E293B"/>
+                                        </Button>
                                         <Button x:Name="BtnVerCuotas" Click="BtnVerCuotas_Click"
                                                 Background="Transparent" ToolTip="Ver cuotas"
                                                 BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
@@ -276,6 +282,23 @@
                                                 BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
                                                 Tag="{Binding ContractNumber}">
                                             <fa5:SvgAwesome Icon="Solid_FastForward" Height="14" Foreground="#059669"/>
+                                        </Button>
+                                        <Button x:Name="BtnDescartar" Click="BtnDescartar_Click"
+                                            ToolTip="Descartar contrato"
+                                            BorderThickness="0" Cursor="Hand"
+                                            Tag="{Binding ContractNumber}">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Status}" Value="PENDIENTE">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                            <fa5:SvgAwesome Icon="Solid_Trash" Height="14" Foreground="#DC2626"/>
                                         </Button>
                                     </StackPanel>
                                 </DataTemplate>

@@ -10,8 +10,8 @@ namespace WpfApp1.ViewModels
     {
         public int id {  get; set; }
         public string name { get; set; }
-        public double salesPrice { get; set; }
-        public double unitPrice { get; set; }
+        public decimal salesPrice { get; set; }
+        public decimal unitPrice { get; set; }
         public int stock {  get; set; }
         public int minimunStock { get; set; }
         public string category { get; set; }
@@ -19,6 +19,7 @@ namespace WpfApp1.ViewModels
         public string status { get; set; }
         public string code  { get; set; }
         public string description { get; set; }
+        public bool isSerialized { get; set; }
         public bool EsBajoStock => stock <= minimunStock;
 
     }

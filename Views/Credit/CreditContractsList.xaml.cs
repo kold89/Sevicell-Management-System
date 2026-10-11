@@ -434,7 +434,27 @@ namespace WpfApp1.Views.Credit
             DgContracts.ItemsSource = pagina;
             TxtResumen.Text = $"Mostrando {salto + 1}–{salto + pagina.Count} de {_filtrados.Count} contrato(s).";
         }
+        private async void BtnDescartar_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn || btn.Tag is not int contractId) return;
 
+            var confirm = MessageBox.Show(
+                $"¿Descartar el contrato N° {contractId}?\nEsta acción no se puede deshacer.",
+                "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
+            if (confirm != MessageBoxResult.Yes) return;
+
+            var result = await ContractsSevices.DiscardContractAsync(contractId);
+
+            if (!result.Success)
+            {
+                ToastService.ShowError(result.Message);
+                return;
+            }
+
+            ToastService.ShowSuccess(result.Message);
+            await BuscarContratos(reiniciarPagina: false);
+        }
         private void Paginador_PaginaCambiada(object sender, EventArgs e) => MostrarPagina();
     }
 }

@@ -73,7 +73,8 @@ namespace WpfApp1.Views.Inventory
                     ServicesResult<List<ProductsDto>> productResult = await productService.listProducForGrid();
                     if (productResult.Success)
                     {
-                        _allProducts = productResult.Data ?? new List<ProductsDto>();
+                        var products = productResult.Data.Where(x => x.isSerialized == false).ToList();
+                        _allProducts = products ?? new List<ProductsDto>();
                         FiltrarDatosSegunPestaña();
                     }
                     else

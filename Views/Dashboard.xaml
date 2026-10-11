@@ -203,7 +203,7 @@
 
                         <TextBlock Grid.Row="1" 
                                    x:Name="LblSalesToday"
-                                   Text="L. 4,820"
+                                   Text="L. -"
                                    Style="{StaticResource KpiValue}"/>
 
                         <StackPanel Grid.Row="2" 
@@ -215,7 +215,7 @@
                                   Width="12" Height="12"
                                   VerticalAlignment="Center"
                                   Margin="0,0,4,0"/>
-                            <TextBlock Text="12% vs ayer" 
+                            <TextBlock Text="-" 
                                        Style="{StaticResource TrendUp}"/>
                         </StackPanel>
                     </Grid>
@@ -250,11 +250,11 @@
 
                         <TextBlock Grid.Row="1" 
                                    x:Name="LblActiveRepairs"
-                                   Text="8"
+                                   Text="-"
                                    Style="{StaticResource KpiValue}"/>
 
                         <TextBlock Grid.Row="2" 
-                                   Text="2 sin movimiento"
+                                   Text="-"
                                    FontSize="12" 
                                    Foreground="#BA7517" 
                                    FontWeight="Light"/>
@@ -377,7 +377,7 @@
                             <StackPanel Grid.Column="1" 
                                         HorizontalAlignment="Right">
                                 <TextBlock x:Name="LblSalesWeekTotal"
-                                           Text="L. 30,820"
+                                           Text="L. -"
                                            FontSize="22" FontWeight="Bold"
                                            Foreground="#1A1A2E"
                                            HorizontalAlignment="Right"/>
@@ -391,7 +391,7 @@
                                           Width="10" Height="10"
                                           VerticalAlignment="Center"
                                           Margin="0,0,4,0"/>
-                                    <TextBlock Text="8% vs semana anterior" 
+                                    <TextBlock Text="-" 
                                                Style="{StaticResource TrendUp}"
                                                FontSize="11"/>
                                 </StackPanel>
@@ -441,7 +441,7 @@
                             <StackPanel Grid.Column="1" 
                                         HorizontalAlignment="Right">
                                 <TextBlock x:Name="LblRepairsWeekTotal"
-                                           Text="L. 12,400"
+                                           Text="L. -"
                                            FontSize="22" FontWeight="Bold"
                                            Foreground="#1A1A2E"
                                            HorizontalAlignment="Right"/>
@@ -455,7 +455,7 @@
                                           Width="10" Height="10"
                                           VerticalAlignment="Center"
                                           Margin="0,0,4,0"/>
-                                    <TextBlock Text="3% vs semana anterior" 
+                                    <TextBlock Text="-" 
                                                Style="{StaticResource TrendDown}"
                                                FontSize="11"/>
                                 </StackPanel>
@@ -545,7 +545,7 @@
                                            Foreground="#374151"/>
                                 <TextBlock Grid.Column="2" 
                                            x:Name="LblStatusInProgress"
-                                           Text="5" 
+                                           Text="-" 
                                            FontSize="13" 
                                            FontWeight="Light" 
                                            Foreground="#1A1A2E"/>
@@ -568,7 +568,7 @@
                                            Foreground="#374151"/>
                                 <TextBlock Grid.Column="2" 
                                            x:Name="LblStatusWaiting"
-                                           Text="2" 
+                                           Text="-" 
                                            FontSize="13" 
                                            FontWeight="UltraBlack" 
                                            Foreground="#1A1A2E"/>
@@ -591,7 +591,7 @@
                                            Foreground="#374151"/>
                                 <TextBlock Grid.Column="2" 
                                            x:Name="LblStatusReady"
-                                           Text="1" 
+                                           Text="-" 
                                            FontSize="13" 
                                            FontWeight="Light"
                                            Foreground="#1A1A2E"/>
@@ -627,7 +627,7 @@
                                     Style="{StaticResource BadgeGreen}"
                                     VerticalAlignment="Center">
                                 <TextBlock x:Name="LblReadyCount"
-                                           Text="2 equipos"
+                                           Text="-"
                                            Foreground="#27500A"
                                            FontSize="12" FontWeight="SemiBold"/>
                             </Border>
@@ -657,10 +657,10 @@
 
                                 <StackPanel Grid.Column="1" 
                                             VerticalAlignment="Center">
-                                    <TextBlock Text="iPhone 12 — Juan Pérez" 
+                                    <TextBlock Text="-" 
                                                FontSize="14" FontWeight="SemiBold"
                                                Foreground="#1A1A2E"/>
-                                    <TextBlock Text="Pantalla rota · Téc. Carlos · Lista hace 2 horas" 
+                                    <TextBlock Text="-" 
                                                FontSize="12" Foreground="#6B7280"
                                                Margin="0,2,0,0"/>
                                 </StackPanel>
@@ -668,13 +668,13 @@
                                 <StackPanel Grid.Column="2" 
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center">
-                                    <TextBlock Text="L. 850" 
+                                    <TextBlock Text="L. -" 
                                                FontSize="15" FontWeight="Bold"
                                                Foreground="#1A1A2E"
                                                HorizontalAlignment="Right"/>
                                     <Border Style="{StaticResource BadgeStatusGreen}"
                                             Margin="0,4,0,0">
-                                        <TextBlock Text="✓ Listo" 
+                                        <TextBlock Text="-" 
                                                    Foreground="#27500A"
                                                    FontSize="11" FontWeight="SemiBold"/>
                                     </Border>
@@ -706,10 +706,10 @@
 
                                 <StackPanel Grid.Column="1" 
                                             VerticalAlignment="Center">
-                                    <TextBlock Text="Samsung S21 — Mario Reyes" 
+                                    <TextBlock Text="-" 
                                                FontSize="14" FontWeight="SemiBold"
                                                Foreground="#1A1A2E"/>
-                                    <TextBlock Text="Batería · Téc. Luis · Lista desde ayer" 
+                                    <TextBlock Text="-" 
                                                FontSize="12" Foreground="#6B7280"
                                                Margin="0,2,0,0"/>
                                 </StackPanel>
@@ -717,13 +717,13 @@
                                 <StackPanel Grid.Column="2" 
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center">
-                                    <TextBlock Text="L. 450" 
+                                    <TextBlock Text="L. -" 
                                                FontSize="15" FontWeight="Bold"
                                                Foreground="#1A1A2E"
                                                HorizontalAlignment="Right"/>
                                     <Border Style="{StaticResource BadgeStatusOrange}"
                                             Margin="0,4,0,0">
-                                        <TextBlock Text="⏱ 1 día" 
+                                        <TextBlock Text="-" 
                                                    Foreground="#BA7517"
                                                    FontSize="11" FontWeight="SemiBold"/>
                                     </Border>
@@ -742,8 +742,8 @@
                                           VerticalAlignment="Top"/>
                                     <TextBlock TextWrapping="Wrap">
                                         <Run FontWeight="Bold" 
-                                             Text="Samsung S21"/>
-                                        <Run Text=" lleva 1 día esperando — considera contactar al cliente."/>
+                                             Text="-"/>
+                                        <Run Text=" -"/>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>

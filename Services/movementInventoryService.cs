@@ -112,7 +112,7 @@ namespace WpfApp1.Services
                         MovementDate = DateTime.Now,
                         PreviousStock = stockAnterior,
                         NewStock = stockNuevo,
-                        UserId = SessionManager.loggedInUser.RoleId
+                        UserId = SessionManager.loggedInUser.Id
                     };
                     db.InventoryMovements.Add(movimiento);
 

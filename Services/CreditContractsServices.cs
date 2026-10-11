@@ -602,6 +602,45 @@ namespace WpfApp1.Services
                 }
             }
         }
+        public async Task<ServicesResult<bool>> DiscardContractAsync(int contractId)
+        {
+            using var db = new SevicellDbContext();
+            using var transaction = await db.Database.BeginTransactionAsync();
+            try
+            {
+                var contract = await db.Contracts
+                    .Include(c => c.DebtInstallments)
+                    .FirstOrDefaultAsync(c => c.Id == contractId);
 
+                if (contract == null)
+                    return ServicesResult<bool>.Fail("El contrato no existe.");
+
+                if (contract.StatusId != (int)EContractStatus.Pending)
+                    return ServicesResult<bool>.Fail("Solo se pueden descartar contratos pendientes.");
+
+                bool tienePagos = contract.DebtInstallments.Any(x => (x.PaidAmount ?? 0) > 0);
+                if (tienePagos)
+                    return ServicesResult<bool>.Fail("No se puede descartar: el contrato ya tiene pagos registrados.");
+
+                var unit = await db.ProductUnits.FirstOrDefaultAsync(x => x.Id == contract.ProductUnitId);
+                if (unit != null)
+                    unit.Status = EProductUnitStatus.Disponible.ToDbValue();
+
+                db.DebtInstallments.RemoveRange(contract.DebtInstallments);
+                db.Contracts.Remove(contract);
+
+                await SaveAuditAsync(AuditAction.Delete, "Contract", contractId.ToString(),
+                    "Se descartó un contrato pendiente sin pagos", db);
+
+                await db.SaveChangesAsync();
+                await transaction.CommitAsync();
+                return ServicesResult<bool>.Ok(true, "Contrato descartado. El equipo vuelve a estar disponible.");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return ServicesResult<bool>.Fail("Error al descartar el contrato: " + ex.Message);
+            }
+        }
     }
 }

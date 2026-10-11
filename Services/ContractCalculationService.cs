@@ -57,7 +57,7 @@ namespace WpfApp1.Services
             return frequencyCode.ToUpper() switch
             {
                 "SEMANAL" => firstDueDate.AddDays(7 * offset),
-                "QUINCENAL" => firstDueDate.AddDays(15 * offset),
+                "QUINCENAL" => firstDueDate.AddDays(14 * offset),
                 "MENSUAL" => firstDueDate.AddMonths(offset),
                 "TRIMESTRAL" => firstDueDate.AddMonths(3 * offset),
                 _ => throw new ArgumentException($"Frecuencia no reconocida: {frequencyCode}")

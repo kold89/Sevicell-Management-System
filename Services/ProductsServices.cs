@@ -37,13 +37,14 @@ namespace WpfApp1.Services
                         id = pb.product.Id,
                         code = pb.product.Code,
                         name = pb.product.Name,
-                        salesPrice = (double)pb.product.SalePrice,
+                        salesPrice = (decimal)pb.product.SalePrice,
                         stock = pb.product.Stock ?? 0,
                         minimunStock = pb.product.MinimumStock ?? 0,
                         Brand = pb.brand.Name,
                         category = c.Name,
                         description = pb.product.ProductDescription ?? "",
-                        status = pb.product.Status == true ? "Activo" : "Inactivo"
+                        status = pb.product.Status == true ? "Activo" : "Inactivo",
+                        isSerialized = pb.product.IsSerialized                 
                     }
                     ).OrderByDescending(x => x.id).ToListAsync();
 
@@ -68,7 +69,7 @@ namespace WpfApp1.Services
                         id = x.Id,
                         code = x.Code,
                         name = x.Name,
-                        salesPrice =  Convert.ToDouble(x.SalePrice),
+                        salesPrice =  Convert.ToDecimal(x.SalePrice),
                         stock = x.Stock ?? 0
                     }).ToListAsync();
 
@@ -108,7 +109,7 @@ namespace WpfApp1.Services
                         id = pb.product.Id,
                         code = pb.product.Code,
                         name = pb.product.Name,
-                        salesPrice = (double)pb.product.SalePrice,
+                        salesPrice = (decimal)pb.product.SalePrice,
                         stock = pb.product.Stock ?? 0,
                         minimunStock = pb.product.MinimumStock ?? 0,
                         Brand = pb.brand.Name,
