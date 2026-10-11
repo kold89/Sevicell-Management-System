@@ -1,0 +1,91 @@
+﻿<Page x:Class="WpfApp1.Views.Credit.ContractDetailPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:WpfApp1.Views.Credit"
+      xmlns:fa5="http://schemas.fontawesome.com/icons/"
+      Loaded="Page_Loaded"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ContractDetailPage">
+
+    <Grid Background="#F1F5F9" Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+        <DockPanel Grid.Row="0" Margin="0,0,0,20" LastChildFill="False">
+            <Button x:Name="BtnGoBack" Click="BtnGoBack_Click" DockPanel.Dock="Left"
+                    Style="{StaticResource btnGoBackStyle}" Cursor="Hand">
+                <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18"/>
+            </Button>
+            <StackPanel Margin="15,0,0,0" DockPanel.Dock="Left">
+                <TextBlock x:Name="TxtTitulo" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+                <TextBlock x:Name="TxtSubtitulo" Foreground="#777" FontSize="13"/>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- RESUMEN -->
+        <Border Grid.Row="1" Background="White" CornerRadius="8" Padding="18" Margin="0,0,0,16">
+            <UniformGrid Columns="4">
+                <StackPanel>
+                    <TextBlock Text="Deuda total" Foreground="#64748B" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="TxtDeuda" FontSize="20" Foreground="#1E293B" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Monto pendiente" Foreground="#64748B" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="TxtPendiente" FontSize="20" Foreground="#DC2626" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Estado" Foreground="#64748B" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="TxtEstado" FontSize="20" Foreground="#1E293B" Margin="0,4,0,0"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Creado" Foreground="#64748B" FontSize="12" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="TxtCreado" FontSize="20" Foreground="#1E293B" Margin="0,4,0,0"/>
+                </StackPanel>
+            </UniformGrid>
+        </Border>
+
+        <!-- CUOTAS -->
+        <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0" Padding="0,10,0,0">
+            <TabItem Header="Cuotas">
+                <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="4">
+                    <DataGrid x:Name="DgCuotas" Background="Transparent" RowBackground="Transparent"
+                      AlternatingRowBackground="#F8FAFC" BorderThickness="0" Foreground="#1E293B"
+                      GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0"
+                      HeadersVisibility="Column" AutoGenerateColumns="False"
+                      CanUserAddRows="False" RowHeight="40" IsReadOnly="True">
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="#64748B"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="12,12"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="80"/>
+                            <DataGridTextColumn Header="VENCE" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="120"/>
+                            <DataGridTextColumn Header="ESPERADO" Binding="{Binding ExpectedAmount, StringFormat='L. {0:N2}'}" Width="*"/>
+                            <DataGridTextColumn Header="PAGADO" Binding="{Binding PaidAmount, StringFormat='L. {0:N2}'}" Width="*"/>
+                            <DataGridTextColumn Header="SALDO" Binding="{Binding SaldoPendiente, StringFormat='L. {0:N2}'}" Width="*"/>
+                            <DataGridTextColumn Header="ESTADO" Binding="{Binding Status}" Width="130"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+
+                <!-- el Border con DgCuotas, tal cual, SIN el Grid.Row="2" -->
+            </TabItem>
+            <TabItem Header="Recibos">
+                <local:HistorialPagosView x:Name="VistaRecibos"/>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Page>

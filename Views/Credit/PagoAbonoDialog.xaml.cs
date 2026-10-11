@@ -38,7 +38,7 @@ namespace WpfApp1.Views.Credit
                 ? "Se registrará el pago completo de esta cuota."
                 : "Ingrese el monto que el cliente está abonando.";
 
-            TxtMonto.Text = saldoPendiente.ToString("N2");
+            TxtMonto.Text = saldoPendiente.ToString("0.00", CultureInfo.InvariantCulture);
             if (esPagoTotal)
             {
                 TxtMonto.IsEnabled = false;
@@ -75,6 +75,11 @@ namespace WpfApp1.Views.Credit
             if (monto <= 0)
             {
                 MostrarError("El monto debe ser mayor a cero.");
+                return false;
+            }
+            if (decimal.Round(monto, 2) != monto)
+            {
+                MostrarError("Use como máximo dos decimales.");
                 return false;
             }
             if (monto > _saldoPendiente)

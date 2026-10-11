@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="WpfApp1.Views.Credit.HistorialPagosView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Background="White" CornerRadius="8" Padding="4">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+        </Border.Effect>
+        <Grid>
+            <!-- PEGA AQUÍ el <DataGrid x:Name="DgHistorial" ...> completo de la ventana -->
+            <DataGrid x:Name="DgHistorial"
+                      Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
+                      BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                      AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="40"
+                      IsReadOnly="True">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="#64748B"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="12,12"/>
+                        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                        <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="FECHA" Binding="{Binding PaymentDate, StringFormat=dd/MM/yyyy HH:mm}" Width="125"/>
+                    <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="65">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Center"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="MONTO" Binding="{Binding Amount,StringFormat='L. {0:N2}'}" Width="90">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="HorizontalAlignment" Value="Right"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="RECIBIDO POR" Binding="{Binding ReceivedBy}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <TextBlock x:Name="TxtVacio" Visibility="Collapsed"
+                       Text="Este contrato aún no tiene pagos registrados."
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="#94A3B8" FontSize="13"/>
+        </Grid>
+    </Border>
+</UserControl>

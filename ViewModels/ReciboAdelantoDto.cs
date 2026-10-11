@@ -8,6 +8,7 @@ namespace WpfApp1.ViewModels
 {
     public class ReciboAdelantoDto
     {
+        public string NumeroRecibo { get; set; }
         public DateTime FechaPago { get; set; }
         public int ContractNumber { get; set; }
         public string NombreCliente { get; set; }

@@ -60,6 +60,11 @@ namespace WpfApp1.Views.Credit
                 MostrarError("Ingrese un monto válido mayor a cero.");
                 return;
             }
+            if (decimal.Round(monto, 2) != monto)
+            {
+                MostrarError("Use como máximo dos decimales.");
+                return;
+            }
             if (monto > _saldoTotal)
             {
                 MostrarError($"El monto excede el saldo total del contrato ({_saldoTotal:N2}).");
@@ -75,7 +80,7 @@ namespace WpfApp1.Views.Credit
 
                 var aplicado = Math.Min(restante, cuota.SaldoPendiente);
                 restante -= aplicado;
-                var saldada = aplicado >= cuota.SaldoPendiente - 0.01m;
+                var saldada = aplicado >= cuota.SaldoPendiente;
 
                 filas.Add(new FilaCascadaVm
                 {

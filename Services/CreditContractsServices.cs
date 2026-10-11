@@ -249,7 +249,34 @@ namespace WpfApp1.Services
                 }
             }
         }
+        public async Task<ServicesResult<List<PaymentHistoryItemDto>>> GetPaymentHistoryAsync(int contractId)
+        {
+            try
+            {
+                using var db = new SevicellDbContext();
 
+                var historial = await db.InstallmentPayments
+                    .Where(p => p.Installment.ContractId == contractId)
+                    .OrderByDescending(p => p.PaymentDate)
+                    .ThenByDescending(p => p.Id)   // orden estable si dos pagos tienen la misma fecha
+                    .Select(p => new PaymentHistoryItemDto
+                    {
+                        PaymentId = p.Id,
+                        PaymentDate = p.PaymentDate,
+                        InstallmentNumber = p.Installment.InstallmentNumber,
+                        Amount = p.Amount,
+                        ReceivedBy = p.ReceivedBy,
+                        Notes = p.Notes
+                    })
+                    .ToListAsync();
+
+                return ServicesResult<List<PaymentHistoryItemDto>>.Ok(historial, "Historial obtenido correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<List<PaymentHistoryItemDto>>.Fail("Error al obtener el historial: " + ex.Message);
+            }
+        }
         public async Task<ServicesResult<List<InstallmentPreview>>> GetDebtInstalmentAsync(int contractNumber)
         {
             if (contractNumber <= 0)
@@ -641,6 +668,13 @@ namespace WpfApp1.Services
                 await transaction.RollbackAsync();
                 return ServicesResult<bool>.Fail("Error al descartar el contrato: " + ex.Message);
             }
+        }
+        private static string MarcaRecibo(int numero, string? notasUsuario)
+        {
+            var texto = string.IsNullOrWhiteSpace(notasUsuario)
+                ? $"R#{numero}"
+                : $"R#{numero} {notasUsuario.Trim()}";
+            return texto.Length <= 255 ? texto : texto.Substring(0, 255);   // la columna mide 255
         }
     }
 }

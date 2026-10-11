@@ -189,7 +189,7 @@
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="N°" Binding="{Binding ContractNumber}" Width="Auto" ElementStyle="{StaticResource CellCenter}"/>
-                        <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="200" ElementStyle="{StaticResource CellCenter}"/>
+                        <DataGridTextColumn Header="CLIENTE" Binding="{Binding CustomerName}" Width="220" ElementStyle="{StaticResource CellCenter}"/>
                         <DataGridTextColumn Header="PRODUCTO" Binding="{Binding ProductName}" Width="*" ElementStyle="{StaticResource CellCenter}"/>
                         <DataGridTextColumn Header="DEUDA TOTAL" Binding="{Binding TotalDebt, StringFormat='L. {0:N2}'}" Width="120" ElementStyle="{StaticResource CellCenter}"/>
 
@@ -202,7 +202,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTemplateColumn Header="ESTADO" Width="110">
+                        <DataGridTemplateColumn Header="ESTADO" Width="120">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <Border CornerRadius="4" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Center">
@@ -244,8 +244,6 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-
-                        <DataGridTextColumn Header="CREADO" Binding="{Binding CreatedAt, StringFormat=dd/MM/yyyy}" Width="100" ElementStyle="{StaticResource CellCenter}"/>
 
                         <DataGridTemplateColumn Header="ACCIONES" Width="230">
                             <DataGridTemplateColumn.CellTemplate>

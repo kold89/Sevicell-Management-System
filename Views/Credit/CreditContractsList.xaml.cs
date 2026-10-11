@@ -456,5 +456,15 @@ namespace WpfApp1.Views.Credit
             await BuscarContratos(reiniciarPagina: false);
         }
         private void Paginador_PaginaCambiada(object sender, EventArgs e) => MostrarPagina();
+
+        private void BtnVerFicha_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button btn || btn.Tag is not int contractId) return;
+
+            var contrato = _allContracts.FirstOrDefault(c => c.ContractNumber == contractId);
+            if (contrato == null) return;
+
+            NavigationService?.Navigate(new ContractDetailPage(contrato));
+        }
     }
 }
