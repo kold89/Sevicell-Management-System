@@ -59,6 +59,68 @@
                 </Setter.Value>
             </Setter>
         </Style>-->
+
+        <Style x:Key="CeldaDerecha" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="CeldaCentro" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <DataTemplate x:Key="EstadoCuotaTemplate">
+            <Border CornerRadius="4" Padding="8,3" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#FEF3C7"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EstadoVisual}" Value="PAGADO">
+                                <Setter Property="Background" Value="#E8F8F5"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoVisual}" Value="PAGO TARDE">
+                                <Setter Property="Background" Value="#E8F8F5"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoVisual}" Value="VENCIDA">
+                                <Setter Property="Background" Value="#FDEDEC"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoVisual}" Value="PARCIAL VENCIDA">
+                                <Setter Property="Background" Value="#FDEDEC"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding EstadoVisual}" Value="CONDONADO">
+                                <Setter Property="Background" Value="#E5E7EB"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <TextBlock Text="{Binding EstadoVisual}" FontSize="11" FontWeight="SemiBold">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="#B45309"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding EstadoVisual}" Value="PAGADO">
+                                    <Setter Property="Foreground" Value="#117A65"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding EstadoVisual}" Value="PAGO TARDE">
+                                    <Setter Property="Foreground" Value="#117A65"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding EstadoVisual}" Value="VENCIDA">
+                                    <Setter Property="Foreground" Value="#C0392B"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding EstadoVisual}" Value="PARCIAL VENCIDA">
+                                    <Setter Property="Foreground" Value="#C0392B"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding EstadoVisual}" Value="CONDONADO">
+                                    <Setter Property="Foreground" Value="#4B5563"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Border>
+        </DataTemplate>
+
         <Style x:Key="CardButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Height" Value="180"/>

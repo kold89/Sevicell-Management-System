@@ -9,7 +9,7 @@ namespace WpfApp1.Views.Credit
 {
     public partial class ContractDetailPage : Page
     {
-        private readonly creditContractsDTO _contrato;
+        private  creditContractsDTO _contrato;
         private readonly CreditContractsServices _service = new();
 
         public ContractDetailPage(creditContractsDTO contrato)
@@ -52,6 +52,69 @@ namespace WpfApp1.Views.Credit
         {
             if (NavigationService?.CanGoBack == true)
                 NavigationService.GoBack();
+        }
+        private async void BtnRegistrarPago_Click(object sender, RoutedEventArgs e)
+        {
+            var cuotas = await _service.GetDebtInstalmentAsync(_contrato.ContractNumber);
+            if (!cuotas.Success || cuotas.Data == null)
+            {
+                ToastService.ShowError(cuotas.Message);
+                return;
+            }
+
+            var pendientes = cuotas.Data.Where(c => c.SaldoPendiente > 0).ToList();
+            if (pendientes.Count == 0)
+            {
+                ToastService.ShowInfo("Este contrato no tiene saldo pendiente.");
+                return;
+            }
+
+            var dialog = new RegistrarPagoDialog(_contrato.ContractNumber, _contrato.CustomerName, pendientes)
+            { Owner = Window.GetWindow(this) };
+            if (dialog.ShowDialog() != true) return;
+
+            BtnRegistrarPago.IsEnabled = false;
+            try
+            {
+                var result = await _service.RegistrarPagoAsync(_contrato.ContractNumber, dialog.Monto, DateTime.Now);
+                if (!result.Success)
+                {
+                    MessageBox.Show(result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                ToastService.ShowSuccess(result.Message);
+
+                var error = ImpresionRecibos.Imprimir(result.Data);
+                if (error != null)
+                    MessageBox.Show(
+                        $"El pago se registró correctamente, pero no se pudo imprimir el recibo.\n\nMotivo: {error}",
+                        "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                await RecargarAsync();
+            }
+            finally
+            {
+                BtnRegistrarPago.IsEnabled = true;
+            }
+        }
+
+        // Después de un pago, el resumen y las dos pestañas se leen de nuevo de la base
+        private async Task RecargarAsync()
+        {
+            var lista = await _service.ListCreditContractsDtoAsync();
+            if (lista.Success && lista.Data != null)
+            {
+                var fresco = lista.Data.FirstOrDefault(c => c.ContractNumber == _contrato.ContractNumber);
+                if (fresco != null)
+                {
+                    _contrato = fresco;
+                    PintarResumen();
+                }
+            }
+
+            await CargarCuotasAsync();
+            await VistaRecibos.CargarAsync(_contrato.ContractNumber);
         }
     }
 }

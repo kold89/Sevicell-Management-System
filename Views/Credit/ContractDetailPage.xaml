@@ -27,6 +27,16 @@
                 <TextBlock x:Name="TxtTitulo" FontSize="22" FontWeight="Bold" Foreground="#333"/>
                 <TextBlock x:Name="TxtSubtitulo" Foreground="#777" FontSize="13"/>
             </StackPanel>
+            <Button x:Name="BtnRegistrarPago" Click="BtnRegistrarPago_Click"
+        DockPanel.Dock="Right" Background="#2563EB" BorderThickness="0"
+        Cursor="Hand" Padding="16,10" VerticalAlignment="Center">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+                <TextBlock Text="Registrar pago" Foreground="White" FontWeight="SemiBold" FontSize="13"/>
+            </Button>
         </DockPanel>
 
         <!-- RESUMEN -->
@@ -71,12 +81,22 @@
                             </Style>
                         </DataGrid.ColumnHeaderStyle>
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="80"/>
-                            <DataGridTextColumn Header="VENCE" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="120"/>
-                            <DataGridTextColumn Header="ESPERADO" Binding="{Binding ExpectedAmount, StringFormat='L. {0:N2}'}" Width="*"/>
-                            <DataGridTextColumn Header="PAGADO" Binding="{Binding PaidAmount, StringFormat='L. {0:N2}'}" Width="*"/>
-                            <DataGridTextColumn Header="SALDO" Binding="{Binding SaldoPendiente, StringFormat='L. {0:N2}'}" Width="*"/>
-                            <DataGridTextColumn Header="ESTADO" Binding="{Binding Status}" Width="130"/>
+                            <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="100"
+                        ElementStyle="{StaticResource CeldaCentro}"/>
+                            <DataGridTextColumn Header="VENCE" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="200"/>
+                            <DataGridTextColumn Header="ESPERADO" Binding="{Binding ExpectedAmount, StringFormat='L. {0:N2}'}" Width="120"
+                        ElementStyle="{StaticResource CeldaDerecha}"/>
+                            <DataGridTextColumn Header="PAGADO" Binding="{Binding PaidAmount, StringFormat='L. {0:N2}'}" Width="120"
+                        ElementStyle="{StaticResource CeldaDerecha}"/>
+                            <DataGridTextColumn Header="SALDO" Binding="{Binding SaldoPendiente, StringFormat='L. {0:N2}'}" Width="120">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource CeldaDerecha}">
+                                        <Setter Property="Foreground" Value="#DC2626"/>
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="ESTADO" Width="*"
+                            CellTemplate="{StaticResource EstadoCuotaTemplate}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>

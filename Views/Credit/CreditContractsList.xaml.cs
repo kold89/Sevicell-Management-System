@@ -386,7 +386,7 @@ namespace WpfApp1.Views.Credit
             { Owner = Window.GetWindow(this) };
             if (dialog.ShowDialog() != true) return;
 
-            var result = await ContractsSevices.RegisterAdvancePaymentAsync(contractId, dialog.Monto, DateTime.Now);
+            var result = await ContractsSevices.RegistrarPagoAsync(contractId, dialog.Monto, DateTime.Now);
             if (!result.Success)
             {
                 MessageBox.Show(result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -404,7 +404,7 @@ namespace WpfApp1.Views.Credit
             {
                 try
                 {
-                    _printerService.ImprimirReciboAdelanto(result.Data, "POS-58-Series");
+                    _printerService.ImprimirRecibo(result.Data, "POS-58-Series");
                 }
                 catch (Exception ex)
                 {

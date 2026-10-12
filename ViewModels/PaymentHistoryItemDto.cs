@@ -8,6 +8,7 @@ namespace WpfApp1.ViewModels
 {
     public class PaymentHistoryItemDto
     {
+        public string ReceiptNumber { get; set; } = "—";
         public int PaymentId { get; set; }
         public DateTime PaymentDate { get; set; }
         public int InstallmentNumber { get; set; }

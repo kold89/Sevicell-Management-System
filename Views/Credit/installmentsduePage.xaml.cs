@@ -27,8 +27,7 @@ namespace WpfApp1.Views.Credit
         private string _filtroActivo = null;
         private List<CobroItemDto> _filtradas = new();
 
-        private readonly ReciboPrinterService _printerService = new ReciboPrinterService();
-        private ReciboPagoCuotaDto _ultimoReciboImpreso;
+     
         public installmentsduePage()
         {
             InitializeComponent();
@@ -106,52 +105,56 @@ namespace WpfApp1.Views.Credit
             RenderTabla();
         }
 
-        private async void BtnCobrar_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not Button btn || btn.Tag is not int installmentId) return;
-            await AbrirDialogoDePago(installmentId, esPagoTotal: true);
-        }
 
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
             if (this.NavigationService.CanGoBack)
                 this.NavigationService.GoBack();
         }
-
-        private async void BtnCobroParcial_Click(object sender, RoutedEventArgs e)
+        private async void BtnCobrar_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is not Button btn || btn.Tag is not int installmentId) return;
-            await AbrirDialogoDePago(installmentId, esPagoTotal: false);
+            if (sender is not Button btn || btn.Tag is not int contractId) return;
+            await RegistrarPagoDelContratoAsync(contractId);
         }
-        private async Task AbrirDialogoDePago(int installmentId, bool esPagoTotal)
+
+        private async Task RegistrarPagoDelContratoAsync(int contractId)
         {
-            var cuota = _todasLasCuotas.FirstOrDefault(x => x.InstallmentId == installmentId);
-            if (cuota == null) return;
+            var cuotas = await ContractsSevices.GetDebtInstalmentAsync(contractId);
+            if (!cuotas.Success || cuotas.Data == null)
+            {
+                ToastService.ShowError(cuotas.Message);
+                return;
+            }
 
-            var saldo = cuota.ExpectedAmount - cuota.PaidAmount;
+            var pendientes = cuotas.Data.Where(c => c.SaldoPendiente > 0).ToList();
+            if (pendientes.Count == 0)
+            {
+                ToastService.ShowInfo("Este contrato no tiene saldo pendiente.");
+                await LoadCobrosDataAsync(reiniciarPagina: false);
+                return;
+            }
 
-            var dialog = new PagoAbonoDialog(saldo, esPagoTotal) { Owner = Window.GetWindow(this) };
+            var cliente = _todasLasCuotas.FirstOrDefault(x => x.ContractId == contractId)?.ClientName ?? "";
+
+            var dialog = new RegistrarPagoDialog(contractId, cliente, pendientes)
+            { Owner = Window.GetWindow(this) };
             if (dialog.ShowDialog() != true) return;
 
-            var result = await ContractsSevices.RegisterPaymentAsync(installmentId, dialog.Monto, DateTime.Now);
+            var result = await ContractsSevices.RegistrarPagoAsync(contractId, dialog.Monto, DateTime.Now);
             if (!result.Success)
             {
                 MessageBox.Show(result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            ToastService.ShowSuccess(result.Message); // ya viene "Pago registrado" o "Abono registrado" desde el service
-            try
-            {
-                _printerService.ImprimirReciboPago(result.Data, "POS-58-Series");
-                _ultimoReciboImpreso = result.Data;
-            }
-            catch (Exception ex)
-            {
+            ToastService.ShowSuccess(result.Message);
+
+            var error = ImpresionRecibos.Imprimir(result.Data);
+            if (error != null)
                 MessageBox.Show(
-                    $"El pago se registró correctamente, pero no se pudo imprimir el recibo.\n\nMotivo: {ex.Message}\n\nPuede usar 'Reimprimir último recibo'.",
+                    $"El pago se registró correctamente, pero no se pudo imprimir el recibo.\n\nMotivo: {error}",
                     "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
+
             await LoadCobrosDataAsync(reiniciarPagina: false);
         }
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WpfApp1.ViewModels
 {
-    public class ReciboAdelantoDto
+    public class ReciboDto
     {
         public string NumeroRecibo { get; set; }
         public DateTime FechaPago { get; set; }
@@ -17,6 +17,9 @@ namespace WpfApp1.ViewModels
         public List<DetalleCuotaPagadaDto> CuotasAplicadas { get; set; } = new();
         public decimal SaldoPendienteContrato { get; set; }
         public string RecibidoPor { get; set; }
+
+        public int TotalCuotas { get; set; }
+        public DateTime? ProximaFechaPago { get; set; }
     }
 
     public class DetalleCuotaPagadaDto
@@ -24,5 +27,6 @@ namespace WpfApp1.ViewModels
         public int InstallmentNumber { get; set; }
         public decimal MontoAplicado { get; set; }
         public bool QuedoSaldada { get; set; }
+        public decimal SaldoCuota { get; set; }
     }
 }

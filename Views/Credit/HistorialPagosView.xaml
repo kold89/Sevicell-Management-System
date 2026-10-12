@@ -24,15 +24,16 @@
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="FECHA" Binding="{Binding PaymentDate, StringFormat=dd/MM/yyyy HH:mm}" Width="125"/>
-                    <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="65">
+                    <DataGridTextColumn Header="FECHA" Binding="{Binding PaymentDate, StringFormat=dd/MM/yyyy HH:mm}" Width="140"/>
+                    <DataGridTextColumn Header="RECIBO" Binding="{Binding ReceiptNumber}" Width="100"/>
+                    <DataGridTextColumn Header="CUOTA" Binding="{Binding InstallmentNumber}" Width="80">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Center"/>
                             </Style>
                         </DataGridTextColumn.ElementStyle>
                     </DataGridTextColumn>
-                    <DataGridTextColumn Header="MONTO" Binding="{Binding Amount,StringFormat='L. {0:N2}'}" Width="90">
+                    <DataGridTextColumn Header="MONTO" Binding="{Binding Amount,StringFormat='L. {0:N2}'}" Width="100">
                         <DataGridTextColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <Setter Property="HorizontalAlignment" Value="Right"/>

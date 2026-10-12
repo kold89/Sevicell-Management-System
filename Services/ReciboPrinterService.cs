@@ -12,7 +12,7 @@ namespace WpfApp1.Services
     public class ReciboPrinterService
     {
         private ReciboPagoCuotaDto _reciboPago;
-        private ReciboAdelantoDto _reciboAdelanto;   // nuevo
+        private ReciboDto _recibo;   // nuevo
         private float DibujarLinea(Graphics g, string texto, Font fuente, float y)
         {
             g.DrawString(texto, fuente, Brushes.Black, 0, y);
@@ -59,6 +59,8 @@ namespace WpfApp1.Services
 
             // Datos del recibo y contrato
             y += DibujarLinea(g, $"Fecha: {_reciboPago.FechaPago:dd/MM/yyyy HH:mm}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Recibo N°: {_reciboPago.NumeroRecibo}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Contrato No: {_reciboPago.ContractNumber}", fuenteNormal, y);
             y += DibujarLinea(g, $"Cliente: ", fuenteNormal, y);
             y += DibujarLinea(g, $" {_reciboPago.NombreCliente}", fuenteNormal, y);
             y += DibujarLinea(g, $"Artículo: {_reciboPago.NombreProducto}", fuenteChica, y);
@@ -102,78 +104,145 @@ namespace WpfApp1.Services
             e.HasMorePages = false;
         }
         // NUEVO: impresión del adelanto
-        public void ImprimirReciboAdelanto(ReciboAdelantoDto recibo, string nombreImpresora)
+        public void ImprimirRecibo(ReciboDto recibo, string nombreImpresora)
         {
-            _reciboAdelanto = recibo;
+            _recibo = recibo;
 
             var doc = new PrintDocument();
             doc.PrinterSettings.PrinterName = nombreImpresora;
             doc.DefaultPageSettings.PaperSize = new PaperSize("Recibo58mm", 220, 1000);
             doc.DefaultPageSettings.Margins = new Margins(5, 5, 5, 5);
-            doc.PrintPage += Doc_PrintPageAdelanto;
+            doc.PrintPage += Doc_PrintPageRecibo;
             doc.Print();
         }
         // NUEVO: impresión del adelanto (varias cuotas en un solo recibo)
-        private void Doc_PrintPageAdelanto(object sender, PrintPageEventArgs e)
+        //private void Doc_PrintPageAdelanto(object sender, PrintPageEventArgs e)
+        //{
+        //    var g = e.Graphics;
+        //    float y = 0;
+        //    float anchoUtil = e.MarginBounds.Width;
+
+        //    var fuenteTitulo = new Font("Consolas", 11, FontStyle.Bold);
+        //    var fuenteNormal = new Font("Consolas", 9, FontStyle.Regular);
+        //    var fuenteChica = new Font("Consolas", 8, FontStyle.Regular);
+
+        //    y += DibujarCentrado(g, "SEVICELL", fuenteTitulo, anchoUtil, y);
+        //    y += DibujarCentrado(g, "COMPROBANTE DE ADELANTO", fuenteNormal, anchoUtil, y);
+        //    y += 10;
+        //    g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
+        //    y += 5;
+
+        //    y += DibujarLinea(g, $"Fecha: {_recibo.FechaPago:dd/MM/yyyy HH:mm}", fuenteNormal, y);
+        //    y += DibujarLinea(g, $"Recibo N°: {_recibo.NumeroRecibo}", fuenteNormal, y);
+        //    y += DibujarLinea(g, $"Contrato No: {_recibo.ContractNumber}", fuenteNormal, y);
+        //    y += DibujarLinea(g, $"Cliente: ", fuenteNormal, y);
+        //    y += DibujarLinea(g, $" {_recibo.NombreCliente}", fuenteNormal, y);
+        //    y += DibujarLinea(g, $"Artículo: {_recibo.NombreProducto}", fuenteChica, y);
+        //    y += 5;
+        //    g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
+        //    y += 5;
+
+        //    y += DibujarLinea(g, $"Monto total abonado: L. {_recibo.MontoTotalAbonado:N2}", fuenteNormal, y);
+        //    y += 5;
+        //    g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
+        //    y += 5;
+
+        //    y += DibujarLinea(g, "Detalle de cuotas aplicadas:", fuenteChica, y);
+        //    y += 3;
+
+        //    foreach (var cuota in _recibo.CuotasAplicadas)
+        //    {
+        //        string estado = cuota.QuedoSaldada ? "SALDADA" : "PARCIAL";
+        //        y += DibujarLinea(g, $" Cuota {cuota.InstallmentNumber}: L. {cuota.MontoAplicado:N2} [{estado}]", fuenteChica, y);
+        //    }
+
+        //    y += 5;
+        //    g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
+        //    y += 5;
+
+        //    y += DibujarLinea(g, $"Saldo pendiente del contrato: ", fuenteTitulo, y);
+        //    y += DibujarLinea(g, $" L. {_recibo.SaldoPendienteContrato:N2}", fuenteTitulo, y);
+        //    y += 5;
+
+        //    if (_recibo.SaldoPendienteContrato <= 0)
+        //    {
+        //        y += DibujarCentrado(g, "¡CONTRATO LIQUIDADO!", fuenteTitulo, anchoUtil, y);
+        //        y += 5;
+        //    }
+
+        //    y += 10;
+        //    y += DibujarLinea(g, $"Recibido por: {_recibo.RecibidoPor}", fuenteChica, y);
+        //    y += 10;
+        //    y += DibujarCentrado(g, "¡Gracias por su pago!", fuenteChica, anchoUtil, y);
+
+        //    e.HasMorePages = false;
+        //}
+
+        private void Doc_PrintPageRecibo(object sender, PrintPageEventArgs e)
         {
             var g = e.Graphics;
             float y = 0;
             float anchoUtil = e.MarginBounds.Width;
 
-            var fuenteTitulo = new Font("Consolas", 11, FontStyle.Bold);
-            var fuenteNormal = new Font("Consolas", 9, FontStyle.Regular);
-            var fuenteChica = new Font("Consolas", 8, FontStyle.Regular);
+            using var fuenteTitulo = new Font("Consolas", 11, FontStyle.Bold);
+            using var fuenteNormal = new Font("Consolas", 9, FontStyle.Regular);
+            using var fuenteChica = new Font("Consolas", 8, FontStyle.Regular);
+
+            var lineas = _recibo.CuotasAplicadas;
+            string titulo = lineas.Count > 1 ? "COMPROBANTE DE ADELANTO"
+                          : lineas.Count == 1 && !lineas[0].QuedoSaldada ? "COMPROBANTE DE ABONO"
+                          : "COMPROBANTE DE PAGO";
 
             y += DibujarCentrado(g, "SEVICELL", fuenteTitulo, anchoUtil, y);
-            y += DibujarCentrado(g, "COMPROBANTE DE ADELANTO", fuenteNormal, anchoUtil, y);
+            y += DibujarCentrado(g, titulo, fuenteNormal, anchoUtil, y);
             y += 10;
             g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
             y += 5;
 
-            y += DibujarLinea(g, $"Fecha: {_reciboAdelanto.FechaPago:dd/MM/yyyy HH:mm}", fuenteNormal, y);
-            y += DibujarLinea(g, $"Contrato No: {_reciboAdelanto.ContractNumber}", fuenteNormal, y);
-            y += DibujarLinea(g, $"Cliente: ", fuenteNormal, y);
-            y += DibujarLinea(g, $" {_reciboAdelanto.NombreCliente}", fuenteNormal, y);
-            y += DibujarLinea(g, $"Artículo: {_reciboAdelanto.NombreProducto}", fuenteChica, y);
+            y += DibujarLinea(g, $"Fecha: {_recibo.FechaPago:dd/MM/yyyy HH:mm}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Recibo N°: {_recibo.NumeroRecibo}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Contrato No: {_recibo.ContractNumber}", fuenteNormal, y);
+            y += DibujarLinea(g, "Cliente: ", fuenteNormal, y);
+            y += DibujarLinea(g, $" {_recibo.NombreCliente}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Artículo: {_recibo.NombreProducto}", fuenteChica, y);
             y += 5;
             g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
             y += 5;
 
-            y += DibujarLinea(g, $"Monto total abonado: L. {_reciboAdelanto.MontoTotalAbonado:N2}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Monto pagado: L. {_recibo.MontoTotalAbonado:N2}", fuenteNormal, y);
             y += 5;
             g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
             y += 5;
 
-            y += DibujarLinea(g, "Detalle de cuotas aplicadas:", fuenteChica, y);
+            y += DibujarLinea(g, $"Cuotas aplicadas (de {_recibo.TotalCuotas}):", fuenteChica, y);
             y += 3;
-
-            foreach (var cuota in _reciboAdelanto.CuotasAplicadas)
+            foreach (var c in lineas)
             {
-                string estado = cuota.QuedoSaldada ? "SALDADA" : "PARCIAL";
-                y += DibujarLinea(g, $" Cuota {cuota.InstallmentNumber}: L. {cuota.MontoAplicado:N2} [{estado}]", fuenteChica, y);
+                string estado = c.QuedoSaldada ? "SALDADA" : "PARCIAL";
+                y += DibujarLinea(g, $" Cuota {c.InstallmentNumber}: L. {c.MontoAplicado:N2} [{estado}]", fuenteChica, y);
+                if (!c.QuedoSaldada)
+                    y += DibujarLinea(g, $"   Falta: L. {c.SaldoCuota:N2}", fuenteChica, y);
             }
 
             y += 5;
             g.DrawLine(Pens.Black, 0, y, anchoUtil, y);
             y += 5;
 
-            y += DibujarLinea(g, $"Saldo pendiente del contrato: ", fuenteTitulo, y);
-            y += DibujarLinea(g, $" L. {_reciboAdelanto.SaldoPendienteContrato:N2}", fuenteTitulo, y);
+            y += DibujarLinea(g, "Saldo pendiente del contrato: ", fuenteTitulo, y);
+            y += DibujarLinea(g, $" L. {_recibo.SaldoPendienteContrato:N2}", fuenteTitulo, y);
             y += 5;
 
-            if (_reciboAdelanto.SaldoPendienteContrato <= 0)
-            {
+            if (_recibo.SaldoPendienteContrato <= 0)
                 y += DibujarCentrado(g, "¡CONTRATO LIQUIDADO!", fuenteTitulo, anchoUtil, y);
-                y += 5;
-            }
+            else if (_recibo.ProximaFechaPago.HasValue)
+                y += DibujarLinea(g, $"Próximo pago: {_recibo.ProximaFechaPago:dd/MM/yyyy}", fuenteChica, y);
 
             y += 10;
-            y += DibujarLinea(g, $"Recibido por: {_reciboAdelanto.RecibidoPor}", fuenteChica, y);
+            y += DibujarLinea(g, $"Recibido por: {_recibo.RecibidoPor}", fuenteChica, y);
             y += 10;
             y += DibujarCentrado(g, "¡Gracias por su pago!", fuenteChica, anchoUtil, y);
 
             e.HasMorePages = false;
         }
-
     }
 }

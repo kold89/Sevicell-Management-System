@@ -3,6 +3,7 @@ using WpfApp1.Models;
 using WpfApp1.Models.Enums;
 using WpfApp1.ViewModels;
 using WpfApp1.Security;
+using System.Text.RegularExpressions;
 
 namespace WpfApp1.Services
 {
@@ -114,8 +115,6 @@ namespace WpfApp1.Services
                 return ServicesResult<List<viewProductUnit>>.Fail("Error al obtener el listado de Frecuencias.");
             }
         }
-
-
         public async Task<ServicesResult<List<creditContractsDTO>>> ListCreditContractsDtoAsync()
         {
             try
@@ -270,6 +269,13 @@ namespace WpfApp1.Services
                     })
                     .ToListAsync();
 
+                var rx = new Regex(@"^R#(\d+)");
+                foreach (var h in historial)
+                {
+                    var m = h.Notes != null ? rx.Match(h.Notes) : Match.Empty;
+                    if (m.Success) h.ReceiptNumber = m.Groups[1].Value;
+                }
+
                 return ServicesResult<List<PaymentHistoryItemDto>>.Ok(historial, "Historial obtenido correctamente.");
             }
             catch (Exception ex)
@@ -336,15 +342,18 @@ namespace WpfApp1.Services
                         return ServicesResult<ReciboPagoCuotaDto>.Fail(
                             $"Monto inválido. El saldo pendiente de esta cuota es {saldoActual:N2}.");
                     }
-                    db.InstallmentPayments.Add(new InstallmentPayment
+
+                    var usuario = receivedBy ?? SessionManager.loggedInUser?.Name ?? "sistema";
+                    var pago = new InstallmentPayment
                     {
                         InstallmentId = installment.Id,
                         Amount = amount,
                         PaymentDate = paymentDate,
-                        ReceivedBy = receivedBy ?? SessionManager.loggedInUser.Name ?? "sistema",
+                        ReceivedBy = usuario,
                         Notes = notes
-                    });
-
+                    };
+                    db.InstallmentPayments.Add(pago);
+                  
                     var nuevoPaidAmount = (installment.PaidAmount ?? 0) + amount;
                     var nuevoSaldo = installment.ExpectedAmount - nuevoPaidAmount;
                     bool pagoTarde = paymentDate.Date > installment.DueDate.ToDateTime(TimeOnly.MinValue).Date;
@@ -356,6 +365,7 @@ namespace WpfApp1.Services
                                    : (int)InstallmentStatus.Partial;
 
                     await db.SaveChangesAsync();
+                    pago.Notes = MarcaRecibo(pago.Id, notes);   // se guarda con el SaveChanges de más abajo
                     await ActualizarEstadoContratoAsync(installment.ContractId, db);
                     await SaveAuditAsync(AuditAction.Update, "DebtInstallment", installment.Id.ToString(),
                         nuevoSaldo <= 0 ? "Se registró el pago de la cuota" : "Se registró un abono parcial a la cuota", db);
@@ -397,7 +407,8 @@ namespace WpfApp1.Services
 
                     var recibo = new ReciboPagoCuotaDto
                     {
-                        NumeroRecibo = installment.Id.ToString(),   // o un consecutivo propio si ya manejas uno
+                        NumeroRecibo = pago.Id.ToString(),
+                        //NumeroRecibo = installment.Id.ToString(),   // o un consecutivo propio si ya manejas uno
                         FechaPago = paymentDate,
                         ContractNumber = contrato.Id,
                         NombreCliente = $"{contrato.Client.Name} {contrato.Client.LastName}",
@@ -408,7 +419,8 @@ namespace WpfApp1.Services
                         SaldoCuota = nuevoSaldo > 0 ? nuevoSaldo : null,   // null si la cuota quedó saldada
                         SaldoPendiente = saldoPendienteContrato,
                         ProximaFechaPago = proximaCuota?.DueDate.ToDateTime(TimeOnly.MinValue),
-                        RecibidoPor = receivedBy ?? Environment.UserName
+                        RecibidoPor = usuario
+                        //RecibidoPor = receivedBy ?? Environment.UserName
                     };
 
                     await transaction.CommitAsync();
@@ -467,7 +479,6 @@ namespace WpfApp1.Services
                 return ServicesResult<List<CobroItemDto>>.Fail("Error al obtener las cuotas pendientes: " + ex.Message);
             }
         }
-
         private async Task ActualizarEstadoContratoAsync(int contractId, SevicellDbContext db)
         {
             var cuotas = await db.DebtInstallments.Where(x => x.ContractId == contractId).ToListAsync();
@@ -515,7 +526,7 @@ namespace WpfApp1.Services
 
             await db.SaveChangesAsync();
         }
-        public async Task<ServicesResult<ReciboAdelantoDto>> RegisterAdvancePaymentAsync(
+        public async Task<ServicesResult<ReciboDto>> RegistrarPagoAsync(
         int contractId, decimal amount, DateTime paymentDate, string? receivedBy = null, string? notes = null)
         {
             using (var db = new SevicellDbContext())
@@ -534,20 +545,21 @@ namespace WpfApp1.Services
                     if (cuotasPendientes.Count == 0)
                     {
                         await transaction.RollbackAsync();
-                        return ServicesResult<ReciboAdelantoDto>.Fail("Este contrato no tiene cuotas pendientes.");
+                        return ServicesResult<ReciboDto>.Fail("Este contrato no tiene cuotas pendientes.");
                     }
 
                     var saldoTotalContrato = cuotasPendientes.Sum(x => x.ExpectedAmount - (x.PaidAmount ?? 0));
-                    if (amount <= 0 || amount > saldoTotalContrato)
+                    if (amount <= 0 || decimal.Round(amount, 2) != amount || amount > saldoTotalContrato)
                     {
                         await transaction.RollbackAsync();
-                        return ServicesResult<ReciboAdelantoDto>.Fail(
+                        return ServicesResult<ReciboDto>.Fail(
                             $"Monto inválido. El saldo total pendiente del contrato es {saldoTotalContrato:N2}.");
                     }
 
                     var montoRestante = amount;
                     var detalleAplicado = new List<DetalleCuotaPagadaDto>();
                     var usuario = receivedBy ?? SessionManager.loggedInUser?.Name ?? "sistema";
+                    var pagosCreados = new List<InstallmentPayment>();
 
                     foreach (var cuota in cuotasPendientes)
                     {
@@ -556,14 +568,16 @@ namespace WpfApp1.Services
                         var saldoCuota = cuota.ExpectedAmount - (cuota.PaidAmount ?? 0);
                         var aplicado = Math.Min(montoRestante, saldoCuota);
 
-                        db.InstallmentPayments.Add(new InstallmentPayment
+                        var pago = new InstallmentPayment
                         {
                             InstallmentId = cuota.Id,
                             Amount = aplicado,
                             PaymentDate = paymentDate,
                             ReceivedBy = usuario,
                             Notes = notes
-                        });
+                        };
+                        db.InstallmentPayments.Add(pago);
+                        pagosCreados.Add(pago);
 
                         var nuevoPaidAmount = (cuota.PaidAmount ?? 0) + aplicado;
                         var nuevoSaldoCuota = cuota.ExpectedAmount - nuevoPaidAmount;
@@ -579,6 +593,7 @@ namespace WpfApp1.Services
                         {
                             InstallmentNumber = cuota.InstallmentNumber,
                             MontoAplicado = aplicado,
+                            SaldoCuota = Math.Max(0, nuevoSaldoCuota),
                             QuedoSaldada = nuevoSaldoCuota <= 0
                         });
 
@@ -586,6 +601,10 @@ namespace WpfApp1.Services
                     }
 
                     await db.SaveChangesAsync();
+                    var numeroRecibo = pagosCreados.Min(p => p.Id);
+                    foreach (var p in pagosCreados)
+                        p.Notes = MarcaRecibo(numeroRecibo, notes);
+
                     await ActualizarEstadoContratoAsync(contractId, db);
                     await SaveAuditAsync(AuditAction.Update, "Contract", contractId.ToString(),
                         $"Se registró un adelanto de pago de {amount:N2}, aplicado a {detalleAplicado.Count} cuota(s)", db);
@@ -606,8 +625,16 @@ namespace WpfApp1.Services
                                  && x.StatusId != (int)InstallmentStatus.Waived)
                         .Sum(x => x.ExpectedAmount - (x.PaidAmount ?? 0));
 
-                    var recibo = new ReciboAdelantoDto
+                    var proxima = todasLasCuotas
+                        .Where(x => x.StatusId != (int)InstallmentStatus.Paid
+                                 && x.StatusId != (int)InstallmentStatus.PaidLate
+                                 && x.StatusId != (int)InstallmentStatus.Waived)
+                        .OrderBy(x => x.DueDate)
+                        .FirstOrDefault();
+
+                    var recibo = new ReciboDto
                     {
+                        NumeroRecibo = numeroRecibo.ToString(),
                         FechaPago = paymentDate,
                         ContractNumber = contrato.Id,
                         NombreCliente = $"{contrato.Client.Name} {contrato.Client.LastName}",
@@ -615,17 +642,19 @@ namespace WpfApp1.Services
                         MontoTotalAbonado = amount,
                         CuotasAplicadas = detalleAplicado,
                         SaldoPendienteContrato = saldoPendienteContrato,
+                        TotalCuotas = todasLasCuotas.Count,
+                        ProximaFechaPago = proxima?.DueDate.ToDateTime(TimeOnly.MinValue),
                         RecibidoPor = usuario
                     };
 
                     await transaction.CommitAsync();
-                    return ServicesResult<ReciboAdelantoDto>.Ok(recibo,
+                    return ServicesResult<ReciboDto>.Ok(recibo,
                         $"Adelanto registrado, aplicado a {detalleAplicado.Count} cuota(s).");
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    return ServicesResult<ReciboAdelantoDto>.Fail("Error al registrar el adelanto: " + ex.Message);
+                    return ServicesResult<ReciboDto>.Fail("Error al registrar el adelanto: " + ex.Message);
                 }
             }
         }

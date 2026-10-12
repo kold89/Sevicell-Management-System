@@ -107,19 +107,12 @@
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="VENCE" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="100"/>
 
-                    <DataGridTemplateColumn Header="ACCIÓN" Width="220">
+                    <DataGridTemplateColumn Header="ACCIÓN" Width="120">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Button Content="Cobrar" Click="BtnCobrar_Click" Tag="{Binding InstallmentId}"
-                                        Background="#2563EB" Foreground="White" BorderThickness="0"
-                                        Padding="12,6" FontSize="12" FontWeight="SemiBold" Cursor="Hand"/> 
-
-                                    <Button Content="Pago parcial" Click="BtnCobroParcial_Click" Tag="{Binding InstallmentId}"
-                                        Margin="4,0,0,0"
-                                        Background="#2563EB" Foreground="White" BorderThickness="0"
-                                        Padding="12,6" FontSize="12" FontWeight="SemiBold" Cursor="Hand"/>
-                                </StackPanel>
+                                <Button Content="Cobrar" Click="BtnCobrar_Click" Tag="{Binding ContractId}"
+                    Background="#2563EB" Foreground="White" BorderThickness="0"
+                    Padding="12,6" FontSize="12" FontWeight="SemiBold" Cursor="Hand"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

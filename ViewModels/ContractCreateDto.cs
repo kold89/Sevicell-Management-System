@@ -41,6 +41,16 @@ namespace WpfApp1.ViewModels
         public decimal PaidAmount { get; set; }                      
         public decimal SaldoPendiente => ExpectedAmount - PaidAmount;
         public string? Status { get; set; }
+        public string EstadoVisual
+        {
+            get
+            {
+                bool atrasada = DueDate.Date < DateTime.Today;
+                if (Status == "PENDIENTE" && atrasada) return "VENCIDA";
+                if (Status == "PARCIAL" && atrasada) return "PARCIAL VENCIDA";
+                return Status?.Replace('_', ' ') ?? "";   // PAGO_TARDE se muestra como "PAGO TARDE"
+            }
+        }
 
     }
     public class ContractDetailViewModel : INotifyPropertyChanged
