@@ -78,6 +78,7 @@ namespace WpfApp1
                 { btnConfiguraciones, "MODULE_CONFIG_VIEW" },
                 { btnRepairs, "MODULE_REPAIRS_VIEW" },
                 { btnCatalogo, "MODULE_CATALOG_VIEW" },
+                { BtnPurchases, "MODULE_PURCHASE_VIEW" },
             };
 
             foreach (var item in MapsModules)
@@ -90,7 +91,7 @@ namespace WpfApp1
 
         private void btnConfiguraciones_Click(object sender, RoutedEventArgs e)
         {
-            var confiCards = new WpfApp1.Views.ConfigDashboardPage();
+            var confiCards = new WpfApp1.Views.Hubs.ConfigDashboardPage();
 
             MainFrame.Navigate(confiCards);
         }
@@ -104,7 +105,7 @@ namespace WpfApp1
 
         private void BtnInventory_Click(object sender, RoutedEventArgs e)
         {
-            var confiCards = new WpfApp1.Views.Inventory.InventaryPage();
+            var confiCards = new WpfApp1.Views.Hubs.InventaryPage();
 
             MainFrame.Navigate(confiCards);
         }
@@ -215,7 +216,7 @@ namespace WpfApp1
 
         private void BtnSales_Click(object sender, RoutedEventArgs e)
         {
-            var confiCards = new WpfApp1.Views.Sales.MenuSalesInvoicePages();
+            var confiCards = new WpfApp1.Views.Hubs.MenuSalesInvoicePages();
 
             MainFrame.Navigate(confiCards);
         }
@@ -269,18 +270,26 @@ namespace WpfApp1
             PanelTextReportes.Visibility = visibilidad;
             PanelTextConfig.Visibility = visibilidad;
             PanelTextCatalogo.Visibility = visibilidad;
+            PanelTexCompras.Visibility = visibilidad;
         }
 
-        private void Catálogos_Click(object sender, RoutedEventArgs e)
+        private void Catalogos_Click(object sender, RoutedEventArgs e)
         {
-            var catalogosCard = new WpfApp1.Views.OptionCatalogoPage();
+            var catalogosCard = new WpfApp1.Views.Hubs.OptionCatalogoPage();
+
+            MainFrame.Navigate(catalogosCard);
+        }
+
+        private void BtnPurchases_Click(object sender, RoutedEventArgs e)
+        {
+            var catalogosCard = new WpfApp1.Views.Hubs.OptionPurshasePage();
 
             MainFrame.Navigate(catalogosCard);
         }
 
         private void BtnCredits_Click(object sender, RoutedEventArgs e)
         {
-            var confiCards = new WpfApp1.Views.Credit.CreditContractsOptionPages();
+            var confiCards = new WpfApp1.Views.Hubs.CreditContractsOptionPages();
 
             MainFrame.Navigate(confiCards);
         }

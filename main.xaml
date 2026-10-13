@@ -58,12 +58,21 @@
                 </StackPanel>
             </RadioButton>
 
-            <!-- Ventas -->
-            <RadioButton x:Name="BtnSales" Click="BtnSales_Click" ToolTip="Ventas" Style="{StaticResource MenuButtonStyle}">
+            <!-- Catalogo -->
+            <RadioButton x:Name="btnCatalogo" ToolTip="Catálogos" Click="Catalogos_Click"  Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_ShoppingCart" Height="16" Margin="0,0,15,0"/>
-                    <StackPanel x:Name="PanelTextVentas" Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Ventas" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Regular_ListAlt" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextCatalogo" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Catálogos" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
+                </StackPanel>
+            </RadioButton>
+            <!-- Compras -->
+            <RadioButton x:Name="BtnPurchases" Click="BtnPurchases_Click"  ToolTip="Ventas" Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_ShoppingBag" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTexCompras" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Compras" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
                     </StackPanel>
                 </StackPanel>
             </RadioButton>
@@ -77,17 +86,7 @@
                     </StackPanel>
                 </StackPanel>
             </RadioButton>
-
-            <!-- Reparaciones -->
-            <RadioButton x:Name="btnRepairs" ToolTip="Reparaciones" Click="btnRepairs_Click" Style="{StaticResource MenuButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_Tools" Height="16" Margin="0,0,15,0"/>
-                    <StackPanel x:Name="PanelTextReparaciones" Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Reparaciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
-                    </StackPanel>
-                </StackPanel>
-            </RadioButton>
-
+            
             <!-- Inventario -->
             <RadioButton x:Name="BtnInventory" ToolTip="Inventario" Click="BtnInventory_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
@@ -97,7 +96,26 @@
                     </StackPanel>
                 </StackPanel>
             </RadioButton>
-
+            
+            <!-- Ventas -->
+            <RadioButton x:Name="BtnSales" Click="BtnSales_Click" ToolTip="Ventas" Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_ShoppingCart" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextVentas" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Ventas" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
+                </StackPanel>
+            </RadioButton>
+            
+            <!-- Reparaciones -->
+            <RadioButton x:Name="btnRepairs" ToolTip="Reparaciones" Click="btnRepairs_Click" Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_Tools" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextReparaciones" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Reparaciones" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
+                </StackPanel>
+            </RadioButton>
             <!-- Reportes -->
             <RadioButton x:Name="BtnReports" ToolTip="Reportes" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
@@ -107,17 +125,6 @@
                     </StackPanel>
                 </StackPanel>
             </RadioButton>
-
-            <!-- Configuraciones -->
-            <RadioButton x:Name="btnCatalogo" ToolTip="Catalogos" Click="Catálogos_Click"  Style="{StaticResource MenuButtonStyle}">
-                <StackPanel Orientation="Horizontal">
-                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Regular_ListAlt" Height="16" Margin="0,0,15,0"/>
-                    <StackPanel x:Name="PanelTextCatalogo" Orientation="Horizontal">
-                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Catalogos" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
-                    </StackPanel>
-                </StackPanel>
-            </RadioButton>
-
             <!-- Configuraciones -->
             <RadioButton x:Name="btnConfiguraciones" ToolTip="Configuraciones" Click="btnConfiguraciones_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">

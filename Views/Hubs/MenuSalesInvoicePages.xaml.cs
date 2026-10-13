@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApp1.Views.Sales
+namespace WpfApp1.Views.Hubs
 {
     /// <summary>
     /// Lógica de interacción para MenuSalesInvoicePages.xaml

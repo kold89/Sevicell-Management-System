@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApp1.Views.Inventory
+namespace WpfApp1.Views.Hubs
 {
     /// <summary>
     /// Lógica de interacción para InventaryPage.xaml
@@ -33,18 +33,6 @@ namespace WpfApp1.Views.Inventory
         private void btnStockMovements_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new WpfApp1.Views.Inventory.InventoryMovement());
-        }
-
-
-        private void btnPurchases_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.InvoicePage());
-        }
-
-        private void btnInvoiceHistory_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.PurchaseInvoiceListPage());
-
         }
 
         private void BtnProductUnit_Click(object sender, RoutedEventArgs e)

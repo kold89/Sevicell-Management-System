@@ -13,32 +13,31 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WpfApp1.Views.Credit
+namespace WpfApp1.Views.Hubs
 {
     /// <summary>
-    /// Lógica de interacción para CreditContractsOptionPages.xaml
+    /// Lógica de interacción para OptionCatalogoPage.xaml
     /// </summary>
-    public partial class CreditContractsOptionPages : Page
+    public partial class OptionCatalogoPage : Page
     {
-        public CreditContractsOptionPages()
+        public OptionCatalogoPage()
         {
             InitializeComponent();
         }
 
-        private void BtnContracts_Click(object sender, RoutedEventArgs e)
+        private void btnSuppliers_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new CreditContractsList());
+            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.suppliersPage());
         }
 
         private void btnCategories_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new installmentsduePage());
-
+            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.BrandAndCategory());
         }
 
-        private void BtnPhones_Click(object sender, RoutedEventArgs e)
+        private void BtnClientes_Click(object sender, RoutedEventArgs e)
         {
-            this.NavigationService.Navigate(new PhoneDeviceList());
+            this.NavigationService.Navigate(new WpfApp1.Views.Catalog.CustomersListPage());
         }
     }
 }
