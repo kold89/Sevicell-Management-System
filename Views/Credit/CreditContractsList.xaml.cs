@@ -20,7 +20,6 @@ namespace WpfApp1.Views.Credit
             public string Id { get; set; }   // "" = todos
             public string Name { get; set; }
         }
-        private readonly ReciboPrinterService _printerService = new ReciboPrinterService();
 
         private enum EstadoLista
         {
@@ -299,21 +298,7 @@ namespace WpfApp1.Views.Credit
             }
         }
 
-        // ---------- Acciones por fila ----------
-        private void BtnVerCuotas_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not Button btn || btn.Tag is not int contractId) return;
-            var ventana = new CuotasWindow(contractId) { Owner = Window.GetWindow(this) };
-            ventana.ShowDialog();
-        }
-
-        private void BtnVerHistorial_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not Button btn || btn.Tag is not int contractId) return;
-            var ventana = new HistorialPagosWindow(contractId) { Owner = Window.GetWindow(this) };
-            ventana.ShowDialog();
-        }
-
+        // ---------- Acciones por fila ---------
         private async void BtnDownload_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Button btn || btn.Tag is not int contractId) return;
@@ -363,67 +348,6 @@ namespace WpfApp1.Views.Credit
             {
                 ToastService.ShowError("Error al generar el contrato: " + ex.Message);
             }
-        }
-
-        private async void BtnAdelanto_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is not Button btn || btn.Tag is not int contractId) return;
-
-            var contractSelection = _allContracts.FirstOrDefault(c => c.ContractNumber == contractId);
-            if (contractSelection == null) return;
-
-            var cuotasResult = await ContractsSevices.GetDebtInstalmentAsync(contractId);
-            if (!cuotasResult.Success) return;
-
-            var pendientes = cuotasResult.Data.Where(c => c.SaldoPendiente > 0).ToList();
-            if (pendientes.Count == 0)
-            {
-                MessageBox.Show("Este contrato no tiene saldo pendiente.", "Aviso", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            var dialog = new AdelantoPagoDialog(contractId, contractSelection.CustomerName, pendientes)
-            { Owner = Window.GetWindow(this) };
-            if (dialog.ShowDialog() != true) return;
-
-            var result = await ContractsSevices.RegistrarPagoAsync(contractId, dialog.Monto, DateTime.Now);
-            if (!result.Success)
-            {
-                MessageBox.Show(result.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            ToastService.ShowSuccess(result.Message);
-            if (!ImpresoraExiste("POS-58-Series"))
-            {
-                MessageBox.Show(
-                    "El adelanto se registró correctamente, pero no se encontró la impresora 'POS-58-Series' para imprimir el recibo.",
-                    "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
-            else
-            {
-                try
-                {
-                    _printerService.ImprimirRecibo(result.Data, "POS-58-Series");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(
-                        $"El adelanto se registró correctamente, pero no se pudo imprimir el recibo.\n\nMotivo: {ex.Message}",
-                        "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
-                }
-            }
-
-            await BuscarContratos(reiniciarPagina: false);
-        }
-        private bool ImpresoraExiste(string nombreImpresora)
-        {
-            foreach (string printer in System.Drawing.Printing.PrinterSettings.InstalledPrinters)
-            {
-                if (printer.Equals(nombreImpresora, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-            return false;
         }
         private void MostrarPagina()
         {

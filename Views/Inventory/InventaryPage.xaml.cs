@@ -25,11 +25,6 @@ namespace WpfApp1.Views.Inventory
             InitializeComponent();
         }
 
-        private void btnCategories_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.BrandAndCategory());
-        }
-
         private void btnProducts_Click(object sender, RoutedEventArgs e)
         {
             this.NavigationService.Navigate(new WpfApp1.Views.Inventory.Products());
@@ -40,11 +35,6 @@ namespace WpfApp1.Views.Inventory
             this.NavigationService.Navigate(new WpfApp1.Views.Inventory.InventoryMovement());
         }
 
-
-        private void btnSuppliers_Click(object sender, RoutedEventArgs e)
-        {
-            this.NavigationService.Navigate(new WpfApp1.Views.Inventory.suppliersPage());
-        }
 
         private void btnPurchases_Click(object sender, RoutedEventArgs e)
         {

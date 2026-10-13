@@ -9,7 +9,20 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ContractDetailPage">
-
+    
+    <Page.Resources>
+        <!-- texto que parece etiqueta pero se puede seleccionar y copiar (útil para el IMEI) -->
+        <Style x:Key="InfoCopiable" TargetType="TextBox">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#475569"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Page.Resources>
+    
     <Grid Background="#F1F5F9" Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -23,9 +36,39 @@
                     Style="{StaticResource btnGoBackStyle}" Cursor="Hand">
                 <fa5:SvgAwesome Icon="Solid_ArrowLeft" Height="18"/>
             </Button>
-            <StackPanel Margin="15,0,0,0" DockPanel.Dock="Left">
+            <!--<StackPanel Margin="15,0,0,0" DockPanel.Dock="Left">
                 <TextBlock x:Name="TxtTitulo" FontSize="22" FontWeight="Bold" Foreground="#333"/>
                 <TextBlock x:Name="TxtSubtitulo" Foreground="#777" FontSize="13"/>
+            </StackPanel>-->
+            <StackPanel Margin="15,0,0,0" DockPanel.Dock="Left">
+                <TextBlock x:Name="TxtTitulo" FontSize="22" FontWeight="Bold" Foreground="#333"/>
+
+                <!-- Línea 1: cliente y teléfono -->
+                <WrapPanel Margin="0,6,0,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,22,4">
+                        <fa5:SvgAwesome Icon="Solid_User" Height="12" Foreground="#94A3B8" Margin="0,0,6,0"/>
+                        <TextBlock x:Name="TxtCliente" FontSize="13" Foreground="#475569" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,22,4">
+                        <fa5:SvgAwesome Icon="Solid_Phone" Height="12" Foreground="#94A3B8" Margin="0,0,6,0"/>
+                        <TextBox x:Name="TxtTelefono" Style="{StaticResource InfoCopiable}"/>
+                    </StackPanel>
+                </WrapPanel>
+
+                <!-- Línea 2: equipo e IMEI -->
+                <WrapPanel>
+                    <TextBlock x:Name="TxtProducto" FontSize="13" FontWeight="SemiBold" Foreground="#475569"
+                   VerticalAlignment="Center" Margin="0,0,22,4"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,22,4">
+                        <fa5:SvgAwesome Icon="Solid_Barcode" Height="12" Foreground="#94A3B8" Margin="0,0,6,0"/>
+                        <TextBlock Text="IMEI " FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBox x:Name="TxtImei" Style="{StaticResource InfoCopiable}"/>
+                    </StackPanel>
+                    <StackPanel x:Name="PnlImei2" Orientation="Horizontal" Margin="0,0,22,4">
+                        <TextBlock Text="IMEI 2 " FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                        <TextBox x:Name="TxtImei2" Style="{StaticResource InfoCopiable}"/>
+                    </StackPanel>
+                </WrapPanel>
             </StackPanel>
             <Button x:Name="BtnRegistrarPago" Click="BtnRegistrarPago_Click"
         DockPanel.Dock="Right" Background="#2563EB" BorderThickness="0"
@@ -62,10 +105,10 @@
         </Border>
 
         <!-- CUOTAS -->
-        <TabControl Grid.Row="2" Background="Transparent" BorderThickness="0" Padding="0,10,0,0">
+        <TabControl Grid.Row="2" Style="{StaticResource ModernTabControl}">
             <TabItem Header="Cuotas">
                 <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="4">
-                    <DataGrid x:Name="DgCuotas" Background="Transparent" RowBackground="Transparent"
+                    <DataGrid x:Name="DgCuotas" Background="Transparent" RowBackground="Transparent" 
                       AlternatingRowBackground="#F8FAFC" BorderThickness="0" Foreground="#1E293B"
                       GridLinesVisibility="Horizontal" HorizontalGridLinesBrush="#E2E8F0"
                       HeadersVisibility="Column" AutoGenerateColumns="False"
@@ -86,9 +129,9 @@
                             <DataGridTextColumn Header="VENCE" Binding="{Binding DueDate, StringFormat=dd/MM/yyyy}" Width="200"/>
                             <DataGridTextColumn Header="ESPERADO" Binding="{Binding ExpectedAmount, StringFormat='L. {0:N2}'}" Width="120"
                         ElementStyle="{StaticResource CeldaDerecha}"/>
-                            <DataGridTextColumn Header="PAGADO" Binding="{Binding PaidAmount, StringFormat='L. {0:N2}'}" Width="120"
+                            <DataGridTextColumn Header="PAGADO" Binding="{Binding PaidAmount, StringFormat='L. {0:N2}'}"  Width="120"
                         ElementStyle="{StaticResource CeldaDerecha}"/>
-                            <DataGridTextColumn Header="SALDO" Binding="{Binding SaldoPendiente, StringFormat='L. {0:N2}'}" Width="120">
+                            <DataGridTextColumn Header="SALDO" Binding="{Binding SaldoPendiente, StringFormat='L. {0:N2}'}" FontWeight="SemiBold" Width="120">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock" BasedOn="{StaticResource CeldaDerecha}">
                                         <Setter Property="Foreground" Value="#DC2626"/>

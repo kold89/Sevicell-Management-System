@@ -127,7 +127,7 @@ namespace WpfApp1.Services
                         ContractNumber = x.Id,
                         ProductName = x.ProductUnit.Product.Name,
                         CustomerName = $"{x.Client.Name} {x.Client.LastName}",
-                        //CustomerPhone = x.Client.Phone,          // NUEVO: para poder filtrar por teléfono
+                        CustomerPhone = x.Client.Phone,          
                         PriceSales = x.SalePrice,
                         DownPayment = x.DownPayment,
                         Status = x.Status.Code,

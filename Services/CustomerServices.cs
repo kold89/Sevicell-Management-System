@@ -24,7 +24,8 @@ namespace WpfApp1.Services
                         Id = x.Id,
                         Name = $"{x.Name ?? ""} {x.LastName ?? ""}".Trim(),
                         Address = x.Address ?? "sin datos",
-                        Mail = x.Email ?? "Sin correo"
+                        Mail = x.Email ?? "Sin correo",
+                        Phone = x.Phone ?? "-"
                         }).ToListAsync();
 
                     return ServicesResult<List<custumerDTO>>.Ok(data, "Datos obtenidos exitosamente.");

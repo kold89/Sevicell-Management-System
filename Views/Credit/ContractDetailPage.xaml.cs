@@ -22,7 +22,18 @@ namespace WpfApp1.Views.Credit
         private void PintarResumen()
         {
             TxtTitulo.Text = $"Contrato N° {_contrato.ContractNumber}";
-            TxtSubtitulo.Text = $"{_contrato.CustomerName} · {_contrato.ProductName}";
+            //TxtSubtitulo.Text = $"{_contrato.CustomerName} · {_contrato.ProductName}";
+            TxtCliente.Text = _contrato.CustomerName;
+            TxtTelefono.Text = string.IsNullOrWhiteSpace(_contrato.CustomerPhone)
+                ? "Sin teléfono" : _contrato.CustomerPhone;
+
+            TxtProducto.Text = _contrato.ProductName;
+            TxtImei.Text = _contrato.Imei;
+
+            bool hayImei2 = !string.IsNullOrWhiteSpace(_contrato.Imei2);
+            PnlImei2.Visibility = hayImei2 ? Visibility.Visible : Visibility.Collapsed;
+            TxtImei2.Text = _contrato.Imei2;
+
             TxtDeuda.Text = $"L. {_contrato.TotalDebt:N2}";
             TxtPendiente.Text = $"L. {_contrato.Balance:N2}";
             TxtEstado.Text = _contrato.Status;

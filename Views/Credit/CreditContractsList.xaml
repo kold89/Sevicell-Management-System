@@ -245,7 +245,7 @@
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTemplateColumn Header="ACCIONES" Width="230">
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
@@ -260,27 +260,9 @@
                                                 Background="Transparent" ToolTip="Ver contrato"
                                                 BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
                                                 Tag="{Binding ContractNumber}">
-                                            <fa5:SvgAwesome Icon="Solid_Eye" Height="14" Foreground="#1E293B"/>
+                                            <fa5:SvgAwesome Icon="Solid_Eye" Height="14" Foreground="#28A745"/>
                                         </Button>
-                                        <Button x:Name="BtnVerCuotas" Click="BtnVerCuotas_Click"
-                                                Background="Transparent" ToolTip="Ver cuotas"
-                                                BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
-                                                Tag="{Binding ContractNumber}">
-                                            <fa5:SvgAwesome Icon="Solid_ListAlt" Height="14" Foreground="#2563EB"/>
-                                        </Button>
-
-                                        <Button x:Name="BtnVerHistorial" Click="BtnVerHistorial_Click"
-                                                Background="Transparent" ToolTip="Ver histórico de pagos"
-                                                BorderThickness="0" Cursor="Hand"
-                                                Tag="{Binding ContractNumber}">
-                                            <fa5:SvgAwesome Icon="Solid_History" Height="14" Foreground="#64748B"/>
-                                        </Button>
-                                        <Button x:Name="BtnAdelanto" Click="BtnAdelanto_Click"
-                                                Background="Transparent" ToolTip="Adelanto de pago"
-                                                BorderThickness="0" Cursor="Hand" Margin="0,0,10,0"
-                                                Tag="{Binding ContractNumber}">
-                                            <fa5:SvgAwesome Icon="Solid_FastForward" Height="14" Foreground="#059669"/>
-                                        </Button>
+                        
                                         <Button x:Name="BtnDescartar" Click="BtnDescartar_Click"
                                             ToolTip="Descartar contrato"
                                             BorderThickness="0" Cursor="Hand"

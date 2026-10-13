@@ -8,7 +8,7 @@
         xmlns:fa5="http://schemas.fontawesome.com/icons/"
         WindowStartupLocation="CenterOwner"
         mc:Ignorable="d"
-        Title="AddOrEditCustumer" Height="500" Width="420">
+        Title="Agregar Cliente" Height="500" Width="420">
     <Grid Margin="20,15" >
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>

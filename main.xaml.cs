@@ -77,6 +77,7 @@ namespace WpfApp1
                 { BtnReports, "MODULE_REPORTS_VIEW" },
                 { btnConfiguraciones, "MODULE_CONFIG_VIEW" },
                 { btnRepairs, "MODULE_REPAIRS_VIEW" },
+                { btnCatalogo, "MODULE_CATALOG_VIEW" },
             };
 
             foreach (var item in MapsModules)
@@ -267,6 +268,14 @@ namespace WpfApp1
             PanelTextInventario.Visibility = visibilidad;
             PanelTextReportes.Visibility = visibilidad;
             PanelTextConfig.Visibility = visibilidad;
+            PanelTextCatalogo.Visibility = visibilidad;
+        }
+
+        private void Catálogos_Click(object sender, RoutedEventArgs e)
+        {
+            var catalogosCard = new WpfApp1.Views.OptionCatalogoPage();
+
+            MainFrame.Navigate(catalogosCard);
         }
 
         private void BtnCredits_Click(object sender, RoutedEventArgs e)

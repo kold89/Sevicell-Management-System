@@ -29,6 +29,7 @@ namespace WpfApp1.ViewModels
         public string Brand { get; set; }
         public string model { get; set; }
         public string colour { get; set; }
+        public string CustomerPhone { get; set; }
         public List<InstallmentPreview> instalments  { get; set; } = new ();
     }
     public struct Tasa

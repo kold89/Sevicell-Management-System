@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:WpfApp1"
              xmlns:controles="clr-namespace:WpfApp1"
-
-        xmlns:fa5="http://schemas.fontawesome.com/icons/"
-             
+            xmlns:fa5="http://schemas.fontawesome.com/icons/"             
              StartupUri="MainWindow.xaml">
+    
     <Application.Resources>
         <Style TargetType="controles:PriceTexBox">
             <Setter Property="Height" Value="32"/>
@@ -19,6 +18,118 @@
                         <Border Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6">
                             <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
                         </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+
+        <!-- Pestaña compacta -->
+        <Style x:Key="ModernTabItem"
+       TargetType="{x:Type TabItem}">
+
+            <Setter Property="Foreground" Value="#64748B"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="0,0,5,0"/>
+            <Setter Property="Background" Value="Transparent"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Border x:Name="Bd"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="Transparent"
+                        BorderThickness="1"
+                        CornerRadius="6"
+                        Padding="{TemplateBinding Padding}">
+
+                            <ContentPresenter
+                        ContentSource="Header"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        RecognizesAccessKey="True"/>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd"
+                                Property="Background"
+                                Value="#F1F5F9"/>
+                                <Setter TargetName="Bd"
+                                Property="BorderBrush"
+                                Value="#E2E8F0"/>
+                            </Trigger>
+
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd"
+                                Property="Background"
+                                Value="#DBEAFE"/>
+                                <Setter TargetName="Bd"
+                                Property="BorderBrush"
+                                Value="#BFDBFE"/>
+                                <Setter Property="Foreground"
+                                Value="#1D4ED8"/>
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd"
+                                Property="Opacity"
+                                Value="0.5"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+        <!-- Contenedor de pestañas -->
+        <Style x:Key="ModernTabControl"
+       TargetType="{x:Type TabControl}">
+
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="ItemContainerStyle"
+            Value="{StaticResource ModernTabItem}"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabControl}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Barra de pestañas -->
+                            <Border Grid.Row="0"
+                                BorderBrush="#E2E8F0"
+                                BorderThickness="0,0,0,1"
+                                Padding="0,4,12,5">
+
+                                                        <TabPanel IsItemsHost="True"
+                                      Background="Transparent"
+                                      HorizontalAlignment="Left"
+                                      ClipToBounds="False"/>
+
+                            </Border>
+
+                            <!-- Contenido seleccionado -->
+                            <ContentPresenter
+                                x:Name="PART_SelectedContentHost"
+                                Grid.Row="1"
+                                ContentSource="SelectedContent"
+                                Margin="0,8,0,0"
+                                TextElement.FontWeight="Normal"/>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -40,26 +151,6 @@
             </Setter>
         </Style>
         
-        <!--<Style x:Key="CardButtonStyle" TargetType="Button">
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Height" Value="180"/>
-            <Setter Property="Margin" Value="10"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" CornerRadius="12">
-                            <Border.Effect>
-                                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1"/>
-                            </Border.Effect>
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>-->
-
         <Style x:Key="CeldaDerecha" TargetType="TextBlock">
             <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -291,16 +382,6 @@
                             RelativeSource={RelativeSource AncestorType=RadioButton}}"/>
         </Style>
         
-        <!--<Style x:Key="DataGridHeaderStyle" TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#F8F9FA"/>
-            <Setter Property="Foreground" Value="#333333"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="10,8"/>
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
-            <Setter Property="BorderBrush" Value="#2196F3"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-        </Style>-->
-
         <Style x:Key="DataGridHeaderStyle"
        TargetType="DataGridColumnHeader">
 
@@ -388,21 +469,6 @@
             </Style.Triggers>
         </Style>
         
-        <!--<Style TargetType="DataGridRow">
-            <Setter Property="BorderThickness" Value="0,0,0,1"/>
-            <Setter Property="BorderBrush" Value="#EEEEEE"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#F0F7FF"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#E3F2FD"/>
-                    <Setter Property="Foreground" Value="#2196F3"/>
-                    <Setter Property="FontWeight" Value="Medium"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>-->
-
         <Style x:Key="ActionButtonStyle"
        TargetType="Button">
 
@@ -637,7 +703,6 @@
             <Setter Property="BorderThickness" Value="0,0,0,1"/>
             <Setter Property="BorderBrush" Value="#BDC3C7"/>
         </Style>
-        
 
     </Application.Resources>
 </Application>

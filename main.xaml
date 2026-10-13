@@ -109,6 +109,16 @@
             </RadioButton>
 
             <!-- Configuraciones -->
+            <RadioButton x:Name="btnCatalogo" ToolTip="Catalogos" Click="Catálogos_Click"  Style="{StaticResource MenuButtonStyle}">
+                <StackPanel Orientation="Horizontal">
+                    <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Regular_ListAlt" Height="16" Margin="0,0,15,0"/>
+                    <StackPanel x:Name="PanelTextCatalogo" Orientation="Horizontal">
+                        <TextBlock Style="{StaticResource MenuTextStyle}" Text="Catalogos" VerticalAlignment="Center" FontSize="14" FontFamily="Segoe UI Semibold"/>
+                    </StackPanel>
+                </StackPanel>
+            </RadioButton>
+
+            <!-- Configuraciones -->
             <RadioButton x:Name="btnConfiguraciones" ToolTip="Configuraciones" Click="btnConfiguraciones_Click" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_Cog" Height="16" Margin="0,0,15,0"/>
