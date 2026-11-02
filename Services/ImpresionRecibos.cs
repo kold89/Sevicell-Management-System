@@ -32,5 +32,22 @@ namespace WpfApp1.Services
                 return ex.Message;
             }
         }
+
+        /// <summary>Devuelve null si imprimió bien, o el motivo del fallo.</summary>
+        public static string? ImprimirEnganche(ReciboEngancheDto recibo)
+        {
+            if (!ImpresoraExiste())
+                return $"No se encontró la impresora '{Impresora}'.";
+
+            try
+            {
+                new ReciboPrinterService().ImprimirReciboEnganche(recibo, Impresora);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
     }
 }

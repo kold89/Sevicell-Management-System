@@ -101,6 +101,17 @@ namespace WpfApp1.Views.Credit
                 }
                 ToastService.ShowSuccess("Contrato creado exitosamente.");
 
+                // NUEVO: ofrecer el recibo de enganche
+                try
+                {
+                    await OfrecerReciboEngancheAsync(save.Data);   // save.Data = número del contrato
+                }
+                catch
+                {
+                    ToastService.ShowWarning("El contrato se creó, pero no se pudo preparar el recibo de enganche. " +
+                                             "Podrá imprimirlo desde la ficha del contrato.");
+                }
+
                 if (this.NavigationService.CanGoBack)
                     this.NavigationService.GoBack();
             }
@@ -113,6 +124,36 @@ namespace WpfApp1.Views.Credit
                 btnGuardar.IsEnabled = true;
             }
         }
+        private static async Task OfrecerReciboEngancheAsync(int contractId)
+        {
+            var servicio = new CreditContractsServices();
+            var rec = await servicio.GetReciboEngancheAsync(contractId);
+
+            if (!rec.Success || rec.Data == null)
+            {
+                ToastService.ShowWarning("El contrato se creó, pero no se pudo preparar el recibo de enganche. " +
+                                         "Podrá imprimirlo desde la ficha del contrato.");
+                return;
+            }
+
+            if (rec.Data.Enganche <= 0) return;   // sin enganche no hay nada que ofrecer
+
+            var respuesta = MessageBox.Show(
+                $"Contrato N° {contractId} creado correctamente.\n\n" +
+                $"¿Desea imprimir el recibo de enganche (L. {rec.Data.Enganche:N2})?",
+                "Recibo de enganche",
+                MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
+
+            if (respuesta != MessageBoxResult.Yes) return;
+
+            var error = ImpresionRecibos.ImprimirEnganche(rec.Data);
+            if (error != null)
+                MessageBox.Show(
+                    $"El contrato se creó correctamente, pero no se pudo imprimir el recibo.\n\nMotivo: {error}\n\n" +
+                    "Podrá reimprimirlo desde la ficha del contrato.",
+                    "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
 
         private  void LoadCboxCustumer()
         {

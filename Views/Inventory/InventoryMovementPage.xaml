@@ -175,6 +175,13 @@
                                                 <Setter TargetName="StockBadgeText" Property="Text" Value="BAJO STOCK"/>
                                                 <Setter TargetName="StockBadgeText" Property="Foreground" Value="#FF7373"/>
                                             </DataTrigger>
+                                            <DataTrigger Binding="{Binding stock}" Value="0">
+                                                <Setter TargetName="StockBadge" Property="Background" Value="#FFF9E7"/>
+                                                <Setter TargetName="StockBadge" Property="BorderBrush" Value="#FF7373"/>
+                                                <Setter TargetName="StockBadge" Property="BorderThickness" Value="1"/>
+                                                <Setter TargetName="StockBadgeText" Property="Text" Value="SIN EXISTENCIA"/>
+                                                <Setter TargetName="StockBadgeText" Property="Foreground" Value="#FF7373"/>
+                                            </DataTrigger>
                                             <DataTrigger Binding="{Binding EsBajoStock}" Value="False">
                                                 <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
                                                 <Setter TargetName="StockBadge" Property="BorderBrush" Value="#117A65"/>

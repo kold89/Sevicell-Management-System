@@ -29,78 +29,81 @@ namespace WpfApp1.Views
         public RoleListPage()
         {
             InitializeComponent();
-            LoadData();
+            Loaded += (_, _) => LoadData();
         }
 
         public void LoadData()
         {
-            dgRoles.ItemsSource = servicesRole.GetRoleForDGrid();
+            try
+            {
+                dgRoles.ItemsSource = servicesRole.GetRoleForDGrid();
+            }
+            catch (Exception ex)
+            {
+                ToastService.ShowError("Error al cargar los roles: " + ex.Message);
+            }
         }
 
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
-            if (this.NavigationService.CanGoBack)
-            {
-                this.NavigationService.GoBack();
-            }
+            if (NavigationService?.CanGoBack == true)
+                NavigationService.GoBack();
         }
 
         private void BtnAddRole_Click(object sender, RoutedEventArgs e)
         {
-            RoleEditWindow modalRol = new RoleEditWindow();
-            modalRol.Owner = Window.GetWindow(this);
-            bool? result = modalRol.ShowDialog();
-
-            if (result == true)
-            {
+            var modal = new RoleEditWindow { Owner = Window.GetWindow(this) };
+            if (modal.ShowDialog() == true)
                 LoadData();
-            }
         }
 
         private void BtnEdit_Click(object sender, RoutedEventArgs e)
         {
-            var roleSelect = (ViewRoleDto)dgRoles.SelectedItem;
+            if (sender is not Button { DataContext: ViewRoleDto row }) return;
 
-            if (roleSelect != null)
+            var result = servicesRole.GetRolForId(row.id);
+            if (!result.Success || result.Data == null)
             {
-                ServicesResult<Role?> rolForEdit = servicesRole.GetRolForId(roleSelect.id);
-                if (rolForEdit.Success)
-                {
-                    var win = new RoleEditWindow(rolForEdit.Data);
-                    win.Owner = Window.GetWindow(this);
-
-                    if (win.ShowDialog() == true)
-                    {
-                        LoadData();
-                    }
-                }  
+                ToastService.ShowError(result.Message ?? "No se pudo cargar el rol.");
+                return;
             }
+
+            var win = new RoleEditWindow(result.Data) { Owner = Window.GetWindow(this) };
+            if (win.ShowDialog() == true)
+                LoadData();
         }
 
         private async void BtnDisable_Click(object sender, RoutedEventArgs e)
         {
-            var seleccionado = (ViewRoleDto)dgRoles.SelectedItem;
+            if (sender is not Button { DataContext: ViewRoleDto row }) return;
 
-            if (seleccionado != null)
+            bool estaActivo = row.status == "Activo";
+            string accion = estaActivo ? "dar de baja" : "habilitar";
+
+            var confirm = MessageBox.Show(
+                $"¿Está seguro que desea {accion} el rol {row.name}?",
+                "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (confirm != MessageBoxResult.Yes) return;
+
+            try
             {
-                bool newStatus = seleccionado.status == "Activo" ? false : true;
-                string actionStatus = seleccionado.status == "Activo" ? "dar de baja" : "habilitar";
+                var result = await servicesRole.ChangeRoleStatusAsync(row.id, !estaActivo);
 
-                var msjDisable = MessageBox.Show($"¿Está seguro que desea {actionStatus} el rol {seleccionado.name}?",
-                            "Confirmar", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-                if (msjDisable == MessageBoxResult.Yes)
+                if (result.Success)
                 {
-                    var result = await servicesRole.ChangeRoleStatusAsync(seleccionado.id, newStatus);
-
-                    if (result.Success)
-                    {
-                        LoadData();
-                        ToastService.ShowSuccess(result.Message);
-                    }
+                    LoadData();
+                    ToastService.ShowSuccess(result.Message);
+                }
+                else
+                {
+                    ToastService.ShowError(result.Message);
                 }
             }
+            catch (Exception ex)
+            {
+                ToastService.ShowError("Error al cambiar el estado del rol: " + ex.Message);
+            }
         }
-
     }
 }

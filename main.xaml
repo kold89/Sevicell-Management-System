@@ -68,7 +68,7 @@
                 </StackPanel>
             </RadioButton>
             <!-- Compras -->
-            <RadioButton x:Name="BtnPurchases" Click="BtnPurchases_Click"  ToolTip="Ventas" Style="{StaticResource MenuButtonStyle}">
+            <RadioButton x:Name="BtnPurchases" Click="BtnPurchases_Click"  ToolTip="Compras" Style="{StaticResource MenuButtonStyle}">
                 <StackPanel Orientation="Horizontal">
                     <fa5:SvgAwesome Style="{StaticResource MenuIconStyle}" Icon="Solid_ShoppingBag" Height="16" Margin="0,0,15,0"/>
                     <StackPanel x:Name="PanelTexCompras" Orientation="Horizontal">

@@ -80,6 +80,12 @@
                 </Button.Resources>
                 <TextBlock Text="Registrar pago" Foreground="White" FontWeight="SemiBold" FontSize="13"/>
             </Button>
+            <Button x:Name="BtnImprimirEnganche" Click="BtnImprimirEnganche_Click"
+        DockPanel.Dock="Right" Margin="0,0,10,0" Padding="14,10"
+        Background="White" BorderBrush="#CBD5E1" BorderThickness="1"
+        Cursor="Hand" VerticalAlignment="Center">
+                <TextBlock Text="Imprimir enganche" Foreground="#334155" FontWeight="SemiBold" FontSize="13"/>
+            </Button>
         </DockPanel>
 
         <!-- RESUMEN -->

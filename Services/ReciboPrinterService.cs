@@ -13,6 +13,7 @@ namespace WpfApp1.Services
     {
         private ReciboPagoCuotaDto _reciboPago;
         private ReciboDto _recibo;   // nuevo
+        private ReciboEngancheDto _reciboEnganche;
         private float DibujarLinea(Graphics g, string texto, Font fuente, float y)
         {
             g.DrawString(texto, fuente, Brushes.Black, 0, y);
@@ -241,6 +242,71 @@ namespace WpfApp1.Services
             y += DibujarLinea(g, $"Recibido por: {_recibo.RecibidoPor}", fuenteChica, y);
             y += 10;
             y += DibujarCentrado(g, "¡Gracias por su pago!", fuenteChica, anchoUtil, y);
+
+            e.HasMorePages = false;
+        }
+
+        public void ImprimirReciboEnganche(ReciboEngancheDto recibo, string nombreImpresora)
+        {
+            _reciboEnganche = recibo;
+
+            var doc = new PrintDocument();
+            doc.PrinterSettings.PrinterName = nombreImpresora;
+            doc.DefaultPageSettings.PaperSize = new PaperSize("Recibo58mm", 220, 1000);
+            doc.DefaultPageSettings.Margins = new Margins(5, 5, 5, 5);
+            doc.PrintPage += Doc_PrintPageEnganche;
+            doc.Print();
+        }
+
+        private void Doc_PrintPageEnganche(object sender, PrintPageEventArgs e)
+        {
+            var g = e.Graphics;
+            float y = 0;
+            float ancho = e.MarginBounds.Width;
+            var r = _reciboEnganche;
+
+            using var fuenteTitulo = new Font("Consolas", 11, FontStyle.Bold);
+            using var fuenteNormal = new Font("Consolas", 9, FontStyle.Regular);
+            using var fuenteChica = new Font("Consolas", 8, FontStyle.Regular);
+
+            y += DibujarCentrado(g, "SEVICELL", fuenteTitulo, ancho, y);
+            y += DibujarCentrado(g, "COMPROBANTE DE ENGANCHE", fuenteNormal, ancho, y);
+            y += 10;
+            g.DrawLine(Pens.Black, 0, y, ancho, y);
+            y += 5;
+
+            y += DibujarLinea(g, $"Fecha: {r.FechaPago:dd/MM/yyyy HH:mm}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Recibo N°: {r.NumeroRecibo}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Contrato No: {r.ContractNumber}", fuenteNormal, y);
+            y += DibujarLinea(g, "Cliente: ", fuenteNormal, y);
+            y += DibujarLinea(g, $" {r.NombreCliente}", fuenteNormal, y);
+            y += DibujarLinea(g, $"Artículo: {r.NombreProducto}", fuenteChica, y);
+            if (!string.IsNullOrWhiteSpace(r.Imei))
+                y += DibujarLinea(g, $"IMEI: {r.Imei}", fuenteChica, y);
+            y += 5;
+            g.DrawLine(Pens.Black, 0, y, ancho, y);
+            y += 5;
+
+            y += DibujarLinea(g, $"Precio de venta: L. {r.PrecioVenta:N2}", fuenteNormal, y);
+            y += DibujarLinea(g, "Enganche recibido:", fuenteNormal, y);
+            y += DibujarLinea(g, $" L. {r.Enganche:N2}", fuenteTitulo, y);
+            y += DibujarLinea(g, $"Saldo a financiar: L. {r.SaldoFinanciado:N2}", fuenteNormal, y);
+            y += 5;
+            g.DrawLine(Pens.Black, 0, y, ancho, y);
+            y += 5;
+
+            y += DibujarLinea(g, "Plan de pago:", fuenteChica, y);
+            y += DibujarLinea(g, $" {r.NumeroCuotas} cuotas de L. {r.MontoCuota:N2}", fuenteChica, y);
+            if (!string.IsNullOrWhiteSpace(r.Frecuencia))
+                y += DibujarLinea(g, $" Frecuencia: {r.Frecuencia}", fuenteChica, y);
+            if (r.PrimerPago.HasValue)
+                y += DibujarLinea(g, $" Primer pago: {r.PrimerPago:dd/MM/yyyy}", fuenteChica, y);
+            y += DibujarLinea(g, $" Total en cuotas: L. {r.TotalAPagar:N2}", fuenteChica, y);
+
+            y += 10;
+            y += DibujarLinea(g, $"Recibido por: {r.RecibidoPor}", fuenteChica, y);
+            y += 10;
+            y += DibujarCentrado(g, "¡Gracias por su compra!", fuenteChica, ancho, y);
 
             e.HasMorePages = false;
         }

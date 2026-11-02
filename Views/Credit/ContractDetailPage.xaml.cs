@@ -127,5 +127,30 @@ namespace WpfApp1.Views.Credit
             await CargarCuotasAsync();
             await VistaRecibos.CargarAsync(_contrato.ContractNumber);
         }
+
+        private async void BtnImprimirEnganche_Click(object sender, RoutedEventArgs e)
+        {
+            var rec = await _service.GetReciboEngancheAsync(_contrato.ContractNumber);
+            if (!rec.Success || rec.Data == null)
+            {
+                ToastService.ShowError(rec.Message);
+                return;
+            }
+            if (rec.Data.Enganche <= 0)
+            {
+                ToastService.ShowInfo("Este contrato no tiene enganche.");
+                return;
+            }
+
+            var error = ImpresionRecibos.ImprimirEnganche(rec.Data);
+            if (error != null)
+                MessageBox.Show($"No se pudo imprimir el recibo.\n\nMotivo: {error}",
+                    "Aviso de impresión", MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        private void BtnImprimirEnganche_Click_1(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

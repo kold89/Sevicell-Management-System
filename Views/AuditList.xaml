@@ -7,6 +7,8 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       xmlns:fa5="http://schemas.fontawesome.com/icons/"
+      xmlns:ctrl="clr-namespace:WpfApp1.ControlsUI"
+
       Title="AuditList">
 
     <Grid Margin="30">
@@ -41,74 +43,91 @@
                      Style="{StaticResource SearchTextBoxStyle}" 
                      />
         </Grid>
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="4">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
 
-        <DataGrid x:Name="dgAudit" Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
-               CanUserAddRows="False" HeadersVisibility="Column"
-               GridLinesVisibility="Horizontal"
-               IsReadOnly="True"
-               BorderThickness="0"
-               BorderBrush="#DDDDDD"
-               Background="White" RowHeight="44" FontSize="13">
-
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="auto">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="HorizontalAlignment" Value="Right"/>
-                            <Setter Property="Margin" Value="0,0,16,0"/>
-                            <Setter Property="FontFamily" Value="Consolas"/>
+            <Grid>
+                <DataGrid x:Name="dgAudit"       Background="Transparent" RowBackground="Transparent" 
+                          AlternatingRowBackground="#F8FAFC"
+                          BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                          AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="44"
+                          FontSize="13" IsReadOnly="True">     
+                    
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#64748B"/>
                             <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Padding" Value="12,12"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
                         </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                    </DataGrid.ColumnHeaderStyle>
+                    
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="auto">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter Property="Margin" Value="0,0,16,0"/>
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
-                <DataGridTextColumn Header="FECHA Y HORA" Binding="{Binding DateCreate, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="170">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="Margin" Value="0,0,16,0"/>
-                            <Setter Property="FontFamily" Value="Consolas"/>
-                            <Setter Property="FontWeight" Value="SemiBold"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                        <DataGridTextColumn Header="FECHA Y HORA" Binding="{Binding DateCreate, StringFormat=\{0:dd/MM/yyyy HH:mm\}}" Width="170">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter Property="Margin" Value="0,0,16,0"/>
+                                    <Setter Property="FontFamily" Value="Consolas"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
 
-                <DataGridTextColumn Header="ACCION REALIZADA" Binding="{Binding Accion}" Width="auto"/>
-                
-                <DataGridTextColumn Header="TABLA AFECTADA" Binding="{Binding AffectedTable}" Width="150"/>
-                
-                <DataGridTextColumn Header="DETALLES" Binding="{Binding Details}" Width="*"/>
+                        <DataGridTextColumn Header="ACCION REALIZADA" Binding="{Binding Accion}" Width="auto"/>
 
-                <DataGridTemplateColumn Header="ACCIONES" Width="100">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button x:Name="BtnSee" Click="BtnSee_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
-                                    <fa5:SvgAwesome Icon="Solid_Eye" Height="14" Foreground="Orange"/>
-                                </Button>
-                   
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,15,0,0">
-            <Button x:Name="BtnPreviusPage" Click="BtnPreviusPage_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="5,0">
-                <fa5:SvgAwesome Icon="Solid_ChevronLeft" Height="15" Foreground="#2196F3"/>
-            </Button>
+                        <DataGridTextColumn Header="TABLA AFECTADA" Binding="{Binding AffectedTable}" Width="150"/>
 
-            <Border BorderBrush="#DDD" BorderThickness="1" CornerRadius="5" Padding="10,5" Background="White">
-                <TextBlock x:Name="lblPag" Text="Página 1 de 1" FontSize="14" VerticalAlignment="Center" FontWeight="SemiBold"/>
-            </Border>
+                        <DataGridTextColumn Header="DETALLES" Binding="{Binding Details}" Width="*"/>
 
-            <Button x:Name="BtnNextPage" Click="BtnNextPage_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="5,0">
-                <fa5:SvgAwesome Icon="Solid_ChevronRight" Height="15" Foreground="#2196F3"/>
-            </Button>
-        </StackPanel>
+                        <DataGridTemplateColumn Header="ACCIONES" Width="100">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnSee" Click="BtnSee_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                            <fa5:SvgAwesome Icon="Solid_Eye" Height="14" Foreground="Orange"/>
+                                        </Button>
+
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+        </Border>
+        <Grid Grid.Row="3" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock x:Name="TxtResumen" Grid.Column="0" Margin="4,0,0,0"
+               VerticalAlignment="Center" FontSize="12" Foreground="#64748B"/>
+
+            <ctrl:PaginadorControl x:Name="Paginador" Grid.Column="1"
+                           RegistrosPorPagina="10"
+                           PaginaCambiada="Paginador_PaginaCambiada"/>
+        </Grid>
     </Grid>
-
 </Page>

@@ -49,79 +49,91 @@
                 </StackPanel>
             </Button>
         </Grid>
+        <Border Grid.Row="2" Background="White" CornerRadius="8" Padding="4">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" Color="#000000" Opacity="0.04" ShadowDepth="2"/>
+            </Border.Effect>
+            <Grid>
+                <DataGrid x:Name="dgRoles"   Background="Transparent" RowBackground="Transparent" AlternatingRowBackground="#F8FAFC"
+                          BorderThickness="0" Foreground="#1E293B" GridLinesVisibility="Horizontal"
+                          HorizontalGridLinesBrush="#E2E8F0" HeadersVisibility="Column"
+                          AutoGenerateColumns="False" CanUserAddRows="False" RowHeight="44"
+                          FontSize="13" IsReadOnly="True">      
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#64748B"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                            <Setter Property="Padding" Value="12,12"/>
+                            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
 
-        <DataGrid x:Name="dgRoles"  Grid.Row="2" AutoGenerateColumns="False" Style="{StaticResource ModernDataGrid}" 
-               CanUserAddRows="False" HeadersVisibility="Column"
-               GridLinesVisibility="Horizontal"
-                  IsReadOnly="True"
-               BorderThickness="0"
-               BorderBrush="#DDDDDD"
-               Background="White" RowHeight="44" FontSize="13">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding id}" Width="50"/>
+                        <DataGridTextColumn Header="TIPO DE ROL" Binding="{Binding name}" Width="*"/>
 
-                <DataGridTextColumn Header="TIPO DE ROL" Binding="{Binding name}" Width="*"/>
-
-                <DataGridTemplateColumn Header="ESTADO"  Width="*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid Margin="0,0,16,0" HorizontalAlignment="Left" VerticalAlignment="Center">
-                                <Border x:Name="StockBadge" Style="{StaticResource BadgeBorderStyle}">
-                                    <TextBlock x:Name="statusText" 
+                        <DataGridTemplateColumn Header="ESTADO"  Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid Margin="0,0,16,0" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <Border x:Name="StockBadge" Style="{StaticResource BadgeBorderStyle}">
+                                            <TextBlock x:Name="statusText" 
                          Text="{Binding status}" 
                          Style="{StaticResource BadgeTextStyle}"
                          FontWeight="Bold"/>
-                                </Border>
-                            </Grid>
+                                        </Border>
+                                    </Grid>
 
-                            <DataTemplate.Triggers>
-                                <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
-                                    <Setter TargetName="StockBadge" Property="Background" Value="#FDEDEC"/>
-                                    <Setter TargetName="statusText" Property="Foreground" Value="#C0392B"/>
-                                </DataTrigger>
+                                    <DataTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
+                                            <Setter TargetName="StockBadge" Property="Background" Value="#FDEDEC"/>
+                                            <Setter TargetName="statusText" Property="Foreground" Value="#C0392B"/>
+                                        </DataTrigger>
 
-                                <DataTrigger Binding="{Binding status}" Value="Activo">
-                                    <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
-                                    <Setter TargetName="statusText" Property="Foreground" Value="#117A65"/>
-                                </DataTrigger>
-                            </DataTemplate.Triggers>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="ACCIONES" Width="150">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button x:Name="BtnEdit" Click="BtnEdit_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
-                                    <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
-                                </Button>
-                                <Button x:Name="BtnDisable" Click="BtnDisable_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="10,0">
-                                    <fa5:SvgAwesome Height="14">
-                                        <fa5:SvgAwesome.Style>
-                                            <Style TargetType="{x:Type fa5:SvgAwesome}">
-                                                <Setter Property="Icon" Value="Solid_Trash" />
-                                                <Setter Property="Foreground" Value="Red" />
-                                                <Setter Property="ToolTip" Value="Dar de baja" />
+                                        <DataTrigger Binding="{Binding status}" Value="Activo">
+                                            <Setter TargetName="StockBadge" Property="Background" Value="#E8F8F5"/>
+                                            <Setter TargetName="statusText" Property="Foreground" Value="#117A65"/>
+                                        </DataTrigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="ACCIONES" Width="150">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button x:Name="BtnEdit" Click="BtnEdit_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="20,0,10,0">
+                                            <fa5:SvgAwesome Icon="Solid_Edit" Height="14" Foreground="Orange"/>
+                                        </Button>
+                                        <Button x:Name="BtnDisable" Click="BtnDisable_Click" Background="Transparent" BorderThickness="0" Cursor="Hand" Margin="10,0">
+                                            <fa5:SvgAwesome Height="14">
+                                                <fa5:SvgAwesome.Style>
+                                                    <Style TargetType="{x:Type fa5:SvgAwesome}">
+                                                        <Setter Property="Icon" Value="Solid_Trash" />
+                                                        <Setter Property="Foreground" Value="Red" />
+                                                        <Setter Property="ToolTip" Value="Dar de baja" />
 
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
-                                                        <Setter Property="Icon" Value="Solid_UserCheck" />
-                                                        <Setter Property="Foreground" Value="Green" />
-                                                        <Setter Property="ToolTip" Value="Habilitar usuario" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </fa5:SvgAwesome.Style>
-                                    </fa5:SvgAwesome>
-                                </Button>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding status}" Value="Deshabilitado">
+                                                                <Setter Property="Icon" Value="Solid_UserCheck" />
+                                                                <Setter Property="Foreground" Value="Green" />
+                                                                <Setter Property="ToolTip" Value="Habilitar usuario" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </fa5:SvgAwesome.Style>
+                                            </fa5:SvgAwesome>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </Border>
     </Grid>
-
 </Page>

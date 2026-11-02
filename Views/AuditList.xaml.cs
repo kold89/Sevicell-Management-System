@@ -1,103 +1,91 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using WpfApp1.Data;
-using Microsoft.EntityFrameworkCore;
 using WpfApp1.Models;
+using WpfApp1.Services;
 
 namespace WpfApp1.Views
 {
-    /// <summary>
-    /// Lógica de interacción para AuditList.xaml
-    /// </summary>
     public partial class AuditList : Page
     {
-        private int paginaActual = 1;
-        private int registrosPorPagina = 15; // Ajusta según el alto de tu pantalla
-        private int totalRegistros = 0;
+        private bool _isLoading;
 
         public AuditList()
         {
             InitializeComponent();
-            LoadData();
+            Loaded += async (_, _) => await LoadData(nuevaCarga: true);
         }
 
-        public async void LoadData()
+        private async Task LoadData(bool nuevaCarga = true)
         {
+            // Evita cargas solapadas (clic rápido en las flechas)
+            if (_isLoading) return;
+            _isLoading = true;
+            Paginador.IsEnabled = false;
+
             try
             {
-                using (var db = new SevicellDbContext())
-                {
-                    // 1. Obtener total para calcular páginas
-                    totalRegistros = await db.AuditTables.CountAsync();
-                    int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
+                using var db = new SevicellDbContext();
 
-                    // 2. Cargar solo el segmento (Paginación)
-                    var logs = await db.AuditTables
-                        .OrderByDescending(x => x.DateCreate)
-                        .Skip((paginaActual - 1) * registrosPorPagina)
-                        .Take(registrosPorPagina)
-                        .ToListAsync();
+                // 1. Total, para que el paginador calcule sus páginas
+                int total = await db.AuditTables.CountAsync();
 
-                    dgAudit.ItemsSource = logs;
+                // 2. Configurar ANTES de leer PaginaActual: el control la ajusta si ya no existe
+                Paginador.Configurar(total, nuevaCarga ? 1 : Paginador.PaginaActual);
 
-                    // 3. Actualizar Interfaz
-                    lblPag.Text = $"Página {paginaActual} de {Math.Max(1, totalPaginas)}";
+                int tam = Paginador.RegistrosPorPagina;
+                int salto = (Paginador.PaginaActual - 1) * tam;
 
-                    // Deshabilitar botones si no hay más páginas
-                    BtnPreviusPage.IsEnabled = paginaActual > 1;
-                    BtnPreviusPage.Opacity = BtnPreviusPage.IsEnabled ? 1 : 0.3;
+                // 3. Solo el segmento que toca
+                var logs = await db.AuditTables
+                    .AsNoTracking()
+                    .OrderByDescending(x => x.DateCreate)
+                    .ThenByDescending(x => x.Id)   // orden estable para Skip/Take
+                    .Skip(salto)
+                    .Take(tam)
+                    .ToListAsync();
 
-                    BtnNextPage.IsEnabled = paginaActual < totalPaginas;
-                    BtnNextPage.Opacity = BtnNextPage.IsEnabled ? 1 : 0.3;
-                }
+                dgAudit.ItemsSource = logs;
+
+                Paginador.Visibility = total == 0 ? Visibility.Collapsed : Visibility.Visible;
+
+                TxtResumen.Text = total == 0
+                    ? "No hay registros de auditoría."
+                    : $"Mostrando {salto + 1}–{salto + logs.Count} de {total} registro(s).";
+                Paginador.Visibility = total == 0 ? Visibility.Collapsed : Visibility.Visible;
             }
             catch (Exception ex)
+
             {
-                MessageBox.Show("Error al cargar logs: " + ex.Message);
+                TxtResumen.Text = string.Empty;
+                ToastService.ShowError("Error al cargar los registros de auditoría: " + ex.Message);
+
+            }
+            finally
+            {
+                Paginador.IsEnabled = true;
+                _isLoading = false;
             }
         }
-        private void BtnSee_Click(object sender, RoutedEventArgs e)
-        {
 
+        private async void Paginador_PaginaCambiada(object sender, EventArgs e)
+        {
+            await LoadData(nuevaCarga: false);
         }
 
         private void BtnGoBack_Click(object sender, RoutedEventArgs e)
         {
-            if (this.NavigationService.CanGoBack)
-            {
-                this.NavigationService.GoBack();
-            }
+            if (NavigationService?.CanGoBack == true)
+                NavigationService.GoBack();
         }
 
-        private void BtnPreviusPage_Click(object sender, RoutedEventArgs e)
+        private void BtnSee_Click(object sender, RoutedEventArgs e)
         {
-            if (paginaActual > 1)
-            {
-                paginaActual--;
-                LoadData();
-            }
-        }
-
-        private void BtnNextPage_Click(object sender, RoutedEventArgs e)
-        {
-            int totalPaginas = (int)Math.Ceiling((double)totalRegistros / registrosPorPagina);
-            if (paginaActual < totalPaginas)
-            {
-                paginaActual++;
-                LoadData();
-            }
+            // pendiente
         }
     }
 }

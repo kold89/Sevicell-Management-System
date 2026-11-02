@@ -184,7 +184,7 @@ namespace WpfApp1.Services
 
             return ServicesResult<bool>.Ok(true, "Validación exitosa.");
         }
-        public async Task<ServicesResult<bool>> SaveContractAsync(ContractCreateDto dto, ContractCalculationResult calc)
+        public async Task<ServicesResult<int>> SaveContractAsync(ContractCreateDto dto, ContractCalculationResult calc)
         {
             using (var db = new SevicellDbContext())
             using (var transaction = await db.Database.BeginTransactionAsync())
@@ -231,7 +231,7 @@ namespace WpfApp1.Services
                     if (unit == null)
                     {
                         await transaction.RollbackAsync();
-                        return ServicesResult<bool>.Fail("El producto ya no está disponible.");
+                        return ServicesResult<int>.Fail("El producto ya no está disponible.");
                     }
                     unit.Status = EProductUnitStatus.Vendido.ToDbValue();
 
@@ -239,12 +239,12 @@ namespace WpfApp1.Services
                     await db.SaveChangesAsync();
 
                     await transaction.CommitAsync();
-                    return ServicesResult<bool>.Ok(true, "Contrato creado exitosamente.");
+                    return ServicesResult<int>.Ok(contract.Id, "Contrato creado exitosamente.");
                 }
                 catch (Exception ex)
                 {
                     await transaction.RollbackAsync();
-                    return ServicesResult<bool>.Fail("Error al guardar el contrato: " + ex.Message);
+                    return ServicesResult<int>.Fail("Error al guardar el contrato: " + ex.Message);
                 }
             }
         }
@@ -311,6 +311,53 @@ namespace WpfApp1.Services
             catch (Exception ex)
             {
                 return ServicesResult<List<InstallmentPreview>>.Fail("Error al obtener los pagos: " + ex.Message);
+            }
+        }
+        public async Task<ServicesResult<ReciboEngancheDto>> GetReciboEngancheAsync(int contractId)
+        {
+            try
+            {
+                using var db = new SevicellDbContext();
+
+                var c = await db.Contracts
+                    .Include(x => x.Client)
+                    .Include(x => x.ProductUnit).ThenInclude(u => u.Product)
+                    .FirstOrDefaultAsync(x => x.Id == contractId);
+
+                if (c == null)
+                    return ServicesResult<ReciboEngancheDto>.Fail("No se encontró el contrato.");
+
+                var frecuencia = await db.Frequencies
+                    .Where(f => f.Id == c.FrequencyId)
+                    .Select(f => f.Code)
+                    .FirstOrDefaultAsync();
+
+                var primerPago = (DateOnly?)c.FirstDueDate;
+
+                var recibo = new ReciboEngancheDto
+                {
+                    NumeroRecibo = $"E-{c.Id}",
+                    FechaPago = c.CreatedAt ?? DateTime.Now,
+                    ContractNumber = c.Id,
+                    NombreCliente = $"{c.Client.Name} {c.Client.LastName}",
+                    NombreProducto = c.ProductUnit.Product.Name,
+                    Imei = c.ProductUnit.Imei,
+                    PrecioVenta = Convert.ToDecimal(c.SalePrice),
+                    Enganche = Convert.ToDecimal(c.DownPayment),
+                    SaldoFinanciado = Convert.ToDecimal(c.FinancedBalance),
+                    TotalAPagar = Convert.ToDecimal(c.TotalDebt),
+                    NumeroCuotas = Convert.ToInt32(c.InstallmentCount),
+                    MontoCuota = Convert.ToDecimal(c.InstallmentAmount),
+                    Frecuencia = frecuencia,
+                    PrimerPago = primerPago?.ToDateTime(TimeOnly.MinValue),
+                    RecibidoPor = SessionManager.loggedInUser?.Name ?? "sistema"
+                };
+
+                return ServicesResult<ReciboEngancheDto>.Ok(recibo, "Recibo obtenido correctamente.");
+            }
+            catch (Exception ex)
+            {
+                return ServicesResult<ReciboEngancheDto>.Fail("Error al obtener el recibo de enganche: " + ex.GetBaseException().Message);
             }
         }
         public async Task<ServicesResult<ReciboPagoCuotaDto>> RegisterPaymentAsync(int installmentId, decimal amount, DateTime paymentDate, string? receivedBy = null, string? notes = null)
